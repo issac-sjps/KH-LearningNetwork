@@ -6,469 +6,349 @@
 <title>管理後台 — 高雄城市學習網絡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@600;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <style>
-/* ============ CLOUDINARY CONFIG ============
-   在 Cloudinary 控制台建立一個 Unsigned Upload Preset：
-   Settings → Upload → Upload presets → Add unsigned preset
-   Preset 名稱設為: kaohsiung_gallery
-   Folder 設為: kaohsiung-gallery
-   =========================================== */
-
-:root {
-  --primary: #003F88;
-  --primary-mid: #0062CC;
-  --teal: #0098B4;
-  --gold: #F5A800;
-  --danger: #D63031;
-  --success: #00B894;
-  --warning: #FDCB6E;
-  --bg: #F2F6FC;
-  --sidebar: #003F88;
-  --sidebar-hover: #0062CC;
-  --sidebar-active: rgba(245,168,0,0.15);
-  --white: #FFFFFF;
-  --border: #D0DDEF;
-  --text: #1A2840;
-  --text-dim: #5A6A80;
-  --shadow: 0 2px 16px rgba(0,63,136,0.1);
-  --shadow-md: 0 4px 24px rgba(0,63,136,0.15);
-  --radius: 8px;
+:root{
+  --navy:#003F88;--navy2:#0062CC;--teal:#0098B4;--gold:#F5A800;
+  --danger:#D63031;--success:#00B894;--warn:#FDCB6E;
+  --bg:#F2F6FC;--white:#fff;--border:#D0DDEF;
+  --text:#1A2840;--tdim:#5A6A80;
+  --shadow:0 2px 16px rgba(0,63,136,.1);--shadowmd:0 4px 24px rgba(0,63,136,.15);
+  --r:8px;
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;}
 input,textarea,select,button{font-family:'Noto Sans TC',sans-serif;}
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-/* ============ LOGIN SCREEN ============ */
-#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary) 0%,#005BAA 50%,var(--teal) 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-.login-card{background:var(--white);border-radius:12px;padding:48px 44px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
-.login-header{text-align:center;margin-bottom:36px;}
-.login-emblem{width:56px;height:56px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;}
-.login-emblem img{width:100%;height:100%;object-fit:contain;}
-.login-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:var(--primary);margin-bottom:4px;}
-.login-sub{font-size:12px;color:var(--text-dim);letter-spacing:0.04em;}
-.login-tabs{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:28px;}
-.login-tab{flex:1;padding:10px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-dim);transition:all .2s;}
-.login-tab.active{background:var(--primary);color:#fff;font-weight:700;}
-.form-group{margin-bottom:18px;}
-.form-label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;letter-spacing:0.04em;}
-.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;color:var(--text);transition:border-color .2s;background:#fff;}
-.form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,63,136,0.1);}
-.btn-login{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:0.05em;}
-.btn-login:hover{background:var(--primary-mid);}
-.login-err{background:#fff0f0;border:1px solid #ffcdd2;color:var(--danger);padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px;display:none;}
-.login-hint{font-size:11px;color:var(--text-dim);text-align:center;margin-top:16px;}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.lcard{background:var(--white);border-radius:12px;padding:48px 44px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.lhdr{text-align:center;margin-bottom:32px;}
+.lhdr img{width:56px;height:56px;object-fit:contain;margin-bottom:14px;}
+.lhdr h2{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.lhdr p{font-size:12px;color:var(--tdim);}
+.ltabs{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:24px;}
+.ltab{flex:1;padding:10px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--tdim);transition:all .2s;}
+.ltab.on{background:var(--navy);color:#fff;font-weight:700;}
+.lerr{background:#fff0f0;border:1px solid #ffcdd2;color:var(--danger);padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px;display:none;}
+.fg{margin-bottom:16px;}
+.fl{display:block;font-size:12px;color:var(--tdim);margin-bottom:6px;letter-spacing:.04em;}
+.fi{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;color:var(--text);transition:border-color .2s;}
+.fi:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,63,136,.1);}
+.lbtn{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.05em;}
+.lbtn:hover{background:var(--navy2);}
+.lbtn:disabled{opacity:.6;cursor:not-allowed;}
+.lhint{font-size:11px;color:var(--tdim);text-align:center;margin-top:14px;}
 
-/* ============ APP LAYOUT ============ */
-#app{display:none;min-height:100vh;display:grid;grid-template-columns:240px 1fr;grid-template-rows:auto 1fr;}
-#app.hidden{display:none!important;}
+/* APP LAYOUT */
+#app{display:none;min-height:100vh;}
+#app.show{display:grid;grid-template-columns:240px 1fr;grid-template-rows:60px 1fr;}
 
-/* TOP BAR */
-.topbar{grid-column:1/-1;background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;box-shadow:var(--shadow);}
-.topbar-brand{display:flex;align-items:center;gap:10px;}
-.topbar-brand img{width:32px;height:32px;object-fit:contain;}
-.topbar-brand-text{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;color:var(--primary);}
-.topbar-brand-text span{display:block;font-size:9px;font-family:'Space Mono',monospace;color:var(--text-dim);letter-spacing:0.15em;font-weight:400;}
-.topbar-right{display:flex;align-items:center;gap:16px;}
-.user-badge{display:flex;align-items:center;gap:10px;}
-.user-avatar{width:34px;height:34px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;}
-.user-info{line-height:1.3;}
-.user-name{font-size:13px;font-weight:500;color:var(--text);}
-.user-role{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;}
-.topbar-btn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:0.04em;}
-.btn-view{background:var(--bg);color:var(--primary);border:1px solid var(--border);}
-.btn-view:hover{background:#e8f0fe;}
-.btn-logout{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}
-.btn-logout:hover{background:#ffcdd2;}
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.tbrand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.tbrand img{width:32px;height:32px;object-fit:contain;}
+.tbrand-txt{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;color:var(--navy);}
+.tbrand-txt span{display:block;font-size:9px;font-family:'Space Mono',monospace;color:var(--tdim);letter-spacing:.15em;font-weight:400;}
+.tright{display:flex;align-items:center;gap:14px;}
+.uav{width:34px;height:34px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;}
+.uinfo{line-height:1.3;}
+.uname{font-size:13px;font-weight:500;}
+.urole{font-size:10px;color:var(--tdim);font-family:'Space Mono',monospace;}
+.tbtn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.04em;}
+.tbtn-view{background:var(--bg);color:var(--navy);border:1px solid var(--border);}
+.tbtn-view:hover{background:#e8f0fe;}
+.tbtn-out{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}
+.tbtn-out:hover{background:#ffcdd2;}
 
 /* SIDEBAR */
-.sidebar{background:var(--sidebar);padding:20px 0;overflow-y:auto;}
-.sidebar-section{padding:4px 0;margin-bottom:8px;}
-.sidebar-section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);padding:0 20px 6px;text-transform:uppercase;}
-.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,0.65);font-size:13px;position:relative;}
-.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
-.nav-item.active{background:var(--sidebar-active);color:var(--gold);border-right:3px solid var(--gold);}
-.nav-item .nav-icon{font-size:17px;min-width:22px;}
-.nav-badge-count{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:10px;font-weight:700;}
-.sidebar-divider{height:1px;background:rgba(255,255,255,0.08);margin:8px 20px;}
+.sidebar{background:var(--navy);padding:20px 0;overflow-y:auto;}
+.sg-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:rgba(255,255,255,.3);padding:0 20px 6px;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);font-size:13px;position:relative;}
+.ni:hover{background:rgba(255,255,255,.08);color:#fff;}
+.ni.on{background:rgba(245,168,0,.15);color:var(--gold);border-right:3px solid var(--gold);}
+.ni-ico{font-size:17px;min-width:22px;}
+.ni-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:10px;font-weight:700;}
+.sdiv{height:1px;background:rgba(255,255,255,.08);margin:8px 20px;}
 
-/* MAIN CONTENT */
-.main-content{padding:28px;overflow-y:auto;max-height:calc(100vh - 60px);}
-.page-header{margin-bottom:24px;}
-.page-title{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600;color:var(--primary);margin-bottom:4px;}
-.page-sub{font-size:13px;color:var(--text-dim);}
+/* MAIN */
+.main{padding:28px;overflow-y:auto;max-height:calc(100vh - 60px);}
+.phdr{margin-bottom:24px;}
+.ptitle{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.psub{font-size:13px;color:var(--tdim);}
 
 /* PANELS */
-.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
-.panel-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.panel-title .pt-icon{font-size:18px;}
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:20px;}
+.panel-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
-/* STATS CARDS */
+/* STAT CARDS */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;}
-.stat-num-sm{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--primary);display:block;}
-.stat-label-sm{font-size:12px;color:var(--text-dim);margin-top:4px;}
-.stat-card.accent{background:var(--primary);border-color:var(--primary);}
-.stat-card.accent .stat-num-sm{color:var(--gold);}
-.stat-card.accent .stat-label-sm{color:rgba(255,255,255,0.65);}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;}
+.sc.accent{background:var(--navy);border-color:var(--navy);}
+.sc-n{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--navy);display:block;}
+.sc.accent .sc-n{color:var(--gold);}
+.sc-l{font-size:12px;color:var(--tdim);margin-top:4px;}
+.sc.accent .sc-l{color:rgba(255,255,255,.65);}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:0.04em;}
-.btn-primary{background:var(--primary);color:#fff;}.btn-primary:hover{background:var(--primary-mid);}
-.btn-teal{background:var(--teal);color:#fff;}.btn-teal:hover{background:#007A91;}
-.btn-gold{background:var(--gold);color:var(--primary);}.btn-gold:hover{background:#e09900;}
-.btn-danger{background:var(--danger);color:#fff;}.btn-danger:hover{background:#b22424;}
-.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{background:#e8effa;border-color:var(--primary);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.04em;}
+.btn-p{background:var(--navy);color:#fff;}.btn-p:hover{background:var(--navy2);}
+.btn-t{background:var(--teal);color:#fff;}.btn-t:hover{background:#007A91;}
+.btn-g{background:var(--gold);color:var(--navy);}.btn-g:hover{background:#e09900;}
+.btn-d{background:var(--danger);color:#fff;}.btn-d:hover{background:#b22424;}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{background:#e8effa;border-color:var(--navy);}
 .btn-sm{padding:5px 14px;font-size:12px;}
-.btn-icon{padding:7px;border-radius:6px;font-size:14px;}
 
-/* IMAGE GALLERY */
-.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;}
-.upload-zone:hover{border-color:var(--primary);background:#f0f4ff;}
-.upload-zone-icon{font-size:40px;margin-bottom:12px;}
-.upload-zone-text{font-size:14px;color:var(--text-dim);margin-bottom:4px;}
-.upload-zone-sub{font-size:12px;color:#aab4c4;}
+/* GALLERY */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;}
+.upload-zone:hover{border-color:var(--navy);background:#f0f4ff;}
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
-.gallery-item{position:relative;border-radius:6px;overflow:hidden;background:#f0f4f8;aspect-ratio:16/9;}
-.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;}
-.gallery-item-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .25s;display:flex;align-items:flex-end;}
-.gallery-item:hover .gallery-item-overlay{background:rgba(0,0,0,0.55);}
-.gallery-item-actions{padding:10px;display:flex;gap:6px;width:100%;opacity:0;transition:opacity .25s;}
-.gallery-item:hover .gallery-item-actions{opacity:1;}
-.gallery-caption{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:10px;padding:3px 8px;border-radius:10px;max-width:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.gallery-empty{text-align:center;padding:60px;color:var(--text-dim);}
-.gallery-empty-icon{font-size:40px;display:block;margin-bottom:10px;}
+.gi{position:relative;border-radius:6px;overflow:hidden;background:#f0f4f8;aspect-ratio:16/9;}
+.gi img{width:100%;height:100%;object-fit:cover;display:block;}
+.gi-ov{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .25s;display:flex;align-items:flex-end;}
+.gi:hover .gi-ov{background:rgba(0,0,0,.55);}
+.gi-acts{padding:8px;display:flex;gap:5px;width:100%;opacity:0;transition:opacity .25s;}
+.gi:hover .gi-acts{opacity:1;}
+.gi-cap{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;max-width:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gi-order{position:absolute;top:6px;right:6px;background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
 
-/* IMAGE EDIT MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
-.modal-bg.open{display:flex;}
-.modal-box{background:var(--white);border-radius:12px;padding:32px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);}
-.modal-title{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:var(--primary);margin-bottom:20px;}
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:11px;font-family:'Space Mono',monospace;color:var(--tdim);letter-spacing:.15em;padding:10px 14px;border-bottom:2px solid var(--border);text-transform:uppercase;}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8faff;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+.b-on{background:#e8f5ee;color:var(--success);}
+.b-off{background:#f5f5f5;color:#999;}
+.b-pend{background:#fff8e0;color:#8a6000;}
+.b-admin{background:#e0f0ff;color:var(--navy);}
+.b-user{background:#f5f5f5;color:#666;}
 
-/* ANNOUNCEMENTS TABLE */
-.announce-table{width:100%;border-collapse:collapse;}
-.announce-table th{text-align:left;font-size:11px;font-family:'Space Mono',monospace;color:var(--text-dim);letter-spacing:0.15em;padding:10px 14px;border-bottom:2px solid var(--border);text-transform:uppercase;}
-.announce-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
-.announce-table tr:last-child td{border-bottom:none;}
-.announce-table tr:hover td{background:#f8faff;}
-.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
-.status-on{background:#e8f5ee;color:var(--success);}
-.status-off{background:#f5f5f5;color:#999;}
-.status-pending{background:#fff8e0;color:#b07800;}
-.status-approved{background:#e8f5ee;color:var(--success);}
-.status-denied{background:#fff0f0;color:var(--danger);}
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+.mover.open{display:flex;}
+.mbox{background:var(--white);border-radius:12px;padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadowmd);}
+.mtitle{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:var(--navy);margin-bottom:20px;}
+.fg2{margin-bottom:16px;}
+.fl2{display:block;font-size:12px;color:var(--tdim);margin-bottom:6px;font-weight:500;}
+.fi2{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);transition:border-color .2s;}
+.fi2:focus{outline:none;border-color:var(--navy);}
+textarea.fi2{resize:vertical;min-height:90px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.facts{display:flex;gap:10px;margin-top:20px;}
 
-/* USER MANAGEMENT */
-.user-table{width:100%;border-collapse:collapse;}
-.user-table th{text-align:left;font-size:11px;font-family:'Space Mono',monospace;color:var(--text-dim);padding:10px 14px;border-bottom:2px solid var(--border);text-transform:uppercase;letter-spacing:0.15em;}
-.user-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;}
-.user-table tr:hover td{background:#f8faff;}
-.user-email{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);}
+/* TOGGLE */
+.tog-wrap{display:flex;align-items:center;gap:10px;margin-top:6px;}
+.tog{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;}
+.tog input{opacity:0;width:0;height:0;position:absolute;}
+.tog-tr{position:absolute;inset:0;background:#ccc;border-radius:11px;transition:.3s;}
+.tog input:checked+.tog-tr{background:var(--success);}
+.tog-th{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.tog input:checked~.tog-th{left:21px;}
 
-/* FORM ELEMENTS */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.form-group-admin{margin-bottom:16px;}
-.form-label-admin{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-weight:500;letter-spacing:0.04em;}
-.form-input-admin{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);transition:border-color .2s;background:#fff;}
-.form-input-admin:focus{outline:none;border-color:var(--primary);}
-textarea.form-input-admin{resize:vertical;min-height:90px;}
-select.form-input-admin{cursor:pointer;}
-.form-actions{display:flex;gap:10px;margin-top:20px;}
-
-/* ALERT BOX */
-.alert{padding:12px 16px;border-radius:6px;font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
-.alert-info{background:#e0f0ff;color:#003F88;border:1px solid #b0d4f4;}
-.alert-success{background:#e8f5ee;color:var(--success);border:1px solid #b0e0c4;}
+/* ALERT */
+.alert{padding:12px 16px;border-radius:6px;font-size:13px;margin-bottom:16px;}
+.alert-info{background:#e0f0ff;color:var(--navy);border:1px solid #b0d4f4;}
 .alert-warn{background:#fff8e0;color:#8a6000;border:1px solid #f5d88a;}
-.alert-danger{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}
+.alert-ok{background:#e8f5ee;color:var(--success);border:1px solid #b0e0c4;}
+.alert-err{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}
 
-/* REQUEST PANEL */
-.request-form{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:16px;}
-.request-pending-notice{display:flex;align-items:center;gap:12px;background:#fff8e0;border:1px solid #f5d88a;border-radius:var(--radius);padding:14px 16px;margin-top:16px;}
+/* TAB CONTENT */
+.tc{display:none;}.tc.on{display:block;}
 
-/* TAB CONTENT VISIBILITY */
-.tab-content{display:none;}
-.tab-content.active{display:block;}
-
-/* TOGGLE SWITCH */
-.toggle-wrap{display:flex;align-items:center;gap:10px;}
-.toggle{position:relative;width:40px;height:22px;cursor:pointer;}
-.toggle input{opacity:0;width:0;height:0;}
-.toggle-track{position:absolute;inset:0;background:#ccc;border-radius:11px;transition:.3s;}
-.toggle input:checked + .toggle-track{background:var(--success);}
-.toggle-thumb{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
-.toggle input:checked ~ .toggle-thumb{left:21px;}
-
-/* NOTIFICATION TOAST */
+/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .35s;max-width:320px;}
 .toast.show{transform:translateY(0);opacity:1;}
-.toast.success{background:var(--success);}
-.toast.error{background:var(--danger);}
+.toast.ok{background:var(--success);}
+.toast.err{background:var(--danger);}
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  #app{grid-template-columns:1fr;}
-  .sidebar{display:none;}
-  .stats-row{grid-template-columns:1fr 1fr;}
-}
+/* REQUEST BOX */
+.req-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+
+@media(max-width:768px){#app.show{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
+<!-- LOGIN -->
 <div id="loginScreen">
-  <div class="login-card">
-    <div class="login-header">
-      <div class="login-emblem"><img src="Emblem_of_Kaohsiung_City.svg" alt="高雄市徽"></div>
-      <div class="login-title">高雄城市學習網絡</div>
-      <div class="login-sub">管理後台 · Admin Dashboard</div>
+  <div class="lcard">
+    <div class="lhdr">
+      <img src="Emblem_of_Kaohsiung_City.svg" alt="">
+      <h2>高雄城市學習網絡</h2>
+      <p>管理後台 · Admin Dashboard</p>
     </div>
-    <div class="login-tabs">
-      <button class="login-tab active" onclick="switchLoginTab('login')">登入</button>
-      <button class="login-tab" onclick="switchLoginTab('register')">註冊帳號</button>
+    <div class="ltabs">
+      <button class="ltab on" onclick="setLTab('login')">登入</button>
+      <button class="ltab" onclick="setLTab('reg')">註冊帳號</button>
     </div>
-    <div id="loginErr" class="login-err"></div>
+    <div class="lerr" id="lerr"></div>
 
-    <!-- Login form -->
-    <div id="loginForm">
-      <div class="form-group">
-        <label class="form-label">電子郵件</label>
-        <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com">
-      </div>
-      <div class="form-group">
-        <label class="form-label">密碼</label>
-        <input type="password" class="form-input" id="loginPassword" placeholder="••••••••">
-      </div>
-      <button class="btn-login" onclick="doLogin()">登入</button>
-      <p class="login-hint">首次登入請點「註冊帳號」建立您的帳戶</p>
+    <div id="lform">
+      <div class="fg"><label class="fl">電子郵件</label><input type="email" class="fi" id="lemail" placeholder="your@email.com"></div>
+      <div class="fg"><label class="fl">密碼</label><input type="password" class="fi" id="lpwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="lbtn" id="lbtnEl" onclick="doLogin()">登入</button>
+      <p class="lhint">首次使用請點「註冊帳號」</p>
     </div>
 
-    <!-- Register form -->
-    <div id="registerForm" style="display:none">
-      <div class="form-group">
-        <label class="form-label">電子郵件</label>
-        <input type="email" class="form-input" id="regEmail" placeholder="your@email.com">
-      </div>
-      <div class="form-group">
-        <label class="form-label">使用者名稱</label>
-        <input type="text" class="form-input" id="regUsername" placeholder="您的姓名或暱稱">
-      </div>
-      <div class="form-group">
-        <label class="form-label">密碼（至少6位）</label>
-        <input type="password" class="form-input" id="regPassword" placeholder="••••••••">
-      </div>
-      <button class="btn-login" onclick="doRegister()">建立帳號</button>
-      <p class="login-hint">註冊後如需管理權限，請在後台提出申請</p>
+    <div id="rform" style="display:none">
+      <div class="fg"><label class="fl">電子郵件</label><input type="email" class="fi" id="remail" placeholder="your@email.com"></div>
+      <div class="fg"><label class="fl">使用者名稱</label><input type="text" class="fi" id="runame" placeholder="您的姓名"></div>
+      <div class="fg"><label class="fl">密碼（至少6位）</label><input type="password" class="fi" id="rpwd" placeholder="••••••••"></div>
+      <button class="lbtn" id="rbtnEl" onclick="doReg()">建立帳號</button>
+      <p class="lhint">註冊後如需管理權限，可在後台提出申請</p>
     </div>
   </div>
 </div>
 
-<!-- ============ ADMIN APP ============ -->
-<div id="app" class="hidden">
-
-  <!-- TOP BAR -->
+<!-- APP -->
+<div id="app">
   <div class="topbar">
-    <div class="topbar-brand">
+    <a href="index.html" class="tbrand">
       <img src="Emblem_of_Kaohsiung_City.svg" alt="">
-      <div class="topbar-brand-text">高雄城市學習網絡<span>Admin Dashboard</span></div>
-    </div>
-    <div class="topbar-right">
-      <div class="user-badge">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <div class="user-info">
-          <div class="user-name" id="userName">-</div>
-          <div class="user-role" id="userRole">-</div>
-        </div>
+      <div class="tbrand-txt">高雄城市學習網絡<span>Admin Dashboard</span></div>
+    </a>
+    <div class="tright">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="uav" id="uAv">?</div>
+        <div class="uinfo"><div class="uname" id="uName">-</div><div class="urole" id="uRole">-</div></div>
       </div>
-      <button class="topbar-btn btn-view" onclick="window.open('index.html','_blank')">🌐 查看網站</button>
-      <button class="topbar-btn btn-logout" onclick="doLogout()">登出</button>
+      <button class="tbtn tbtn-view" onclick="window.open('index.html','_blank')">🌐 查看網站</button>
+      <button class="tbtn tbtn-out" onclick="doLogout()">登出</button>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">主要功能</div>
-      <div class="nav-item active" onclick="switchTab('dashboard')"><span class="nav-icon">📊</span>總覽</div>
-      <div class="nav-item" onclick="switchTab('images')"><span class="nav-icon">🖼</span>圖片輪播管理</div>
-      <div class="nav-item" onclick="switchTab('announcements')"><span class="nav-icon">📢</span>公告管理</div>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">管理員功能</div>
-      <div class="nav-item admin-only" onclick="switchTab('users')" id="navUsers"><span class="nav-icon">👥</span>使用者管理<span class="nav-badge-count" id="requestBadge" style="display:none">0</span></div>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">帳號</div>
-      <div class="nav-item" onclick="switchTab('settings')"><span class="nav-icon">⚙</span>帳號設定</div>
+    <div style="padding:12px 0;">
+      <div class="sg-lbl">主要功能</div>
+      <div class="ni on" onclick="goTab('dash')"><span class="ni-ico">📊</span>總覽</div>
+      <div class="ni" onclick="goTab('images')"><span class="ni-ico">🖼</span>圖片輪播管理</div>
+      <div class="ni" onclick="goTab('ann')"><span class="ni-ico">📢</span>公告管理</div>
+      <div class="sdiv"></div>
+      <div class="sg-lbl">管理員功能</div>
+      <div class="ni admin-only" id="navUsers" onclick="goTab('users')"><span class="ni-ico">👥</span>使用者管理<span class="ni-badge" id="reqBadge" style="display:none">0</span></div>
+      <div class="sdiv"></div>
+      <div class="sg-lbl">帳號</div>
+      <div class="ni" onclick="goTab('settings')"><span class="ni-ico">⚙</span>帳號設定</div>
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
+  <div class="main">
 
-    <!-- ===== DASHBOARD ===== -->
-    <div class="tab-content active" id="tab-dashboard">
-      <div class="page-header">
-        <div class="page-title">歡迎回來 👋</div>
-        <div class="page-sub">高雄城市學習網絡管理後台</div>
-      </div>
+    <!-- DASHBOARD -->
+    <div class="tc on" id="tc-dash">
+      <div class="phdr"><div class="ptitle">歡迎回來 👋</div><div class="psub">高雄城市學習網絡管理後台</div></div>
       <div class="stats-row" id="dashStats"></div>
-      <div class="panel">
-        <div class="panel-title"><span class="pt-icon">📋</span>最新公告（前5筆）</div>
-        <div id="dashAnnounceList"></div>
-      </div>
-      <div class="panel" id="dashRequestPanel" style="display:none">
-        <div class="panel-title"><span class="pt-icon">🔔</span>待審核申請</div>
-        <div id="dashRequestList"></div>
-      </div>
+      <div class="panel"><div class="panel-t">📋 最新公告（前5筆）</div><div id="dashAnn"></div></div>
+      <div class="panel" id="dashReqPanel" style="display:none"><div class="panel-t">🔔 待審核申請</div><div id="dashReqs"></div></div>
     </div>
 
-    <!-- ===== IMAGE GALLERY ===== -->
-    <div class="tab-content" id="tab-images">
-      <div class="page-header">
-        <div class="page-title">🖼 圖片輪播管理</div>
-        <div class="page-sub">管理首頁圖片輪播區，上傳或刪除展示圖片</div>
-      </div>
-      <div class="alert alert-info">
-        ℹ️ 請先至 <strong>Cloudinary 控制台</strong> 建立名為 <code>kaohsiung_gallery</code> 的 Unsigned Upload Preset，並設定資料夾為 <code>kaohsiung-gallery</code>。
-      </div>
+    <!-- IMAGES -->
+    <div class="tc" id="tc-images">
+      <div class="phdr"><div class="ptitle">🖼 圖片輪播管理</div><div class="psub">管理首頁圖片輪播區，可拖曳調整順序</div></div>
+      <div class="alert alert-info">請先至 Cloudinary 控制台建立名為 <strong>kaohsiung_gallery</strong> 的 Unsigned Upload Preset，Folder 設為 <strong>kaohsiung-gallery</strong>。</div>
       <div class="panel">
-        <div class="panel-title"><span class="pt-icon">⬆</span>上傳新圖片</div>
-        <div class="upload-zone" onclick="openUploadWidget()">
-          <div class="upload-zone-icon">☁️</div>
-          <div class="upload-zone-text">點擊上傳圖片至 Cloudinary</div>
-          <div class="upload-zone-sub">支援 JPG、PNG、WebP，建議尺寸 1920×800</div>
+        <div class="panel-t">⬆ 上傳新圖片</div>
+        <div class="upload-zone" onclick="openUpload()">
+          <div style="font-size:40px;margin-bottom:10px;">☁️</div>
+          <div style="font-size:14px;color:var(--tdim);">點擊上傳圖片至 Cloudinary</div>
+          <div style="font-size:12px;color:#aab4c4;margin-top:4px;">支援 JPG、PNG、WebP，建議尺寸 1920×800px</div>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-title"><span class="pt-icon">🖼</span>圖片庫（<span id="imageCount">0</span> 張）</div>
+        <div class="panel-t" style="justify-content:space-between;">
+          <span>🖼 圖片庫（<span id="imgCount">0</span> 張）</span>
+        </div>
         <div class="gallery-grid" id="galleryGrid"></div>
       </div>
     </div>
 
-    <!-- ===== ANNOUNCEMENTS ===== -->
-    <div class="tab-content" id="tab-announcements">
-      <div class="page-header" style="display:flex;align-items:flex-end;justify-content:space-between;">
-        <div><div class="page-title">📢 公告管理</div><div class="page-sub">新增、編輯或停用首頁公告</div></div>
-        <button class="btn btn-primary" onclick="openAnnounceModal()">＋ 新增公告</button>
+    <!-- ANNOUNCEMENTS -->
+    <div class="tc" id="tc-ann">
+      <div class="phdr" style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告</div></div>
+        <button class="btn btn-p" onclick="openAnnModal()">＋ 新增公告</button>
       </div>
       <div class="panel">
-        <table class="announce-table">
+        <table>
           <thead><tr><th>標題</th><th>分類</th><th>局處</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
-          <tbody id="announceTableBody"></tbody>
+          <tbody id="annTbody"></tbody>
         </table>
-        <div id="announceEmpty" style="text-align:center;padding:40px;color:var(--text-dim);display:none;">目前無公告，點擊「新增公告」開始。</div>
+        <div id="annEmpty" style="text-align:center;padding:40px;color:var(--tdim);display:none;">目前無公告。</div>
       </div>
     </div>
 
-    <!-- ===== USER MANAGEMENT ===== -->
-    <div class="tab-content" id="tab-users">
-      <div class="page-header">
-        <div class="page-title">👥 使用者管理</div>
-        <div class="page-sub">管理所有已註冊使用者與管理員申請</div>
-      </div>
-
+    <!-- USERS -->
+    <div class="tc" id="tc-users">
+      <div class="phdr"><div class="ptitle">👥 使用者管理</div><div class="psub">管理所有已註冊使用者與管理員申請</div></div>
       <div class="panel">
-        <div class="panel-title"><span class="pt-icon">🔔</span>管理員申請（待審核）</div>
-        <div id="requestsSection">
-          <div id="requestsEmpty" style="text-align:center;padding:32px;color:var(--text-dim);">目前無待審核申請。</div>
-          <div id="requestsList"></div>
+        <div class="panel-t">🔔 管理員申請（待審核）</div>
+        <div id="reqsSection"><div id="reqsEmpty" style="text-align:center;padding:32px;color:var(--tdim);">目前無待審核申請。</div><div id="reqsList"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-t">👤 所有使用者</div>
+        <table><thead><tr><th>名稱</th><th>Email</th><th>角色</th><th>加入時間</th><th>操作</th></tr></thead><tbody id="userTbody"></tbody></table>
+      </div>
+      <div class="panel">
+        <div class="panel-t">🔑 管理員 Email 白名單</div>
+        <p style="font-size:13px;color:var(--tdim);margin-bottom:14px;">白名單內的 Email 註冊後自動取得管理員權限</p>
+        <div id="wlDisplay" style="margin-bottom:14px;"></div>
+        <div style="display:flex;gap:10px;"><input type="email" class="fi2" id="wlEmail" placeholder="新增 Email" style="max-width:300px;"><button class="btn btn-p" onclick="addWl()">新增</button></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="tc" id="tc-settings">
+      <div class="phdr"><div class="ptitle">⚙ 帳號設定</div><div class="psub">管理個人帳號資訊</div></div>
+      <div class="panel">
+        <div class="panel-t">👤 帳號資訊</div>
+        <div id="settInfo" style="margin-bottom:20px;padding:16px;background:var(--bg);border-radius:6px;"></div>
+        <div class="frow">
+          <div class="fg2"><label class="fl2">新密碼（留空不更改）</label><input type="password" class="fi2" id="npwd" placeholder="••••••••"></div>
+          <div class="fg2"><label class="fl2">確認新密碼</label><input type="password" class="fi2" id="npwd2" placeholder="••••••••"></div>
         </div>
+        <button class="btn btn-p" onclick="changePwd()">更新密碼</button>
       </div>
-
-      <div class="panel">
-        <div class="panel-title"><span class="pt-icon">👤</span>所有使用者</div>
-        <table class="user-table">
-          <thead><tr><th>名稱</th><th>Email</th><th>角色</th><th>加入時間</th><th>操作</th></tr></thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
-      </div>
-
-      <!-- Allowed Admins Settings -->
-      <div class="panel">
-        <div class="panel-title"><span class="pt-icon">🔑</span>管理員 Email 白名單</div>
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">以下 Email 可直接取得管理員權限（自動核准）</p>
-        <div id="adminWhitelistDisplay" style="margin-bottom:16px;"></div>
-        <div style="display:flex;gap:10px;">
-          <input type="email" class="form-input-admin" id="newAdminEmail" placeholder="新增管理員 Email" style="max-width:300px;">
-          <button class="btn btn-primary" onclick="addToWhitelist()">新增</button>
-        </div>
+      <div class="panel" id="reqAccessPanel">
+        <div class="panel-t">🔐 申請管理員權限</div>
+        <div id="reqAccessContent"></div>
       </div>
     </div>
 
-    <!-- ===== SETTINGS ===== -->
-    <div class="tab-content" id="tab-settings">
-      <div class="page-header">
-        <div class="page-title">⚙ 帳號設定</div>
-        <div class="page-sub">管理您的個人帳號資訊</div>
-      </div>
-
-      <!-- User info panel -->
-      <div class="panel">
-        <div class="panel-title"><span class="pt-icon">👤</span>帳號資訊</div>
-        <div id="settingsUserInfo" style="margin-bottom:20px;padding:16px;background:var(--bg);border-radius:6px;font-size:13px;"></div>
-        <div class="form-row">
-          <div class="form-group-admin">
-            <label class="form-label-admin">新密碼（留空表示不更改）</label>
-            <input type="password" class="form-input-admin" id="newPwd" placeholder="••••••••">
-          </div>
-          <div class="form-group-admin">
-            <label class="form-label-admin">確認新密碼</label>
-            <input type="password" class="form-input-admin" id="newPwd2" placeholder="••••••••">
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="changePassword()">更新密碼</button>
-      </div>
-
-      <!-- Request admin access (non-admin only) -->
-      <div class="panel" id="requestAccessPanel">
-        <div class="panel-title"><span class="pt-icon">🔐</span>申請管理員權限</div>
-        <div id="requestAccessContent"></div>
-      </div>
-    </div>
-
-  </div><!-- end main-content -->
-</div><!-- end app -->
-
-<!-- ============ IMAGE EDIT MODAL ============ -->
-<div class="modal-bg" id="imageModal">
-  <div class="modal-box">
-    <div class="modal-title">編輯圖片資訊</div>
-    <input type="hidden" id="editImageId">
-    <div class="form-group-admin"><label class="form-label-admin">圖片說明（輪播標題）</label><input type="text" class="form-input-admin" id="editCaption" placeholder="輸入圖片標題"></div>
-    <div class="form-group-admin"><label class="form-label-admin">副標題說明</label><textarea class="form-input-admin" id="editDesc" placeholder="簡短說明文字"></textarea></div>
-    <div class="form-group-admin"><label class="form-label-admin">標籤文字（左上角小字）</label><input type="text" class="form-input-admin" id="editTag" placeholder="例：高雄城市學習網絡"></div>
-    <div class="form-group-admin"><label class="form-label-admin">連結網址</label><input type="url" class="form-input-admin" id="editLink" placeholder="https://..."></div>
-    <div class="form-group-admin">
-      <label class="form-label-admin">顯示狀態</label>
-      <div class="toggle-wrap">
-        <label class="toggle"><input type="checkbox" id="editActive" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
-        <span style="font-size:13px;color:var(--text-dim);">在首頁輪播中顯示</span>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" onclick="saveImageEdit()">儲存</button>
-      <button class="btn btn-ghost" onclick="closeModal('imageModal')">取消</button>
-    </div>
   </div>
 </div>
 
-<!-- ============ ANNOUNCE MODAL ============ -->
-<div class="modal-bg" id="announceModal">
-  <div class="modal-box">
-    <div class="modal-title" id="announceModalTitle">新增公告</div>
-    <input type="hidden" id="editAnnounceId">
-    <div class="form-group-admin"><label class="form-label-admin">公告標題</label><input type="text" class="form-input-admin" id="aTitle" placeholder="公告標題"></div>
-    <div class="form-group-admin"><label class="form-label-admin">公告內容</label><textarea class="form-input-admin" id="aContent" style="min-height:120px;" placeholder="公告詳細內容..."></textarea></div>
-    <div class="form-row">
-      <div class="form-group-admin">
-        <label class="form-label-admin">分類</label>
-        <select class="form-input-admin" id="aCategory">
+<!-- IMAGE MODAL -->
+<div class="mover" id="imgModal">
+  <div class="mbox">
+    <div class="mtitle">編輯圖片資訊</div>
+    <input type="hidden" id="eImgId">
+    <div class="fg2"><label class="fl2">圖片標題（輪播大字）</label><input type="text" class="fi2" id="eCaption" placeholder="輪播標題文字"></div>
+    <div class="fg2"><label class="fl2">副標題說明</label><textarea class="fi2" id="eDesc" placeholder="簡短說明"></textarea></div>
+    <div class="fg2"><label class="fl2">左上角小標籤</label><input type="text" class="fi2" id="eTag" placeholder="例：高雄城市學習網絡"></div>
+    <div class="fg2"><label class="fl2">連結網址</label><input type="url" class="fi2" id="eLink" placeholder="https://..."></div>
+    <div class="fg2"><label class="fl2">連結按鈕文字</label><input type="text" class="fi2" id="eLinkTxt" placeholder="例：了解更多"></div>
+    <div class="fg2"><label class="fl2">排列順序（數字越小越前）</label><input type="number" class="fi2" id="eOrder" value="0" min="0"></div>
+    <div class="fg2">
+      <label class="fl2">顯示狀態</label>
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="eActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">在首頁輪播中顯示</span></div>
+    </div>
+    <div class="facts"><button class="btn btn-p" onclick="saveImg()">儲存</button><button class="btn btn-ghost" onclick="closeModal('imgModal')">取消</button></div>
+  </div>
+</div>
+
+<!-- ANNOUNCE MODAL -->
+<div class="mover" id="annModal">
+  <div class="mbox">
+    <div class="mtitle" id="annModalTitle">新增公告</div>
+    <input type="hidden" id="eAnnId">
+    <div class="fg2"><label class="fl2">公告標題</label><input type="text" class="fi2" id="aTitle" placeholder="公告標題"></div>
+    <div class="fg2"><label class="fl2">公告內容</label><textarea class="fi2" id="aContent" style="min-height:120px;" placeholder="詳細內容..."></textarea></div>
+    <div class="frow">
+      <div class="fg2"><label class="fl2">分類</label>
+        <select class="fi2" id="aCat">
           <option value="公告">📋 一般公告</option>
           <option value="教育">📚 教育學習</option>
           <option value="勞工">⚙️ 勞工職訓</option>
@@ -477,637 +357,514 @@ select.form-input-admin{cursor:pointer;}
           <option value="運動">🏃 運動健康</option>
         </select>
       </div>
-      <div class="form-group-admin"><label class="form-label-admin">發布局處</label><input type="text" class="form-input-admin" id="aBureau" placeholder="例：教育局、勞工局"></div>
+      <div class="fg2"><label class="fl2">發布局處</label><input type="text" class="fi2" id="aBureau" placeholder="例：教育局"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group-admin"><label class="form-label-admin">日期</label><input type="date" class="form-input-admin" id="aDate"></div>
-      <div class="form-group-admin">
-        <label class="form-label-admin">狀態</label>
-        <div class="toggle-wrap" style="margin-top:8px;">
-          <label class="toggle"><input type="checkbox" id="aActive" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
-          <span style="font-size:13px;color:var(--text-dim);">立即發布</span>
-        </div>
+    <div class="frow">
+      <div class="fg2"><label class="fl2">日期</label><input type="date" class="fi2" id="aDate"></div>
+      <div class="fg2"><label class="fl2">狀態</label>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">立即發布</span></div>
       </div>
     </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" onclick="saveAnnounce()">儲存公告</button>
-      <button class="btn btn-ghost" onclick="closeModal('announceModal')">取消</button>
-    </div>
+    <div class="facts"><button class="btn btn-p" onclick="saveAnn()">儲存公告</button><button class="btn btn-ghost" onclick="closeModal('annModal')">取消</button></div>
   </div>
 </div>
 
-<!-- ============ TOAST ============ -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ============================================
-// CONFIG
-// ============================================
-const CLOUD_NAME = 'dnypguvxl';
-const UPLOAD_PRESET = 'kaohsiung_gallery'; // Create this in Cloudinary dashboard
-const ADMIN_DEFAULT = 'issac@sjps.kh.edu.tw';
+<script type="module">
+// ─────────────────────────────────────────────
+// FIREBASE INIT
+// ─────────────────────────────────────────────
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{
+  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
+  signOut,onAuthStateChanged,updatePassword
+}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{
+  getFirestore,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,
+  collection,query,where,orderBy,onSnapshot,serverTimestamp,Timestamp
+}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const KEYS = {
-  images: 'kl_images',
-  announcements: 'kl_announcements',
-  users: 'kl_users',
-  session: 'kl_session',
-  requests: 'kl_requests',
-  whitelist: 'kl_whitelist'
+const CFG={apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",authDomain:"kh-learningnetwork.firebaseapp.com",projectId:"kh-learningnetwork",storageBucket:"kh-learningnetwork.firebasestorage.app",messagingSenderId:"140386001536",appId:"1:140386001536:web:fa6902b4479f1a09273c65"};
+const fbApp=initializeApp(CFG);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+
+const CLOUD_NAME='dnypguvxl';
+const UPLOAD_PRESET='kaohsiung_gallery';
+const MASTER_EMAIL='issac@sjps.kh.edu.tw';
+
+let currentUser=null, currentProfile=null;
+let uploadWidget=null;
+let unsubImages=null, unsubAnn=null;
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  clearTimeout(t._timer);t._timer=setTimeout(()=>t.className='toast',3000);
+}
+function lerr(msg){const e=document.getElementById('lerr');e.textContent=msg;e.style.display=msg?'':'none';}
+function setBtnLoading(id,loading,text){const b=document.getElementById(id);if(b){b.disabled=loading;b.textContent=loading?'處理中…':text;}}
+function fmtDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('zh-TW');}
+
+// ─────────────────────────────────────────────
+// AUTH SWITCH
+// ─────────────────────────────────────────────
+window.setLTab=t=>{
+  ['login','reg'].forEach(x=>document.getElementById(x==='login'?'lform':'rform').style.display=x===t?'':'none');
+  document.querySelectorAll('.ltab').forEach((el,i)=>el.classList.toggle('on',(t==='login'&&i===0)||(t==='reg'&&i===1)));
+  lerr('');
 };
 
-// ============================================
-// DATA HELPERS
-// ============================================
-function getData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
-function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function getObj(key) { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; } }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
-function hashPwd(p) { return btoa(unescape(encodeURIComponent(p + '_kl_salt_2025'))); }
-function fmtDate(d) { return new Date(d).toLocaleDateString('zh-TW', { year:'numeric', month:'2-digit', day:'2-digit' }); }
-
-// ============================================
-// INIT — SEED DEFAULT ADMIN
-// ============================================
-function initSeedAdmin() {
-  let users = getData(KEYS.users);
-  let wl = getData(KEYS.whitelist);
-  if (!wl.includes(ADMIN_DEFAULT)) {
-    wl.unshift(ADMIN_DEFAULT);
-    setData(KEYS.whitelist, wl);
-  }
-  if (!users.find(u => u.email === ADMIN_DEFAULT)) {
-    users.push({ id: uid(), email: ADMIN_DEFAULT, username: 'Isaac（管理員）', password: hashPwd('admin1234'), isAdmin: true, createdAt: new Date().toISOString() });
-    setData(KEYS.users, users);
+// ─────────────────────────────────────────────
+// ENSURE WHITELIST / MASTER ADMIN
+// ─────────────────────────────────────────────
+async function ensureWhitelist(){
+  const ref=doc(db,'settings','whitelist');
+  const snap=await getDoc(ref);
+  if(!snap.exists()||!snap.data().emails?.includes(MASTER_EMAIL)){
+    const curr=snap.exists()?snap.data().emails||[]:[]; 
+    if(!curr.includes(MASTER_EMAIL)) curr.unshift(MASTER_EMAIL);
+    await setDoc(ref,{emails:curr},{merge:true});
   }
 }
-initSeedAdmin();
 
-// ============================================
-// AUTH
-// ============================================
-let currentUser = null;
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
+window.doLogin=async()=>{
+  lerr('');
+  const email=document.getElementById('lemail').value.trim().toLowerCase();
+  const pwd=document.getElementById('lpwd').value;
+  if(!email||!pwd)return lerr('請輸入電子郵件與密碼');
+  setBtnLoading('lbtnEl',true,'登入');
+  try{
+    await signInWithEmailAndPassword(auth,email,pwd);
+  }catch(e){
+    lerr(e.code==='auth/invalid-credential'?'帳號或密碼錯誤':e.message);
+  }finally{setBtnLoading('lbtnEl',false,'登入');}
+};
 
-function switchLoginTab(tab) {
-  document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login' && i===0) || (tab==='register' && i===1)));
-  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
-  document.getElementById('loginErr').style.display = 'none';
-}
+window.doReg=async()=>{
+  lerr('');
+  const email=document.getElementById('remail').value.trim().toLowerCase();
+  const uname=document.getElementById('runame').value.trim();
+  const pwd=document.getElementById('rpwd').value;
+  if(!email||!uname||!pwd)return lerr('請填寫所有欄位');
+  if(pwd.length<6)return lerr('密碼至少需要6個字元');
+  setBtnLoading('rbtnEl',true,'建立中');
+  try{
+    await ensureWhitelist();
+    const wlSnap=await getDoc(doc(db,'settings','whitelist'));
+    const wl=wlSnap.exists()?wlSnap.data().emails||[]:[]; 
+    const isAdmin=wl.includes(email);
+    const cred=await createUserWithEmailAndPassword(auth,email,pwd);
+    await setDoc(doc(db,'users',cred.user.uid),{uid:cred.user.uid,email,username:uname,isAdmin,createdAt:serverTimestamp()});
+  }catch(e){
+    lerr(e.code==='auth/email-already-in-use'?'此 Email 已被使用':e.message);
+  }finally{setBtnLoading('rbtnEl',false,'建立帳號');}
+};
 
-function showLoginErr(msg) {
-  const e = document.getElementById('loginErr');
-  e.textContent = msg; e.style.display = '';
-}
+window.doLogout=async()=>{
+  if(unsubImages)unsubImages();if(unsubAnn)unsubAnn();
+  await signOut(auth);
+};
 
-function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pwd = document.getElementById('loginPassword').value;
-  if (!email || !pwd) return showLoginErr('請輸入電子郵件與密碼');
-  const users = getData(KEYS.users);
-  const user = users.find(u => u.email === email);
-  if (!user) return showLoginErr('帳號不存在，請先註冊');
-  if (user.password !== hashPwd(pwd)) return showLoginErr('密碼錯誤');
-  setData(KEYS.session, { email: user.email, username: user.username, isAdmin: user.isAdmin, id: user.id });
-  startApp(user);
-}
-
-function doRegister() {
-  const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const username = document.getElementById('regUsername').value.trim();
-  const pwd = document.getElementById('regPassword').value;
-  if (!email || !username || !pwd) return showLoginErr('請填寫所有欄位');
-  if (pwd.length < 6) return showLoginErr('密碼至少需要6個字元');
-  const users = getData(KEYS.users);
-  if (users.find(u => u.email === email)) return showLoginErr('此 Email 已被使用');
-  const wl = getData(KEYS.whitelist);
-  const isAdmin = wl.includes(email);
-  const newUser = { id: uid(), email, username, password: hashPwd(pwd), isAdmin, createdAt: new Date().toISOString() };
-  users.push(newUser);
-  setData(KEYS.users, users);
-  setData(KEYS.session, { email: newUser.email, username, isAdmin, id: newUser.id });
-  startApp(newUser);
-}
-
-function doLogout() {
-  localStorage.removeItem(KEYS.session);
-  currentUser = null;
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('loginScreen').style.display = '';
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
-}
-
-// Check existing session on load
-window.addEventListener('DOMContentLoaded', () => {
-  const sess = getObj(KEYS.session);
-  if (sess && sess.email) {
-    const users = getData(KEYS.users);
-    const user = users.find(u => u.email === sess.email);
-    if (user) { startApp(user); return; }
+// ─────────────────────────────────────────────
+// AUTH STATE
+// ─────────────────────────────────────────────
+onAuthStateChanged(auth,async user=>{
+  if(user){
+    currentUser=user;
+    const snap=await getDoc(doc(db,'users',user.uid));
+    if(!snap.exists()){
+      // Auto-create profile for existing Auth user (edge case)
+      await ensureWhitelist();
+      const wlSnap=await getDoc(doc(db,'settings','whitelist'));
+      const wl=wlSnap.exists()?wlSnap.data().emails||[]:[]; 
+      const isAdmin=wl.includes(user.email.toLowerCase());
+      await setDoc(doc(db,'users',user.uid),{uid:user.uid,email:user.email,username:user.email.split('@')[0],isAdmin,createdAt:serverTimestamp()});
+      currentProfile=(await getDoc(doc(db,'users',user.uid))).data();
+    }else{
+      currentProfile=snap.data();
+    }
+    startApp();
+  }else{
+    currentUser=null;currentProfile=null;
+    document.getElementById('app').classList.remove('show');
+    document.getElementById('loginScreen').style.display='';
   }
-  document.getElementById('loginScreen').style.display = '';
 });
 
-function startApp(user) {
-  currentUser = user;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').classList.remove('hidden');
-  document.getElementById('app').style.display = 'grid';
-  // Set UI
-  document.getElementById('userAvatar').textContent = (user.username||'U')[0].toUpperCase();
-  document.getElementById('userName').textContent = user.username;
-  document.getElementById('userRole').textContent = user.isAdmin ? '管理員' : '一般使用者';
-  // Admin-only nav
-  document.getElementById('navUsers').style.display = user.isAdmin ? '' : 'none';
-  renderDashboard();
-  renderGallery();
-  renderAnnounceTable();
+// ─────────────────────────────────────────────
+// START APP
+// ─────────────────────────────────────────────
+function startApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').classList.add('show');
+  const p=currentProfile;
+  document.getElementById('uAv').textContent=(p.username||'U')[0].toUpperCase();
+  document.getElementById('uName').textContent=p.username;
+  document.getElementById('uRole').textContent=p.isAdmin?'管理員':'一般使用者';
+  document.getElementById('navUsers').style.display=p.isAdmin?'':'none';
+  renderDash();
+  startImageListener();
+  startAnnListener();
   renderSettings();
-  if (user.isAdmin) { renderUsersTab(); updateRequestBadge(); }
+  if(p.isAdmin){renderUsers();updateReqBadge();}
 }
 
-// ============================================
+// ─────────────────────────────────────────────
 // DASHBOARD
-// ============================================
-function renderDashboard() {
-  const images = getData(KEYS.images);
-  const announces = getData(KEYS.announcements);
-  const users = getData(KEYS.users);
-  const requests = getData(KEYS.requests).filter(r => r.status === 'pending');
+// ─────────────────────────────────────────────
+async function renderDash(){
+  const [imgSnap,annSnap,userSnap,reqSnap]=await Promise.all([
+    getDocs(collection(db,'images')),
+    getDocs(query(collection(db,'announcements'),where('isActive','==',true))),
+    getDocs(collection(db,'users')),
+    getDocs(query(collection(db,'requests'),where('status','==','pending')))
+  ]);
+  document.getElementById('dashStats').innerHTML=`
+    <div class="sc accent"><span class="sc-n">${imgSnap.size}</span><div class="sc-l">輪播圖片</div></div>
+    <div class="sc"><span class="sc-n">${annSnap.size}</span><div class="sc-l">發布中公告</div></div>
+    <div class="sc"><span class="sc-n">${userSnap.size}</span><div class="sc-l">註冊使用者</div></div>
+    <div class="sc"><span class="sc-n" style="color:${reqSnap.size>0?'var(--danger)':'var(--success)'}">${reqSnap.size}</span><div class="sc-l">待審申請</div></div>`;
 
-  document.getElementById('dashStats').innerHTML = `
-    <div class="stat-card accent"><span class="stat-num-sm">${images.length}</span><div class="stat-label-sm">輪播圖片</div></div>
-    <div class="stat-card"><span class="stat-num-sm">${announces.filter(a=>a.isActive).length}</span><div class="stat-label-sm">發布中公告</div></div>
-    <div class="stat-card"><span class="stat-num-sm">${users.length}</span><div class="stat-label-sm">註冊使用者</div></div>
-    <div class="stat-card"><span class="stat-num-sm" style="color:${requests.length>0?'var(--danger)':'var(--success)'}">${requests.length}</span><div class="stat-label-sm">待審申請</div></div>
-  `;
+  // Recent anns
+  const annAll=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
+  const annRows=annAll.docs.slice(0,5);
+  document.getElementById('dashAnn').innerHTML=annRows.length===0
+    ?'<p style="text-align:center;color:var(--tdim);padding:20px;">尚無公告</p>'
+    :annRows.map(d=>{const a=d.data();return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;font-weight:500;">${a.title}</div><div style="font-size:11px;color:var(--tdim);">${a.bureau||''} · ${a.date||''}</div></div><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></div>`;}).join('');
 
-  const latest5 = announces.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5);
-  document.getElementById('dashAnnounceList').innerHTML = latest5.length === 0
-    ? '<p style="text-align:center;color:var(--text-dim);padding:20px;">尚無公告</p>'
-    : latest5.map(a => `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-        <div><div style="font-size:13px;font-weight:500;">${a.title}</div><div style="font-size:11px;color:var(--text-dim);">${a.bureau||''} · ${a.date||''}</div></div>
-        <span class="status-badge ${a.isActive?'status-on':'status-off'}">${a.isActive?'● 發布中':'○ 停用'}</span>
-      </div>`).join('');
-
-  const dashReqPanel = document.getElementById('dashRequestPanel');
-  if (currentUser.isAdmin && requests.length > 0) {
-    dashReqPanel.style.display = '';
-    document.getElementById('dashRequestList').innerHTML = requests.map(r => `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-        <div><div style="font-size:13px;">${r.username} <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);">${r.email}</span></div>
-        <div style="font-size:12px;color:var(--text-dim);">單位：${r.unit} — ${(r.reason||'').substring(0,60)}</div></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-sm btn-teal" onclick="approveRequest('${r.id}')">核准</button>
-          <button class="btn btn-sm btn-ghost" onclick="denyRequest('${r.id}')">拒絕</button>
-        </div>
-      </div>`).join('');
-  } else { dashReqPanel.style.display = 'none'; }
+  // Pending reqs
+  const rp=document.getElementById('dashReqPanel');
+  if(currentProfile.isAdmin&&reqSnap.size>0){
+    rp.style.display='';
+    document.getElementById('dashReqs').innerHTML=reqSnap.docs.map(d=>{const r=d.data();return`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:16px;">
+        <div><div style="font-size:13px;">${r.username} <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);">${r.email}</span></div>
+        <div style="font-size:12px;color:var(--tdim);">單位：${r.unit}</div></div>
+        <div style="display:flex;gap:8px;flex-shrink:0;"><button class="btn btn-sm btn-t" onclick="approveReq('${d.id}','${r.uid}')">核准</button><button class="btn btn-sm btn-ghost" onclick="denyReq('${d.id}')">拒絕</button></div>
+      </div>`;}).join('');
+  }else rp.style.display='none';
 }
 
-// ============================================
-// CLOUDINARY IMAGE GALLERY
-// ============================================
-let uploadWidget = null;
-
-function openUploadWidget() {
-  if (!uploadWidget) {
-    uploadWidget = cloudinary.createUploadWidget({
-      cloudName: CLOUD_NAME,
-      uploadPreset: UPLOAD_PRESET,
-      folder: 'kaohsiung-gallery',
-      sources: ['local', 'url', 'camera'],
-      multiple: true,
-      maxFileSize: 10000000,
-      cropping: false,
-      language: 'zh_TW',
-      text: { 'zh_TW': { 'or': '或', 'back': '返回', 'close': '關閉', 'upload': '上傳' } },
-      styles: { palette: { window: '#FFFFFF', windowBorder: '#D0DDEF', tabIcon: '#003F88', menuIcons: '#5A6A80', textDark: '#1A2840', textLight: '#FFFFFF', link: '#003F88', action: '#F5A800', inactiveTabIcon: '#B0BFCC', error: '#D63031', inProgress: '#0098B4', complete: '#00B894', sourceBg: '#F2F6FC' } }
-    }, (error, result) => {
-      if (error) { showToast('上傳失敗：' + (error.message || error), 'error'); return; }
-      if (result && result.event === 'success') {
-        const info = result.info;
-        const images = getData(KEYS.images);
-        images.unshift({
-          id: uid(),
-          publicId: info.public_id,
-          url: info.secure_url,
-          deleteToken: info.delete_token || '',
-          caption: '',
-          desc: '',
-          tag: '',
-          link: '',
-          isActive: true,
-          uploadedAt: new Date().toISOString(),
-          uploadedBy: currentUser.username
+// ─────────────────────────────────────────────
+// IMAGE MANAGEMENT
+// ─────────────────────────────────────────────
+window.openUpload=function(){
+  if(!uploadWidget){
+    uploadWidget=cloudinary.createUploadWidget({
+      cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,
+      folder:'kaohsiung-gallery',sources:['local','url','camera'],
+      multiple:true,maxFileSize:10000000,
+      styles:{palette:{window:'#FFFFFF',windowBorder:'#D0DDEF',tabIcon:'#003F88',menuIcons:'#5A6A80',textDark:'#1A2840',textLight:'#FFFFFF',link:'#003F88',action:'#F5A800',inactiveTabIcon:'#B0BFCC',error:'#D63031',inProgress:'#0098B4',complete:'#00B894',sourceBg:'#F2F6FC'}}
+    },async(err,res)=>{
+      if(err){toast('上傳失敗：'+(err.message||err),'err');return;}
+      if(res&&res.event==='success'){
+        const info=res.info;
+        const imgs=await getDocs(collection(db,'images'));
+        await addDoc(collection(db,'images'),{
+          publicId:info.public_id,url:info.secure_url,
+          deleteToken:info.delete_token||'',
+          caption:'',desc:'',tag:'',link:'',linkText:'',
+          isActive:true,order:imgs.size,
+          uploadedAt:serverTimestamp(),uploadedBy:currentProfile.username
         });
-        setData(KEYS.images, images);
-        renderGallery();
-        renderDashboard();
-        showToast('圖片上傳成功！', 'success');
+        toast('圖片上傳成功！','ok');
       }
     });
   }
   uploadWidget.open();
+};
+
+function startImageListener(){
+  if(unsubImages)unsubImages();
+  unsubImages=onSnapshot(query(collection(db,'images'),orderBy('order','asc')),snap=>{
+    renderGallery(snap.docs.map(d=>({id:d.id,...d.data()})));
+  });
 }
 
-function renderGallery() {
-  const images = getData(KEYS.images);
-  document.getElementById('imageCount').textContent = images.length;
-  const grid = document.getElementById('galleryGrid');
-  if (images.length === 0) {
-    grid.innerHTML = `<div class="gallery-empty" style="grid-column:1/-1;"><span class="gallery-empty-icon">🏞</span><p>尚未上傳任何圖片</p><p style="font-size:12px;margin-top:4px;color:#aab4c4;">點擊上方區域開始上傳</p></div>`;
-    return;
-  }
-  grid.innerHTML = images.map((img, i) => `
-    <div class="gallery-item">
-      <img src="${img.url.replace('/upload/', '/upload/w_360,q_auto,f_auto/')}" alt="${img.caption||''}">
-      ${img.caption ? `<div class="gallery-caption">${img.caption}</div>` : ''}
-      <div class="gallery-item-overlay">
-        <div class="gallery-item-actions">
-          <button class="btn btn-sm btn-gold" onclick="editImage('${img.id}')">✎ 編輯</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteImage('${img.id}','${img.deleteToken}','${img.publicId}')">🗑</button>
-          <button class="btn btn-sm btn-ghost" style="background:rgba(255,255,255,0.8);" onclick="toggleImageActive('${img.id}')">${img.isActive ? '隱藏' : '顯示'}</button>
+function renderGallery(images){
+  document.getElementById('imgCount').textContent=images.length;
+  const grid=document.getElementById('galleryGrid');
+  if(!images.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);"><span style="font-size:40px;display:block;margin-bottom:10px;">🏞</span><p>尚未上傳任何圖片</p></div>';return;}
+  grid.innerHTML=images.map(img=>`
+    <div class="gi">
+      <img src="${img.url.replace('/upload/','/upload/w_360,q_auto,f_auto/')}" alt="${img.caption||''}">
+      ${img.caption?`<div class="gi-cap">${img.caption}</div>`:''}
+      <div class="gi-order">${img.order??0}</div>
+      <div class="gi-ov">
+        <div class="gi-acts">
+          <button class="btn btn-sm btn-g" onclick="editImg('${img.id}')">✎</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleImg('${img.id}',${!img.isActive})" style="background:rgba(255,255,255,.85);">${img.isActive?'隱藏':'顯示'}</button>
+          <button class="btn btn-sm btn-d" onclick="delImg('${img.id}','${img.deleteToken||''}')">🗑</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function editImage(id) {
-  const images = getData(KEYS.images);
-  const img = images.find(i => i.id === id);
-  if (!img) return;
-  document.getElementById('editImageId').value = id;
-  document.getElementById('editCaption').value = img.caption || '';
-  document.getElementById('editDesc').value = img.desc || '';
-  document.getElementById('editTag').value = img.tag || '';
-  document.getElementById('editLink').value = img.link || '';
-  document.getElementById('editActive').checked = img.isActive !== false;
-  openModal('imageModal');
-}
+window.editImg=async function(id){
+  const snap=await getDoc(doc(db,'images',id));if(!snap.exists())return;
+  const d=snap.data();
+  document.getElementById('eImgId').value=id;
+  document.getElementById('eCaption').value=d.caption||'';
+  document.getElementById('eDesc').value=d.desc||'';
+  document.getElementById('eTag').value=d.tag||'';
+  document.getElementById('eLink').value=d.link||'';
+  document.getElementById('eLinkTxt').value=d.linkText||'';
+  document.getElementById('eOrder').value=d.order??0;
+  document.getElementById('eActive').checked=d.isActive!==false;
+  openModal('imgModal');
+};
 
-function saveImageEdit() {
-  const id = document.getElementById('editImageId').value;
-  const images = getData(KEYS.images);
-  const idx = images.findIndex(i => i.id === id);
-  if (idx === -1) return;
-  images[idx].caption = document.getElementById('editCaption').value;
-  images[idx].desc = document.getElementById('editDesc').value;
-  images[idx].tag = document.getElementById('editTag').value;
-  images[idx].link = document.getElementById('editLink').value;
-  images[idx].isActive = document.getElementById('editActive').checked;
-  setData(KEYS.images, images);
-  closeModal('imageModal');
-  renderGallery();
-  showToast('圖片資訊已儲存', 'success');
-}
+window.saveImg=async function(){
+  const id=document.getElementById('eImgId').value;
+  await updateDoc(doc(db,'images',id),{
+    caption:document.getElementById('eCaption').value,
+    desc:document.getElementById('eDesc').value,
+    tag:document.getElementById('eTag').value,
+    link:document.getElementById('eLink').value,
+    linkText:document.getElementById('eLinkTxt').value,
+    order:parseInt(document.getElementById('eOrder').value)||0,
+    isActive:document.getElementById('eActive').checked
+  });
+  closeModal('imgModal');toast('圖片資訊已儲存','ok');
+};
 
-function toggleImageActive(id) {
-  const images = getData(KEYS.images);
-  const img = images.find(i => i.id === id);
-  if (!img) return;
-  img.isActive = !img.isActive;
-  setData(KEYS.images, images);
-  renderGallery();
-  showToast(img.isActive ? '已顯示圖片' : '已隱藏圖片');
-}
+window.toggleImg=async(id,val)=>{await updateDoc(doc(db,'images',id),{isActive:val});toast(val?'已顯示':'已隱藏');};
 
-async function deleteImage(id, deleteToken, publicId) {
-  if (!confirm('確定要刪除這張圖片？此操作無法復原。')) return;
-  // Delete from Cloudinary (if delete_token available)
-  if (deleteToken) {
-    try {
-      await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: deleteToken })
-      });
-    } catch(e) { console.warn('Cloudinary delete failed', e); }
-  }
-  const images = getData(KEYS.images).filter(i => i.id !== id);
-  setData(KEYS.images, images);
-  renderGallery();
-  renderDashboard();
-  showToast('圖片已刪除', 'success');
-}
+window.delImg=async function(id,token){
+  if(!confirm('確定要刪除這張圖片？'))return;
+  if(token){try{await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});}catch(e){}}
+  await deleteDoc(doc(db,'images',id));
+  toast('圖片已刪除','ok');
+};
 
-// ============================================
+// ─────────────────────────────────────────────
 // ANNOUNCEMENTS
-// ============================================
-function openAnnounceModal(id) {
-  document.getElementById('editAnnounceId').value = id || '';
-  document.getElementById('announceModalTitle').textContent = id ? '編輯公告' : '新增公告';
-  if (id) {
-    const ann = getData(KEYS.announcements).find(a => a.id === id);
-    if (!ann) return;
-    document.getElementById('aTitle').value = ann.title;
-    document.getElementById('aContent').value = ann.content;
-    document.getElementById('aCategory').value = ann.category || '公告';
-    document.getElementById('aBureau').value = ann.bureau || '';
-    document.getElementById('aDate').value = ann.date || '';
-    document.getElementById('aActive').checked = ann.isActive !== false;
-  } else {
-    document.getElementById('aTitle').value = '';
-    document.getElementById('aContent').value = '';
-    document.getElementById('aCategory').value = '公告';
-    document.getElementById('aBureau').value = '';
-    document.getElementById('aDate').value = new Date().toISOString().split('T')[0];
-    document.getElementById('aActive').checked = true;
+// ─────────────────────────────────────────────
+function startAnnListener(){
+  if(unsubAnn)unsubAnn();
+  unsubAnn=onSnapshot(query(collection(db,'announcements'),orderBy('createdAt','desc')),snap=>{
+    renderAnnTable(snap.docs.map(d=>({id:d.id,...d.data()})));
+  });
+}
+
+function renderAnnTable(anns){
+  const tbody=document.getElementById('annTbody'),empty=document.getElementById('annEmpty');
+  if(!anns.length){tbody.innerHTML='';empty.style.display='';return;}
+  empty.style.display='none';
+  tbody.innerHTML=anns.map(a=>`<tr>
+    <td><div style="font-weight:500;">${a.title}</div><div style="font-size:11px;color:var(--tdim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
+    <td><span class="badge b-user">${a.category||'公告'}</span></td>
+    <td>${a.bureau||'—'}</td>
+    <td style="font-family:'Space Mono',monospace;font-size:11px;">${a.date||'—'}</td>
+    <td><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></td>
+    <td><div style="display:flex;gap:6px;">
+      <button class="btn btn-sm btn-ghost" onclick="openAnnModal('${a.id}')">✎ 編輯</button>
+      <button class="btn btn-sm btn-ghost" onclick="toggleAnn('${a.id}',${!a.isActive})">${a.isActive?'停用':'啟用'}</button>
+      <button class="btn btn-sm btn-d" onclick="delAnn('${a.id}')">刪除</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+window.openAnnModal=async function(id){
+  document.getElementById('eAnnId').value=id||'';
+  document.getElementById('annModalTitle').textContent=id?'編輯公告':'新增公告';
+  if(id){
+    const snap=await getDoc(doc(db,'announcements',id));if(!snap.exists())return;
+    const a=snap.data();
+    document.getElementById('aTitle').value=a.title||'';
+    document.getElementById('aContent').value=a.content||'';
+    document.getElementById('aCat').value=a.category||'公告';
+    document.getElementById('aBureau').value=a.bureau||'';
+    document.getElementById('aDate').value=a.date||'';
+    document.getElementById('aActive').checked=a.isActive!==false;
+  }else{
+    document.getElementById('aTitle').value='';
+    document.getElementById('aContent').value='';
+    document.getElementById('aCat').value='公告';
+    document.getElementById('aBureau').value='';
+    document.getElementById('aDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('aActive').checked=true;
   }
-  openModal('announceModal');
-}
+  openModal('annModal');
+};
 
-function saveAnnounce() {
-  const id = document.getElementById('editAnnounceId').value;
-  const title = document.getElementById('aTitle').value.trim();
-  const content = document.getElementById('aContent').value.trim();
-  if (!title) return showToast('請輸入公告標題', 'error');
-  const announces = getData(KEYS.announcements);
-  const now = new Date().toISOString();
-  if (id) {
-    const idx = announces.findIndex(a => a.id === id);
-    if (idx !== -1) {
-      announces[idx] = { ...announces[idx], title, content, category: document.getElementById('aCategory').value, bureau: document.getElementById('aBureau').value, date: document.getElementById('aDate').value, isActive: document.getElementById('aActive').checked, updatedAt: now };
-    }
-  } else {
-    announces.unshift({ id: uid(), title, content, category: document.getElementById('aCategory').value, bureau: document.getElementById('aBureau').value, date: document.getElementById('aDate').value, isActive: document.getElementById('aActive').checked, createdAt: now, updatedAt: now, createdBy: currentUser.username });
-  }
-  setData(KEYS.announcements, announces);
-  closeModal('announceModal');
-  renderAnnounceTable();
-  renderDashboard();
-  showToast('公告已儲存', 'success');
-}
+window.saveAnn=async function(){
+  const id=document.getElementById('eAnnId').value;
+  const title=document.getElementById('aTitle').value.trim();
+  if(!title)return toast('請輸入公告標題','err');
+  const data={title,content:document.getElementById('aContent').value.trim(),category:document.getElementById('aCat').value,bureau:document.getElementById('aBureau').value.trim(),date:document.getElementById('aDate').value,isActive:document.getElementById('aActive').checked,updatedAt:serverTimestamp(),updatedBy:currentProfile.username};
+  if(id){await updateDoc(doc(db,'announcements',id),data);}
+  else{await addDoc(collection(db,'announcements'),{...data,createdAt:serverTimestamp(),createdBy:currentProfile.username});}
+  closeModal('annModal');toast('公告已儲存','ok');
+};
 
-function renderAnnounceTable() {
-  const announces = getData(KEYS.announcements).sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-  const tbody = document.getElementById('announceTableBody');
-  const empty = document.getElementById('announceEmpty');
-  if (announces.length === 0) { tbody.innerHTML = ''; empty.style.display = ''; return; }
-  empty.style.display = 'none';
-  tbody.innerHTML = announces.map(a => `
-    <tr>
-      <td><div style="font-weight:500;font-size:13px;">${a.title}</div><div style="font-size:11px;color:var(--text-dim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
-      <td><span class="status-badge cat-${a.category==='教育'?'edu':a.category==='勞工'?'work':a.category==='環保'?'eco':'all'}">${a.category||'公告'}</span></td>
-      <td>${a.bureau||'—'}</td>
-      <td style="font-family:'Space Mono',monospace;font-size:11px;">${a.date||'—'}</td>
-      <td><span class="status-badge ${a.isActive?'status-on':'status-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></td>
-      <td>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-sm btn-ghost" onclick="openAnnounceModal('${a.id}')">✎ 編輯</button>
-          <button class="btn btn-sm btn-ghost" onclick="toggleAnnounce('${a.id}')">${a.isActive?'停用':'啟用'}</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteAnnounce('${a.id}')">刪除</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
+window.toggleAnn=async(id,val)=>{await updateDoc(doc(db,'announcements',id),{isActive:val});toast(val?'公告已發布':'公告已停用');};
+window.delAnn=async function(id){if(!confirm('確定要刪除這則公告？'))return;await deleteDoc(doc(db,'announcements',id));toast('公告已刪除','ok');};
 
-function toggleAnnounce(id) {
-  const ann = getData(KEYS.announcements);
-  const a = ann.find(x => x.id === id);
-  if (!a) return;
-  a.isActive = !a.isActive;
-  setData(KEYS.announcements, ann);
-  renderAnnounceTable();
-  renderDashboard();
-  showToast(a.isActive ? '公告已發布' : '公告已停用');
-}
+// ─────────────────────────────────────────────
+// USER MANAGEMENT
+// ─────────────────────────────────────────────
+async function renderUsers(){
+  const [userSnap,reqSnap,wlSnap]=await Promise.all([
+    getDocs(query(collection(db,'users'),orderBy('createdAt','asc'))),
+    getDocs(query(collection(db,'requests'),where('status','==','pending'))),
+    getDoc(doc(db,'settings','whitelist'))
+  ]);
+  const wl=wlSnap.exists()?wlSnap.data().emails||[]:[]; 
 
-function deleteAnnounce(id) {
-  if (!confirm('確定要刪除這則公告？')) return;
-  setData(KEYS.announcements, getData(KEYS.announcements).filter(a => a.id !== id));
-  renderAnnounceTable();
-  renderDashboard();
-  showToast('公告已刪除', 'success');
-}
-
-// ============================================
-// USER MANAGEMENT (Admin only)
-// ============================================
-function renderUsersTab() {
-  const users = getData(KEYS.users);
-  const requests = getData(KEYS.requests);
-  const pendingReqs = requests.filter(r => r.status === 'pending');
-  const wl = getData(KEYS.whitelist);
-
-  // Requests
-  document.getElementById('requestsEmpty').style.display = pendingReqs.length === 0 ? '' : 'none';
-  document.getElementById('requestsList').innerHTML = pendingReqs.map(r => `
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;">
+  // Pending requests
+  const pending=reqSnap.docs;
+  document.getElementById('reqsEmpty').style.display=pending.length?'none':'';
+  document.getElementById('reqsList').innerHTML=pending.map(d=>{const r=d.data();return`
+    <div class="req-box">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
         <div>
-          <div style="font-weight:600;font-size:14px;">${r.username} <span class="user-email">${r.email}</span></div>
-          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">申請單位：<strong>${r.unit}</strong></div>
-          <div style="font-size:13px;margin-top:6px;color:var(--text);">${r.reason}</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">${fmtDate(r.requestedAt)}</div>
+          <div style="font-weight:600;font-size:14px;">${r.username} <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);">${r.email}</span></div>
+          <div style="font-size:12px;color:var(--tdim);margin-top:4px;">申請單位：<strong>${r.unit}</strong></div>
+          <div style="font-size:13px;margin-top:6px;">${r.reason}</div>
+          <div style="font-size:11px;color:var(--tdim);margin-top:6px;">${fmtDate(r.requestedAt)}</div>
         </div>
         <div style="display:flex;gap:8px;flex-shrink:0;">
-          <button class="btn btn-teal" onclick="approveRequest('${r.id}')">✓ 核准</button>
-          <button class="btn btn-danger" onclick="denyRequest('${r.id}')">✕ 拒絕</button>
+          <button class="btn btn-t" onclick="approveReq('${d.id}','${r.uid}')">✓ 核准</button>
+          <button class="btn btn-d" onclick="denyReq('${d.id}')">✕ 拒絕</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`}).join('');
 
   // Users table
-  document.getElementById('userTableBody').innerHTML = users.map(u => `
-    <tr>
-      <td><div style="font-weight:500;">${u.username}</div></td>
-      <td><div class="user-email">${u.email}</div></td>
-      <td><span class="status-badge ${u.isAdmin?'status-on':'status-off'}">${u.isAdmin?'● 管理員':'○ 一般'}</span></td>
-      <td style="font-size:11px;color:var(--text-dim);">${u.createdAt ? fmtDate(u.createdAt) : '—'}</td>
-      <td>
-        ${u.email !== ADMIN_DEFAULT ? `
-          <button class="btn btn-sm btn-ghost" onclick="toggleUserAdmin('${u.id}')">${u.isAdmin?'取消管理員':'設為管理員'}</button>
-        ` : '<span style="font-size:11px;color:var(--text-dim);">主要管理員</span>'}
-      </td>
-    </tr>`).join('');
+  document.getElementById('userTbody').innerHTML=userSnap.docs.map(d=>{const u=d.data();return`<tr>
+    <td><div style="font-weight:500;">${u.username}</div></td>
+    <td><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${u.email}</span></td>
+    <td><span class="badge ${u.isAdmin?'b-admin':'b-user'}">${u.isAdmin?'● 管理員':'○ 一般'}</span></td>
+    <td style="font-size:11px;color:var(--tdim);">${fmtDate(u.createdAt)}</td>
+    <td>${u.email!==MASTER_EMAIL?`<button class="btn btn-sm btn-ghost" onclick="toggleAdmin('${d.id}',${!u.isAdmin})">${u.isAdmin?'取消管理員':'設為管理員'}</button>`:'<span style="font-size:11px;color:var(--tdim);">主要管理員</span>'}</td>
+  </tr>`;}).join('');
 
   // Whitelist
-  document.getElementById('adminWhitelistDisplay').innerHTML = wl.map(email => `
-    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:12px;margin:4px;">
-      ${email}
-      ${email !== ADMIN_DEFAULT ? `<button onclick="removeFromWhitelist('${email}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px;">×</button>` : ''}
-    </div>`).join('');
+  document.getElementById('wlDisplay').innerHTML=wl.map(e=>`<span style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);padding:4px 12px;border-radius:20px;font-size:12px;margin:4px;">${e}${e!==MASTER_EMAIL?`<button onclick="removeWl('${e}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px;">×</button>`:''}</span>`).join('');
 }
 
-function approveRequest(id) {
-  const requests = getData(KEYS.requests);
-  const req = requests.find(r => r.id === id);
-  if (!req) return;
-  req.status = 'approved';
-  req.reviewedAt = new Date().toISOString();
-  req.reviewedBy = currentUser.email;
-  setData(KEYS.requests, requests);
-  // Grant admin to user
-  const users = getData(KEYS.users);
-  const user = users.find(u => u.email === req.email);
-  if (user) { user.isAdmin = true; setData(KEYS.users, users); }
-  renderUsersTab(); renderDashboard(); updateRequestBadge();
-  showToast(`已核准 ${req.username} 的申請`, 'success');
+window.approveReq=async function(rid,uid){
+  await updateDoc(doc(db,'requests',rid),{status:'approved',reviewedAt:serverTimestamp(),reviewedBy:currentUser.uid});
+  if(uid)await updateDoc(doc(db,'users',uid),{isAdmin:true});
+  await renderUsers();renderDash();updateReqBadge();toast('已核准申請','ok');
+};
+window.denyReq=async function(rid){
+  if(!confirm('確定要拒絕此申請？'))return;
+  await updateDoc(doc(db,'requests',rid),{status:'denied',reviewedAt:serverTimestamp()});
+  await renderUsers();renderDash();updateReqBadge();toast('已拒絕申請');
+};
+window.toggleAdmin=async(uid,val)=>{await updateDoc(doc(db,'users',uid),{isAdmin:val});await renderUsers();toast(val?'已設為管理員':'已取消管理員權限');};
+
+window.addWl=async function(){
+  const email=document.getElementById('wlEmail').value.trim().toLowerCase();
+  if(!email||!email.includes('@'))return toast('請輸入有效 Email','err');
+  const ref=doc(db,'settings','whitelist');
+  const snap=await getDoc(ref);
+  const curr=snap.exists()?snap.data().emails||[]:[]; 
+  if(curr.includes(email))return toast('此 Email 已在白名單中');
+  curr.push(email);await setDoc(ref,{emails:curr});
+  // Auto-grant existing user
+  const uq=await getDocs(query(collection(db,'users'),where('email','==',email)));
+  for(const d of uq.docs)await updateDoc(doc(db,'users',d.id),{isAdmin:true});
+  document.getElementById('wlEmail').value='';
+  await renderUsers();toast('已新增至白名單','ok');
+};
+
+window.removeWl=async function(email){
+  if(!confirm(`確定移除 ${email}？`))return;
+  const ref=doc(db,'settings','whitelist');
+  const snap=await getDoc(ref);
+  const curr=snap.exists()?snap.data().emails||[]:[]; 
+  await setDoc(ref,{emails:curr.filter(e=>e!==email)});
+  await renderUsers();toast('已從白名單移除');
+};
+
+async function updateReqBadge(){
+  const snap=await getDocs(query(collection(db,'requests'),where('status','==','pending')));
+  const b=document.getElementById('reqBadge');
+  b.style.display=snap.size>0?'':'none';b.textContent=snap.size;
 }
 
-function denyRequest(id) {
-  if (!confirm('確定要拒絕此申請？')) return;
-  const requests = getData(KEYS.requests);
-  const req = requests.find(r => r.id === id);
-  if (!req) return;
-  req.status = 'denied'; req.reviewedAt = new Date().toISOString();
-  setData(KEYS.requests, requests);
-  renderUsersTab(); renderDashboard(); updateRequestBadge();
-  showToast('已拒絕申請');
-}
-
-function toggleUserAdmin(uid) {
-  const users = getData(KEYS.users);
-  const user = users.find(u => u.id === uid);
-  if (!user) return;
-  user.isAdmin = !user.isAdmin;
-  setData(KEYS.users, users);
-  renderUsersTab();
-  showToast(user.isAdmin ? '已設為管理員' : '已取消管理員權限');
-}
-
-function addToWhitelist() {
-  const email = document.getElementById('newAdminEmail').value.trim().toLowerCase();
-  if (!email || !email.includes('@')) return showToast('請輸入有效 Email', 'error');
-  const wl = getData(KEYS.whitelist);
-  if (wl.includes(email)) return showToast('此 Email 已在白名單中');
-  wl.push(email);
-  setData(KEYS.whitelist, wl);
-  // Auto-grant if user already exists
-  const users = getData(KEYS.users);
-  const u = users.find(x => x.email === email);
-  if (u) { u.isAdmin = true; setData(KEYS.users, users); }
-  document.getElementById('newAdminEmail').value = '';
-  renderUsersTab();
-  showToast('已新增至白名單', 'success');
-}
-
-function removeFromWhitelist(email) {
-  if (!confirm(`確定要移除 ${email}？`)) return;
-  setData(KEYS.whitelist, getData(KEYS.whitelist).filter(e => e !== email));
-  renderUsersTab();
-  showToast('已從白名單移除');
-}
-
-function updateRequestBadge() {
-  const pending = getData(KEYS.requests).filter(r => r.status === 'pending').length;
-  const badge = document.getElementById('requestBadge');
-  badge.style.display = pending > 0 ? '' : 'none';
-  badge.textContent = pending;
-}
-
-// ============================================
+// ─────────────────────────────────────────────
 // SETTINGS
-// ============================================
-function renderSettings() {
-  const u = currentUser;
-  document.getElementById('settingsUserInfo').innerHTML = `
+// ─────────────────────────────────────────────
+async function renderSettings(){
+  const p=currentProfile;
+  document.getElementById('settInfo').innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:2px;">名稱</div><div style="font-weight:500;">${u.username}</div></div>
-      <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:2px;">電子郵件</div><div class="user-email">${u.email}</div></div>
-      <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:2px;">角色</div><span class="status-badge ${u.isAdmin?'status-on':'status-off'}">${u.isAdmin?'● 管理員':'○ 一般使用者'}</span></div>
+      <div><div style="font-size:10px;color:var(--tdim);margin-bottom:2px;">名稱</div><div style="font-weight:500;">${p.username}</div></div>
+      <div><div style="font-size:10px;color:var(--tdim);margin-bottom:2px;">Email</div><div style="font-family:'Space Mono',monospace;font-size:11px;">${p.email}</div></div>
+      <div><div style="font-size:10px;color:var(--tdim);margin-bottom:2px;">角色</div><span class="badge ${p.isAdmin?'b-admin':'b-user'}">${p.isAdmin?'● 管理員':'○ 一般使用者'}</span></div>
     </div>`;
 
-  const reqPanel = document.getElementById('requestAccessPanel');
-  const reqContent = document.getElementById('requestAccessContent');
-
-  if (u.isAdmin) {
-    reqPanel.style.display = 'none';
-    return;
-  }
-  reqPanel.style.display = '';
-
-  const myRequest = getData(KEYS.requests).find(r => r.email === u.email);
-  if (myRequest) {
-    if (myRequest.status === 'pending') {
-      reqContent.innerHTML = `<div class="request-pending-notice"><span style="font-size:20px;">⏳</span><div><div style="font-weight:600;">申請已送出，等待審核中</div><div style="font-size:12px;color:var(--text-dim);margin-top:2px;">申請時間：${fmtDate(myRequest.requestedAt)}</div></div></div>`;
-    } else if (myRequest.status === 'denied') {
-      reqContent.innerHTML = `<div class="alert alert-danger">您的申請已被拒絕。如有疑問，請聯繫管理員。</div>
-        <div class="request-form">${renderRequestForm()}</div>`;
-    } else if (myRequest.status === 'approved') {
-      reqContent.innerHTML = `<div class="alert alert-success">✅ 您的申請已核准！請重新登入以取得管理員權限。</div>`;
-    }
-  } else {
-    reqContent.innerHTML = `
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">如需管理後台的完整功能（上傳圖片、編輯公告），請填寫以下表單申請管理員權限。</p>
-      <div class="request-form">
-        <div class="form-group-admin"><label class="form-label-admin">申請人所屬單位</label><input type="text" class="form-input-admin" id="reqUnit" placeholder="例：高雄市政府教育局社會教育科"></div>
-        <div class="form-group-admin"><label class="form-label-admin">申請管理員原因</label><textarea class="form-input-admin" id="reqReason" placeholder="請說明您需要管理後台權限的原因及工作職責..."></textarea></div>
-        <button class="btn btn-primary" onclick="submitRequest()">送出申請</button>
-      </div>`;
+  const panel=document.getElementById('reqAccessPanel');
+  const content=document.getElementById('reqAccessContent');
+  if(p.isAdmin){panel.style.display='none';return;}
+  panel.style.display='';
+  const myReq=await getDocs(query(collection(db,'requests'),where('uid','==',currentUser.uid)));
+  const req=myReq.docs[0]?.data();
+  if(req){
+    if(req.status==='pending') content.innerHTML=`<div class="alert alert-warn">⏳ 申請已送出，等待管理員審核中（${fmtDate(req.requestedAt)}）。</div>`;
+    else if(req.status==='approved') content.innerHTML=`<div class="alert alert-ok">✅ 申請已核准！請重新登入以取得管理員權限。</div>`;
+    else content.innerHTML=`<div class="alert alert-err">申請已被拒絕。如有疑問請聯繫管理員。</div>${reqForm()}`;
+  }else{
+    content.innerHTML=`<p style="font-size:13px;color:var(--tdim);margin-bottom:16px;">如需完整管理功能，請填寫以下表單申請管理員權限。</p>${reqForm()}`;
   }
 }
 
-function submitRequest() {
-  const unit = document.getElementById('reqUnit').value.trim();
-  const reason = document.getElementById('reqReason').value.trim();
-  if (!unit || !reason) return showToast('請填寫所屬單位與申請原因', 'error');
-  const requests = getData(KEYS.requests);
-  // Remove any old denied request
-  const filtered = requests.filter(r => r.email !== currentUser.email);
-  filtered.push({ id: uid(), email: currentUser.email, username: currentUser.username, unit, reason, requestedAt: new Date().toISOString(), status: 'pending' });
-  setData(KEYS.requests, filtered);
-  if (currentUser.isAdmin) { renderUsersTab(); updateRequestBadge(); }
-  renderSettings();
-  showToast('申請已送出，請等待管理員審核', 'success');
-}
+function reqForm(){return`<div class="fg2"><label class="fl2">申請人所屬單位</label><input type="text" class="fi2" id="reqUnit" placeholder="例：高雄市政府教育局社會教育科"></div><div class="fg2"><label class="fl2">申請管理員原因</label><textarea class="fi2" id="reqReason" placeholder="請說明您需要管理後台權限的原因及工作職責…"></textarea></div><button class="btn btn-p" onclick="submitReq()">送出申請</button>`;}
 
-function changePassword() {
-  const p1 = document.getElementById('newPwd').value;
-  const p2 = document.getElementById('newPwd2').value;
-  if (!p1) return showToast('請輸入新密碼', 'error');
-  if (p1 !== p2) return showToast('兩次密碼不一致', 'error');
-  if (p1.length < 6) return showToast('密碼至少6個字元', 'error');
-  const users = getData(KEYS.users);
-  const u = users.find(x => x.email === currentUser.email);
-  if (!u) return;
-  u.password = hashPwd(p1);
-  setData(KEYS.users, users);
-  document.getElementById('newPwd').value = '';
-  document.getElementById('newPwd2').value = '';
-  showToast('密碼已更新', 'success');
-}
+window.submitReq=async function(){
+  const unit=document.getElementById('reqUnit')?.value.trim();
+  const reason=document.getElementById('reqReason')?.value.trim();
+  if(!unit||!reason)return toast('請填寫所屬單位與申請原因','err');
+  // Delete old requests from this user
+  const old=await getDocs(query(collection(db,'requests'),where('uid','==',currentUser.uid)));
+  for(const d of old.docs)await deleteDoc(doc(db,'requests',d.id));
+  await addDoc(collection(db,'requests'),{uid:currentUser.uid,email:currentProfile.email,username:currentProfile.username,unit,reason,status:'pending',requestedAt:serverTimestamp()});
+  if(currentProfile.isAdmin){await renderUsers();await updateReqBadge();}
+  await renderSettings();toast('申請已送出，等待管理員審核','ok');
+};
 
-// ============================================
-// TAB NAVIGATION
-// ============================================
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  const navMap = { dashboard: 0, images: 1, announcements: 2, users: 3, settings: 4 };
-  document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
-  // Re-render on tab switch
-  if (name === 'dashboard') renderDashboard();
-  if (name === 'images') renderGallery();
-  if (name === 'announcements') renderAnnounceTable();
-  if (name === 'users' && currentUser.isAdmin) renderUsersTab();
-  if (name === 'settings') renderSettings();
-}
+window.changePwd=async function(){
+  const p1=document.getElementById('npwd').value;
+  const p2=document.getElementById('npwd2').value;
+  if(!p1)return toast('請輸入新密碼','err');
+  if(p1!==p2)return toast('兩次密碼不一致','err');
+  if(p1.length<6)return toast('密碼至少6個字元','err');
+  try{await updatePassword(currentUser,p1);document.getElementById('npwd').value='';document.getElementById('npwd2').value='';toast('密碼已更新','ok');}
+  catch(e){toast(e.code==='auth/requires-recent-login'?'請先重新登入再修改密碼':e.message,'err');}
+};
 
-// ============================================
+// ─────────────────────────────────────────────
+// TAB NAV
+// ─────────────────────────────────────────────
+window.goTab=function(name){
+  document.querySelectorAll('.tc').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(el=>el.classList.remove('on'));
+  document.getElementById('tc-'+name)?.classList.add('on');
+  const map={dash:0,images:1,ann:2,users:3,settings:4};
+  document.querySelectorAll('.ni')[map[name]]?.classList.add('on');
+  if(name==='dash')renderDash();
+  if(name==='users'&&currentProfile.isAdmin)renderUsers();
+  if(name==='settings')renderSettings();
+};
+
+// ─────────────────────────────────────────────
 // MODAL HELPERS
-// ============================================
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-bg').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
-});
-
-// ============================================
-// TOAST
-// ============================================
-let toastTimer;
-function showToast(msg, type = '') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className = 'toast show' + (type ? ' ' + type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.className = 'toast', 3000);
-}
+// ─────────────────────────────────────────────
+window.openModal=id=>document.getElementById(id).classList.add('open');
+window.closeModal=id=>document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.mover').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));
 </script>
 </body>
 </html>
