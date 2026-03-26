@@ -114,7 +114,7 @@ input,textarea,select,button{font-family:'Noto Sans TC',sans-serif;}
 .btn-sm{padding:5px 14px;font-size:12px;}
 
 /* GALLERY */
-.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;background:transparent;}
 .upload-zone:hover{border-color:var(--navy);background:#f0f4ff;}
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
 .gi{position:relative;border-radius:6px;overflow:hidden;background:#f0f4f8;aspect-ratio:16/9;}
@@ -282,10 +282,10 @@ textarea.fi2{resize:vertical;min-height:90px;}
       <div class="alert alert-info">Cloudinary Upload Preset：<strong>kaohsiung_gallery</strong>，Asset folder：<strong>kaohsiung-gallery</strong>，Mode：<strong>Unsigned</strong>。</div>
       <div class="panel">
         <div class="panel-t">⬆ 上傳新圖片</div>
-        <div class="upload-zone" onclick="openUpload()">
+        <div class="upload-zone" id="dz" onclick="openUpload()">
           <div style="font-size:40px;margin-bottom:10px;">☁️</div>
-          <div style="font-size:14px;color:var(--tdim);">點擊上傳圖片至 Cloudinary</div>
-          <div style="font-size:12px;color:#aab4c4;margin-top:4px;">建議尺寸 1920×800px</div>
+          <div style="font-size:14px;color:var(--text);font-weight:500;">點擊開啟上傳，或將圖片拖曳至此框內</div>
+          <div style="font-size:12px;color:var(--tdim);margin-top:6px;">支援多圖拖曳上傳，建議尺寸 1920×800px</div>
         </div>
       </div>
       <div class="panel">
@@ -395,6 +395,10 @@ import{
   collection,query,where,orderBy,onSnapshot,serverTimestamp,deleteField
 }from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* ── GLOBAL DRAG & DROP PROTECTION ── */
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => e.preventDefault());
+
 /* ── CONFIG ── */
 const CFG={apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",authDomain:"kh-learningnetwork.firebaseapp.com",projectId:"kh-learningnetwork",storageBucket:"kh-learningnetwork.firebasestorage.app",messagingSenderId:"140386001536",appId:"1:140386001536:web:fa6902b4479f1a09273c65"};
 const CLOUD_NAME='dnypguvxl', UPLOAD_PRESET='kaohsiung_gallery';
@@ -424,7 +428,6 @@ window.doGoogleLogin=async()=>{
   }
   catch(e){
     if(e.code!=='auth/popup-closed-by-user') {
-      // 硬核除錯：攔截 403 與網路錯誤，給予精準的 GCP 金鑰配置警告
       let errorMsg = e.message;
       if (errorMsg.includes('network') || errorMsg.includes('403') || errorMsg.includes('configuration')) {
         errorMsg += " [致命錯誤：請至 GCP 檢查 API 金鑰的 HTTP Referrer 限制，確認已將 firebaseapp.com 加入白名單。]";
@@ -454,7 +457,6 @@ onAuthStateChanged(auth,async user=>{
   cu=user;
   document.getElementById('loginScreen').style.display='none';
 
-  /* upsert user doc */
   await ensureWhitelist();
   const wlSnap=await getDoc(doc(db,'settings','whitelist'));
   const wl=wlSnap.exists()?wlSnap.data().emails||[]:[]; 
@@ -471,7 +473,6 @@ onAuthStateChanged(auth,async user=>{
   if(cp.isAdmin){
     showApp();
   } else {
-    /* check for existing request */
     const rq=await getDocs(query(collection(db,'requests'),where('uid','==',cu.uid)));
     const myReq=rq.docs[0]?.data();
     if(myReq?.status==='pending'){
@@ -501,7 +502,6 @@ function showAccessDenied(isPending){
 function showApp(){
   document.getElementById('accessDenied').classList.remove('show');
   document.getElementById('app').classList.add('show');
-  // Set topbar user info
   const av=document.getElementById('uAv');
   if(cp.photoURL){
     av.outerHTML=`<div id="uAv" class="uav"><img src="${cp.photoURL}" alt="${cp.displayName}"></div>`;
@@ -550,7 +550,7 @@ async function renderDash(){
   } else rp.style.display='none';
 }
 
-/* ── IMAGES ── */
+/* ── IMAGES (DRAG & DROP + WIDGET) ── */
 window.openUpload=function(){
   if(!uploadWidget)uploadWidget=cloudinary.createUploadWidget({
     cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,folder:'kaohsiung-gallery',
@@ -566,6 +566,37 @@ window.openUpload=function(){
   });
   uploadWidget.open();
 };
+
+const dz = document.getElementById('dz');
+if(dz){
+  dz.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); dz.style.borderColor = 'var(--navy)'; dz.style.background = '#e8f0fe'; });
+  dz.addEventListener('dragleave', e => { e.preventDefault(); e.stopPropagation(); dz.style.borderColor = ''; dz.style.background = ''; });
+  dz.addEventListener('drop', async e => {
+    e.preventDefault(); e.stopPropagation();
+    dz.style.borderColor = ''; dz.style.background = '';
+    if(!cp || !cp.isAdmin) return;
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if(!files.length) return toast('請拖曳有效的圖片檔案','err');
+    
+    toast(`⏳ 開始上傳 ${files.length} 張圖片...`);
+    let sc = 0;
+    for(const f of files){
+      const fd = new FormData();
+      fd.append('file', f);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'kaohsiung-gallery');
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {method:'POST', body:fd});
+        const i = await res.json();
+        const cnt = (await getDocs(collection(db,'images'))).size;
+        await addDoc(collection(db,'images'),{publicId:i.public_id,url:i.secure_url,deleteToken:i.delete_token||'',caption:'',desc:'',tag:'',link:'',linkText:'',isActive:true,order:cnt,uploadedAt:serverTimestamp(),uploadedBy:cp.email});
+        sc++;
+      } catch(err){ console.error(err); }
+    }
+    if(sc === files.length) toast('✅ 拖曳圖片上傳成功！', 'ok');
+    else toast(`⚠️ 部分上傳失敗 (${sc}/${files.length})`, 'err');
+  });
+}
 
 function startImgListener(){
   if(unsubImg)unsubImg();
