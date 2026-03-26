@@ -35,7 +35,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:8px;}
 @media(max-width:860px){
   nav{padding:0 20px;}
-  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-height:calc(100vh - 68px);overflow-y:auto;}
   nav.open .nl{display:flex;}
   .nl a{width:100%;text-align:center;padding:12px;}
   .hamburger{display:block;}
@@ -54,14 +54,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 
 /* ── CAROUSEL ── */
 .carousel{position:relative;background:#000;overflow:hidden;}
-.cw{position:relative;width:100%;height:520px;overflow:hidden;}
+.cw{position:relative;width:100%;height:520px;overflow:hidden;transition:height .3s;}
 .cs{position:absolute;inset:0;opacity:0;transition:opacity .8s;display:flex;}
 .cs.on{opacity:1;z-index:1;}
 .cs img{width:100%;height:100%;object-fit:cover;}
-.co{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.62),rgba(0,0,0,.18) 60%,transparent);}
+.co{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7),rgba(0,0,0,.2) 70%,transparent);}
 .cb{position:absolute;left:72px;top:50%;transform:translateY(-50%);color:#fff;max-width:540px;z-index:2;}
 .ctag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:block;}
-.ctitle{font-family:'Noto Serif TC',serif;font-size:clamp(28px,3.5vw,50px);font-weight:900;line-height:1.2;margin-bottom:12px;}
+.ctitle{font-family:'Noto Serif TC',serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.2;margin-bottom:12px;}
 .cdesc{font-size:14px;opacity:.85;line-height:1.75;margin-bottom:24px;}
 .clink{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--navy);padding:10px 22px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px;transition:all .2s;}
 .clink:hover{background:#ffc02a;}
@@ -75,7 +75,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .carr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;font-size:18px;transition:all .25s;backdrop-filter:blur(4px);}
 .carr:hover{background:rgba(255,255,255,.3);}
 #carr-l{left:24px;}#carr-r{right:24px;}
-@media(max-width:768px){.cb{left:24px;right:24px;}.cc,.cdots{display:none;}}
+
+/* 手機版核心優化 */
+@media(max-width:768px){
+  .cw { height: 420px; } /* 縮減高度，避免佔滿全螢幕 */
+  .co { background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 60%, transparent 100%); } /* 改為由下往上的漸層，保護底部文字 */
+  .cb{ left:20px; right:20px; top:auto; bottom:32px; transform:none; } /* 將文字塊下壓，避免與箭頭重疊 */
+  .cdesc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:16px; } /* 限制描述最多兩行 */
+  .carr{ width:36px; height:36px; font-size:16px; top:40%; } /* 縮小箭頭並稍微上移 */
+  #carr-l{ left:12px; } #carr-r{ right:12px; }
+  .cc,.cdots{display:none;}
+  .annwrap{padding:48px 20px;}
+  .ann-grid{grid-template-columns:1fr;}
+  .statsbg{padding:32px 20px;}
+  .statsin{grid-template-columns:1fr 1fr;}
+  .quickbg{padding:32px 20px;}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start;gap:20px;} /* 修正頁尾對齊問題 */
+}
 
 /* ── ANNOUNCEMENTS ── */
 .annwrap{background:var(--bg2);border-top:3px solid var(--navy);padding:80px 72px;}
@@ -104,7 +120,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .ann-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);}
 .ann-more{display:block;text-align:center;margin-top:24px;font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;letter-spacing:.04em;}
 .ann-more:hover{text-decoration:underline;}
-@media(max-width:768px){.annwrap{padding:48px 20px;}.ann-grid{grid-template-columns:1fr;}}
 
 /* ── STATS ── */
 .statsbg{background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));padding:48px 72px;}
@@ -112,7 +127,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .sbox{padding:32px 24px;text-align:center;}
 .snum{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;color:var(--gold);display:block;line-height:1;}
 .slbl{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px;display:block;}
-@media(max-width:768px){.statsbg{padding:32px 20px;}.statsin{grid-template-columns:1fr 1fr;}}
 
 /* ── QUICK LINKS ── */
 .quickbg{background:var(--navy);padding:48px 72px;}
@@ -123,7 +137,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .ql:hover{background:rgba(255,255,255,.2);color:#fff;}
 .ql.primary{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700;}
 .ql.primary:hover{background:#ffc02a;color:var(--navy);}
-@media(max-width:768px){.quickbg{padding:32px 20px;}}
 
 /* ── FOOTER ── */
 footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
@@ -133,7 +146,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 .ft-tags{display:flex;gap:8px;flex-wrap:wrap;}
 .fttag{font-size:10px;padding:3px 10px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.4);border-radius:10px;font-family:'Space Mono',monospace;}
 .ft-copy{font-size:11px;color:rgba(255,255,255,.25);}
-@media(max-width:768px){footer{padding:24px 20px;flex-direction:column;}}
 
 /* ── REVEAL ── */
 .rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
@@ -149,18 +161,15 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 </head>
 <body>
 
-<!-- NAV (inline SVG logo) -->
 <nav id="mainNav">
   <a href="index.html" class="nb">
     <div class="nb-emblem">
-      <!-- 高雄市徽 inline SVG -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 599.898" width="44" height="44">
         <defs>
           <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FAB900"/><stop offset="100%" stop-color="#C94F1B"/></linearGradient>
           <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E2007A"/><stop offset="100%" stop-color="#9F0038"/></linearGradient>
           <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8DC9AB"/><stop offset="100%" stop-color="#00483F"/></linearGradient>
         </defs>
-        <!-- Simplified emblem shapes -->
         <path d="M181,59c77-6,117,11,107,64c33-44,54-99-42-123C226,17,201,42,181,59z" fill="url(#g1)"/>
         <path d="M5,274c-44,123,232-17,282-145C172,240,43,291,5,274z" fill="url(#g1)"/>
         <path d="M355,98C224,104-11,203,5,274c40-64,422-205,414-81c43-64,17-91-40-94H355z" fill="url(#g2)"/>
@@ -185,7 +194,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 </nav>
 <div class="scroll-bar" id="scrollBar"></div>
 
-<!-- TICKER -->
 <div class="ticker">
   <div class="tk-lbl">最新</div>
   <div class="tk-track">
@@ -197,7 +205,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <span class="tk-item">行動健身房巡迴車・115年新增第二台</span>
     <span class="tk-item">銀髮人才服務・55歲以上就業媒合</span>
     <span class="tk-item">原住民族部落大學・免學費終身教育</span>
-    <!-- duplicate for seamless loop -->
     <span class="tk-item">樂齡學習中心・38行政區全覆蓋</span>
     <span class="tk-item">淨零學院・11大國際標準認證持續招生</span>
     <span class="tk-item">高美講堂・藝術跨域系列講座</span>
@@ -209,7 +216,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </div>
 
-<!-- CAROUSEL -->
 <section class="carousel" id="top">
   <div class="cw" id="cWrap"></div>
   <button class="carr" id="carr-l" onclick="cStep(-1)">‹</button>
@@ -218,7 +224,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   <div class="cdots" id="cDots"></div>
 </section>
 
-<!-- ANNOUNCEMENTS -->
 <section class="annwrap" id="announcements">
   <div class="sec-inner">
     <div class="eye rv"><div class="eye-line"></div><span class="eye-tag">Latest Announcements</span></div>
@@ -231,7 +236,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </section>
 
-<!-- STATS -->
 <div class="statsbg">
   <div class="statsin">
     <div class="sbox rv"><span class="snum cnt" data-t="9">0</span><span class="slbl">跨局處串聯</span></div>
@@ -241,7 +245,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </div>
 
-<!-- QUICK NAV -->
 <div class="quickbg">
   <div class="quickin">
     <div class="quick-label">探索學習資源 →</div>
@@ -255,7 +258,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="ft-left">
     <div class="ft-brand">高雄城市學習網絡<span>Kaohsiung City Learning Network · 115年度</span></div>
@@ -270,7 +272,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 
 <a href="admin.html" class="fab">⚙ 管理後台</a>
 
-<!-- ── FIREBASE ── -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,collection,query,where,orderBy,limit,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
