@@ -296,7 +296,7 @@ textarea.fi2{resize:vertical;min-height:90px;}
 
     <div class="tc" id="tc-ann">
       <div class="phdr" style="display:flex;align-items:flex-end;justify-content:space-between;">
-        <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告</div></div>
+        <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告，可選擇附加圖片</div></div>
         <button class="btn btn-p" onclick="openAnnModal()">＋ 新增公告</button>
       </div>
       <div class="panel">
@@ -364,6 +364,17 @@ textarea.fi2{resize:vertical;min-height:90px;}
     <div class="mtitle" id="annModalTitle">新增公告</div>
     <input type="hidden" id="eAnnId">
     <div class="fg2"><label class="fl2">公告標題</label><input type="text" class="fi2" id="aTitle"></div>
+    
+    <div class="fg2">
+      <label class="fl2">公告圖片 (選填)</label>
+      <div style="display:flex;gap:12px;align-items:flex-end;">
+        <div id="aImgPreview" style="width:120px;height:80px;background:var(--bg3);border:1px dashed var(--border);border-radius:6px;background-size:cover;background-position:center;"></div>
+        <input type="hidden" id="aImgUrl">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="openAnnUpload()">上傳圖片</button>
+        <button class="btn btn-sm btn-d" type="button" onclick="clearAnnImg()" id="aImgClear" style="display:none;">移除圖片</button>
+      </div>
+    </div>
+
     <div class="fg2"><label class="fl2">公告內容</label><textarea class="fi2" id="aContent" style="min-height:120px;"></textarea></div>
     <div class="frow">
       <div class="fg2"><label class="fl2">分類</label>
@@ -409,9 +420,10 @@ const auth=getAuth(fbApp);
 const db=getFirestore(fbApp);
 const provider=new GoogleAuthProvider();
 
-let cu=null, cp=null; // currentUser, currentProfile
+let cu=null, cp=null;
 let unsubImg=null, unsubAnn=null;
 let uploadWidget=null;
+let annUploadWidget=null; // 新增公告圖片專用 Widget
 
 /* ── HELPERS ── */
 function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3200);}
@@ -542,7 +554,7 @@ async function renderDash(){
     <div class="sc"><span class="sc-n">${userS.size}</span><div class="sc-l">已登入使用者</div></div>
     <div class="sc"><span class="sc-n" style="color:${reqS.size>0?'var(--danger)':'var(--success)'}">${reqS.size}</span><div class="sc-l">待審申請</div></div>`;
   const allAnn=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
-  document.getElementById('dashAnn').innerHTML=allAnn.docs.slice(0,5).map(d=>{const a=d.data();return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;font-weight:500;">${a.title}</div><div style="font-size:11px;color:var(--tdim);">${a.bureau||''} · ${a.date||''}</div></div><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></div>`;}).join('')||'<p style="text-align:center;color:var(--tdim);padding:20px;">尚無公告</p>';
+  document.getElementById('dashAnn').innerHTML=allAnn.docs.slice(0,5).map(d=>{const a=d.data();return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;font-weight:500;">${a.imgUrl?'🖼 ':''}${a.title}</div><div style="font-size:11px;color:var(--tdim);">${a.bureau||''} · ${a.date||''}</div></div><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></div>`;}).join('')||'<p style="text-align:center;color:var(--tdim);padding:20px;">尚無公告</p>';
   const rp=document.getElementById('dashReqPanel');
   if(cp.isAdmin&&reqS.size>0){
     rp.style.display='';
@@ -643,16 +655,40 @@ window.delImg=async(id,token)=>{
 };
 
 /* ── ANNOUNCEMENTS ── */
+window.openAnnUpload=function(){
+  if(!annUploadWidget)annUploadWidget=cloudinary.createUploadWidget({
+    cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,folder:'kaohsiung-announcements',
+    sources:['local','url','camera'],multiple:false,maxFileSize:5000000,
+    styles:{palette:{window:'#FFFFFF',windowBorder:'#D0DDEF',tabIcon:'#003F88',menuIcons:'#5A6A80',textDark:'#1A2840',textLight:'#FFFFFF',link:'#003F88',action:'#F5A800',inactiveTabIcon:'#B0BFCC',error:'#D63031',inProgress:'#0098B4',complete:'#00B894',sourceBg:'#F2F6FC'}}
+  },(err,res)=>{
+    if(err){toast('圖片上傳失敗','err');return;}
+    if(res?.event==='success'){
+      document.getElementById('aImgUrl').value = res.info.secure_url;
+      document.getElementById('aImgPreview').style.backgroundImage = `url(${res.info.secure_url})`;
+      document.getElementById('aImgClear').style.display = '';
+      toast('公告圖片上傳成功！','ok');
+    }
+  });
+  annUploadWidget.open();
+};
+
+window.clearAnnImg=function(){
+  document.getElementById('aImgUrl').value = '';
+  document.getElementById('aImgPreview').style.backgroundImage = '';
+  document.getElementById('aImgClear').style.display = 'none';
+};
+
 function startAnnListener(){
   if(unsubAnn)unsubAnn();
   unsubAnn=onSnapshot(query(collection(db,'announcements'),orderBy('createdAt','desc')),snap=>renderAnnTable(snap.docs.map(d=>({id:d.id,...d.data()}))));
 }
+
 function renderAnnTable(anns){
   const tb=document.getElementById('annTbody'),em=document.getElementById('annEmpty');
   if(!anns.length){tb.innerHTML='';em.style.display='';return;}
   em.style.display='none';
   tb.innerHTML=anns.map(a=>`<tr>
-    <td><div style="font-weight:500;">${a.title}</div><div style="font-size:11px;color:var(--tdim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
+    <td><div style="font-weight:500;">${a.imgUrl?'🖼 ':''}${a.title}</div><div style="font-size:11px;color:var(--tdim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
     <td><span class="badge b-user">${a.category||'公告'}</span></td>
     <td>${a.bureau||'—'}</td>
     <td style="font-family:'Space Mono',monospace;font-size:11px;">${a.date||'—'}</td>
@@ -664,18 +700,59 @@ function renderAnnTable(anns){
     </div></td>
   </tr>`).join('');
 }
+
 window.openAnnModal=async id=>{
   document.getElementById('eAnnId').value=id||'';
   document.getElementById('annModalTitle').textContent=id?'編輯公告':'新增公告';
-  if(id){const a=(await getDoc(doc(db,'announcements',id))).data();if(!a)return;document.getElementById('aTitle').value=a.title||'';document.getElementById('aContent').value=a.content||'';document.getElementById('aCat').value=a.category||'公告';document.getElementById('aBureau').value=a.bureau||'';document.getElementById('aDate').value=a.date||'';document.getElementById('aActive').checked=a.isActive!==false;}
-  else{document.getElementById('aTitle').value='';document.getElementById('aContent').value='';document.getElementById('aCat').value='公告';document.getElementById('aBureau').value='';document.getElementById('aDate').value=new Date().toISOString().split('T')[0];document.getElementById('aActive').checked=true;}
+  const prev = document.getElementById('aImgPreview');
+  const clearBtn = document.getElementById('aImgClear');
+  const urlInput = document.getElementById('aImgUrl');
+  if(id){
+    const a=(await getDoc(doc(db,'announcements',id))).data();
+    if(!a)return;
+    document.getElementById('aTitle').value=a.title||'';
+    document.getElementById('aContent').value=a.content||'';
+    document.getElementById('aCat').value=a.category||'公告';
+    document.getElementById('aBureau').value=a.bureau||'';
+    document.getElementById('aDate').value=a.date||'';
+    document.getElementById('aActive').checked=a.isActive!==false;
+    if(a.imgUrl) {
+      urlInput.value = a.imgUrl;
+      prev.style.backgroundImage = `url(${a.imgUrl})`;
+      clearBtn.style.display = '';
+    } else {
+      urlInput.value = '';
+      prev.style.backgroundImage = '';
+      clearBtn.style.display = 'none';
+    }
+  } else {
+    document.getElementById('aTitle').value='';
+    document.getElementById('aContent').value='';
+    document.getElementById('aCat').value='公告';
+    document.getElementById('aBureau').value='';
+    document.getElementById('aDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('aActive').checked=true;
+    urlInput.value = '';
+    prev.style.backgroundImage = '';
+    clearBtn.style.display = 'none';
+  }
   openModal('annModal');
 };
+
 window.saveAnn=async()=>{
   const id=document.getElementById('eAnnId').value;
   const title=document.getElementById('aTitle').value.trim();
   if(!title)return toast('請輸入公告標題','err');
-  const data={title,content:document.getElementById('aContent').value.trim(),category:document.getElementById('aCat').value,bureau:document.getElementById('aBureau').value.trim(),date:document.getElementById('aDate').value,isActive:document.getElementById('aActive').checked,updatedAt:serverTimestamp()};
+  const data={
+    title,
+    imgUrl: document.getElementById('aImgUrl').value,
+    content:document.getElementById('aContent').value.trim(),
+    category:document.getElementById('aCat').value,
+    bureau:document.getElementById('aBureau').value.trim(),
+    date:document.getElementById('aDate').value,
+    isActive:document.getElementById('aActive').checked,
+    updatedAt:serverTimestamp()
+  };
   if(id)await updateDoc(doc(db,'announcements',id),data);
   else await addDoc(collection(db,'announcements'),{...data,createdAt:serverTimestamp(),createdBy:cu.email});
   closeModal('annModal');toast('公告已儲存','ok');
