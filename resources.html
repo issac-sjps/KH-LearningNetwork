@@ -19,7 +19,7 @@ html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;overflow-x:hidden;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--navy);border-radius:3px;}
 
-/* ── NAV (same as index) ── */
+/* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);height:68px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);}
 .nb{display:flex;align-items:center;gap:14px;text-decoration:none;}
 .nb-emblem{width:44px;height:44px;flex-shrink:0;}
@@ -33,7 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:8px;}
 @media(max-width:860px){
   nav{padding:0 20px;}
-  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-height:calc(100vh - 68px);overflow-y:auto;}
   nav.open .nl{display:flex;}
   .nl a{width:100%;text-align:center;padding:12px;}
   .hamburger{display:block;}
@@ -75,10 +75,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .bsub{font-size:12px;color:var(--tdim);}
 .bbar{flex:1;height:1px;background:var(--border);}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-.rc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:all .3s;position:relative;}
+
+/* ── RESOURCE CARDS WITH COLOR CODING ── */
+.rc{border:1px solid var(--border);border-radius:var(--r);padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:all .3s;position:relative;}
+.rc.bg-edu { background: #F4F8FF; border-color: #DDE8F6; }
+.rc.bg-work { background: #F0F9F9; border-color: #D5EEEE; }
+.rc.bg-social { background: #FFFBF0; border-color: #F8EDD1; }
+.rc.bg-eco { background: #F2F9F4; border-color: #D7EEDB; }
+.rc.bg-culture { background: #FFF5F9; border-color: #F6DDE8; }
+.rc.bg-sports { background: #F0F9F9; border-color: #D5EEEE; }
+.rc.bg-indig { background: #F2F9F4; border-color: #D7EEDB; }
+
 .rc::after{content:'↗';position:absolute;top:16px;right:16px;font-size:14px;color:var(--border);transition:all .25s;}
-.rc:hover{box-shadow:var(--shadow);border-color:var(--navy);transform:translateY(-2px);}
+.rc:hover{background:#fff;box-shadow:var(--shadow);border-color:var(--navy);transform:translateY(-2px);}
 .rc:hover::after{color:var(--navy);}
+
 .rtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .rtag{font-size:9px;padding:2px 8px;border:1px solid;border-radius:10px;font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;}
 .tnavy{border-color:var(--navy);color:var(--navy);}
@@ -145,26 +156,10 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 </head>
 <body>
 
-<!-- NAV -->
 <nav id="mainNav">
   <a href="index.html" class="nb">
     <div class="nb-emblem">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 599.898" width="44" height="44">
-        <defs>
-          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FAB900"/><stop offset="100%" stop-color="#C94F1B"/></linearGradient>
-          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E2007A"/><stop offset="100%" stop-color="#9F0038"/></linearGradient>
-          <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8DC9AB"/><stop offset="100%" stop-color="#00483F"/></linearGradient>
-        </defs>
-        <path d="M181,59c77-6,117,11,107,64c33-44,54-99-42-123C226,17,201,42,181,59z" fill="url(#g1)"/>
-        <path d="M5,274c-44,123,232-17,282-145C172,240,43,291,5,274z" fill="url(#g1)"/>
-        <path d="M355,98C224,104-11,203,5,274c40-64,422-205,414-81c43-64,17-91-40-94H355z" fill="url(#g2)"/>
-        <path d="M194,272c-83,107,197,67,224-79C389,246,212,346,194,272z" fill="url(#g2)"/>
-        <path d="M194,273c130-80,183-31,98,76C410,254,377,198,316,198C276,198,225,221,194,273z" fill="url(#g3)"/>
-        <path d="M19,537c-58,159,204-14,275-185C219,426,40,586,19,537z" fill="url(#g3)"/>
-        <path d="M294,352c-17,98,130,71,206-78C459,329,311,395,294,352z" fill="url(#g3)"/>
-        <path d="M294,352c90-141,176-96,206-78C444,158,294,145,294,352z" fill="url(#g2)"/>
-        <path d="M15,530c0,0,82-19,161,8c80,27,118,62,118,62s-49-128-181-128C75,472,15,530,15,530z" fill="url(#g1)"/>
-      </svg>
+      <img src="https://issac-sjps.github.io/KH-LearningNetwork/Emblem_of_Kaohsiung_City.svg" alt="高雄市徽" width="44" height="44" style="display:block;">
     </div>
     <div class="nt">高雄城市學習網絡<span>Kaohsiung City Learning Network</span></div>
   </a>
@@ -179,7 +174,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 </nav>
 <div class="scroll-bar" id="scrollBar"></div>
 
-<!-- PAGE HERO -->
 <div class="page-hero">
   <div class="ph-inner">
     <div class="breadcrumb">
@@ -190,7 +184,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </div>
 
-<!-- AUDIENCE FILTER (sticky) -->
 <div class="audbg" id="filter">
   <div class="audin">
     <span class="aud-lbl">篩選：</span>
@@ -204,89 +197,77 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </div>
 
-<!-- RESOURCES -->
 <div class="resouter" id="resources">
 
-  <!-- 教育局 -->
   <div class="ressec bgrp on rv" data-a="all senior culture edu">
     <div class="bhr"><div class="bico">📚</div><div><div class="bname">教育局</div><div class="bsub">社會教育科・終身學習資源</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://cc.moe.edu.tw/school_of_region?ri=15" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgreen">免費</span></div><div class="rname">社區大學</div><div class="rdesc">在地化課程，涵蓋人文藝術、食農實作、城市美學、環境永續，培力公民參與。</div><div class="rurl">cc.moe.edu.tw</div></a>
-      <a href="https://city.hcvs.kh.edu.tw/Main/ClassList.aspx?new=1" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">教育局</span></div><div class="rname">市民學苑</div><div class="rdesc">推展成人教育，充實市民生活內涵，培養正當休閒，提升城市文化氣息。</div><div class="rurl">city.hcvs.kh.edu.tw</div></a>
-      <a href="https://moe.senioredu.moe.gov.tw/HomeSon/Kaohsiung/KaohsiungIndex" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgold">樂齡</span></div><div class="rname">樂齡學習中心</div><div class="rdesc">覆蓋全市38行政區，融入在地文化，以祖孫共學為主軸，讓長輩就近學習。</div><div class="rurl">moe.senioredu.moe.gov.tw</div></a>
-      <a href="https://www.kh.edu.tw/forms/getDirectory/863" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgreen">免費</span></div><div class="rname">成人基本研習班</div><div class="rdesc">培養失學民眾與新住民聽、說、讀、寫、算能力，跨越教育落差。</div><div class="rurl">kh.edu.tw</div></a>
-      <a href="https://www.kh.edu.tw/forms/getDirectory/860" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">教育局</span></div><div class="rname">國中小進修部</div><div class="rdesc">提供樂齡、技藝、文化等多元課程，服務失學青年、新住民及社會民眾。</div><div class="rurl">kh.edu.tw</div></a>
+      <a href="https://cc.moe.edu.tw/school_of_region?ri=15" target="_blank" class="rc bg-edu"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgreen">免費</span></div><div class="rname">社區大學</div><div class="rdesc">在地化課程，涵蓋人文藝術、食農實作、城市美學、環境永續，培力公民參與。</div><div class="rurl">cc.moe.edu.tw</div></a>
+      <a href="https://city.hcvs.kh.edu.tw/Main/ClassList.aspx?new=1" target="_blank" class="rc bg-edu"><div class="rtags"><span class="rtag tnavy">教育局</span></div><div class="rname">市民學苑</div><div class="rdesc">推展成人教育，充實市民生活內涵，培養正當休閒，提升城市文化氣息。</div><div class="rurl">city.hcvs.kh.edu.tw</div></a>
+      <a href="https://moe.senioredu.moe.gov.tw/HomeSon/Kaohsiung/KaohsiungIndex" target="_blank" class="rc bg-edu"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgold">樂齡</span></div><div class="rname">樂齡學習中心</div><div class="rdesc">覆蓋全市38行政區，融入在地文化，以祖孫共學為主軸，讓長輩就近學習。</div><div class="rurl">moe.senioredu.moe.gov.tw</div></a>
+      <a href="https://www.kh.edu.tw/forms/getDirectory/863" target="_blank" class="rc bg-edu"><div class="rtags"><span class="rtag tnavy">教育局</span><span class="rtag tgreen">免費</span></div><div class="rname">成人基本研習班</div><div class="rdesc">培養失學民眾與新住民聽、說、讀、寫、算能力，跨越教育落差。</div><div class="rurl">kh.edu.tw</div></a>
+      <a href="https://www.kh.edu.tw/forms/getDirectory/860" target="_blank" class="rc bg-edu"><div class="rtags"><span class="rtag tnavy">教育局</span></div><div class="rname">國中小進修部</div><div class="rdesc">提供樂齡、技藝、文化等多元課程，服務失學青年、新住民及社會民眾。</div><div class="rurl">kh.edu.tw</div></a>
     </div>
   </div>
 
-  <!-- 勞工局 -->
   <div class="ressec bgrp on rv" data-a="all work senior">
     <div class="bhr"><div class="bico">⚙️</div><div><div class="bname">勞工局</div><div class="bsub">訓練就業中心・勞工教育生活中心</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://college.kcg.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">勞工局</span></div><div class="rname">勞工大學</div><div class="rdesc">涵蓋勞動法令、工作技藝、時尚技能、休閒育樂、生活應用五大類，每季一期。</div><div class="rurl">college.kcg.gov.tw</div></a>
-      <a href="https://ktec.kcg.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tgreen">公費</span></div><div class="rname">產訓合作職前訓練</div><div class="rdesc">廠商聯合面試，訓練期滿合格發給結訓證書，優先錄用。</div><div class="rurl">ktec.kcg.gov.tw</div></a>
-      <a href="https://ktec.kcg.gov.tw/cp.aspx?n=626D66A9C474D8D5" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tpink">青年</span></div><div class="rname">職場任我行計畫</div><div class="rdesc">為新鮮人、待業、轉職青年量身打造：職涯分析、面試技巧、職場體驗工作坊。</div><div class="rurl">ktec.kcg.gov.tw</div></a>
-      <a href="https://www.facebook.com/KH55PLUS/" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tgold">55歲以上</span></div><div class="rname">銀髮人才服務據點</div><div class="rdesc">岡山、前鎮兩處，就業媒合、職涯諮詢、就促課程，啟動職涯第二人生。</div><div class="rurl">facebook.com/KH55PLUS</div></a>
+      <a href="https://college.kcg.gov.tw/" target="_blank" class="rc bg-work"><div class="rtags"><span class="rtag tteal">勞工局</span></div><div class="rname">勞工大學</div><div class="rdesc">涵蓋勞動法令、工作技藝、時尚技能、休閒育樂、生活應用五大類，每季一期。</div><div class="rurl">college.kcg.gov.tw</div></a>
+      <a href="https://ktec.kcg.gov.tw/" target="_blank" class="rc bg-work"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tgreen">公費</span></div><div class="rname">產訓合作職前訓練</div><div class="rdesc">廠商聯合面試，訓練期滿合格發給結訓證書，優先錄用。</div><div class="rurl">ktec.kcg.gov.tw</div></a>
+      <a href="https://ktec.kcg.gov.tw/cp.aspx?n=626D66A9C474D8D5" target="_blank" class="rc bg-work"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tpink">青年</span></div><div class="rname">職場任我行計畫</div><div class="rdesc">為新鮮人、待業、轉職青年量身打造：職涯分析、面試技巧、職場體驗工作坊。</div><div class="rurl">ktec.kcg.gov.tw</div></a>
+      <a href="https://www.facebook.com/KH55PLUS/" target="_blank" class="rc bg-work"><div class="rtags"><span class="rtag tteal">勞工局</span><span class="rtag tgold">55歲以上</span></div><div class="rname">銀髮人才服務據點</div><div class="rdesc">岡山、前鎮兩處，就業媒合、職涯諮詢、就促課程，啟動職涯第二人生。</div><div class="rurl">facebook.com/KH55PLUS</div></a>
     </div>
   </div>
 
-  <!-- 社會局 -->
   <div class="ressec bgrp on rv" data-a="all senior culture">
     <div class="bhr"><div class="bico">🤝</div><div><div class="bname">社會局</div><div class="bsub">長青中心・長青學苑</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://senior.kcg.gov.tw/Content_List.aspx?n=628B942291893C3A" target="_blank" class="rc"><div class="rtags"><span class="rtag tgold">社會局</span><span class="rtag tgold">樂齡</span></div><div class="rname">長青學苑</div><div class="rdesc">全國公辦高齡教育先驅，覆蓋38行政區，讓長者建立人際網絡、實現在地安老。</div><div class="rurl">senior.kcg.gov.tw</div></a>
+      <a href="https://senior.kcg.gov.tw/Content_List.aspx?n=628B942291893C3A" target="_blank" class="rc bg-social"><div class="rtags"><span class="rtag tgold">社會局</span><span class="rtag tgold">樂齡</span></div><div class="rname">長青學苑</div><div class="rdesc">全國公辦高齡教育先驅，覆蓋38行政區，讓長者建立人際網絡、實現在地安老。</div><div class="rurl">senior.kcg.gov.tw</div></a>
     </div>
   </div>
 
-  <!-- 環保局 -->
   <div class="ressec bgrp on rv" data-a="all eco">
     <div class="bhr"><div class="bico">🌿</div><div><div class="bname">環保局</div><div class="bsub">綜計科・氣候變遷因應科</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://neecs.moenv.gov.tw/Home/PlaceQry" target="_blank" class="rc"><div class="rtags"><span class="rtag tgreen">環保局</span><span class="rtag tgreen">免費</span></div><div class="rname">22處環境教育設施</div><div class="rdesc">涵蓋環保設施、文化資產、自然生態，遍布全市，提供環境教育實地學習。</div><div class="rurl">neecs.moenv.gov.tw</div></a>
-      <a href="https://khsnetzeroinstitute.kcg.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tgreen">環保局</span><span class="rtag tteal">線上+實體</span></div><div class="rname">淨零學院</div><div class="rdesc">通識、技術、證照三大課程，合作5大國際查驗機構，11大國際標準認證。</div><div class="rurl">khsnetzeroinstitute.kcg.gov.tw</div></a>
+      <a href="https://neecs.moenv.gov.tw/Home/PlaceQry" target="_blank" class="rc bg-eco"><div class="rtags"><span class="rtag tgreen">環保局</span><span class="rtag tgreen">免費</span></div><div class="rname">22處環境教育設施</div><div class="rdesc">涵蓋環保設施、文化資產、自然生態，遍布全市，提供環境教育實地學習。</div><div class="rurl">neecs.moenv.gov.tw</div></a>
+      <a href="https://khsnetzeroinstitute.kcg.gov.tw/" target="_blank" class="rc bg-eco"><div class="rtags"><span class="rtag tgreen">環保局</span><span class="rtag tteal">線上+實體</span></div><div class="rname">淨零學院</div><div class="rdesc">通識、技術、證照三大課程，合作5大國際查驗機構，11大國際標準認證。</div><div class="rurl">khsnetzeroinstitute.kcg.gov.tw</div></a>
     </div>
   </div>
 
-  <!-- 圖書館 -->
   <div class="ressec bgrp on rv" data-a="all culture senior">
     <div class="bhr"><div class="bico">📖</div><div><div class="bname">高雄市立圖書館</div><div class="bsub">總館及各分館・全市閱讀學習網絡</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tgreen">免費</span></div><div class="rname">高雄市立圖書館</div><div class="rdesc">書展、講座、文化體驗、親子共讀，打造全齡低門檻公共學習場域。</div><div class="rurl">ksml.edu.tw</div></a>
-      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tteal">24小時</span></div><div class="rname">智慧圖書館</div><div class="rdesc">高雄車站、左營站R16、岡山高醫站R24，24小時自助借閱，每站400冊。</div><div class="rurl">三站捷運節點</div></a>
-      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tgreen">免費</span></div><div class="rname">行動書車</div><div class="rdesc">6台行動書車，含東南亞書車、英語列車、偏鄉書車，服務全市教育平權。</div><div class="rurl">全市巡迴服務</div></a>
+      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc bg-culture"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tgreen">免費</span></div><div class="rname">高雄市立圖書館</div><div class="rdesc">書展、講座、文化體驗、親子共讀，打造全齡低門檻公共學習場域。</div><div class="rurl">ksml.edu.tw</div></a>
+      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc bg-culture"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tteal">24小時</span></div><div class="rname">智慧圖書館</div><div class="rdesc">高雄車站、左營站R16、岡山高醫站R24，24小時自助借閱，每站400冊。</div><div class="rurl">三站捷運節點</div></a>
+      <a href="https://www.ksml.edu.tw/" target="_blank" class="rc bg-culture"><div class="rtags"><span class="rtag tnavy">圖書館</span><span class="rtag tgreen">免費</span></div><div class="rname">行動書車</div><div class="rdesc">6台行動書車，含東南亞書車、英語列車、偏鄉書車，服務全市教育平權。</div><div class="rurl">全市巡迴服務</div></a>
     </div>
   </div>
 
-  <!-- 美術館 -->
   <div class="ressec bgrp on rv" data-a="all culture">
     <div class="bhr"><div class="bico">🎨</div><div><div class="bname">高雄市立美術館</div><div class="bsub">教育暨公共服務部・內惟藝術中心</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://www.kmfa.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tpink">美術館</span></div><div class="rname">高美講堂</div><div class="rdesc">搭配展覽策劃跨域系列講座，各領域專家主講，全年齡歡迎參與。</div><div class="rurl">kmfa.gov.tw</div></a>
-      <a href="https://www.nwac.org.tw/tw/about-repair" target="_blank" class="rc"><div class="rtags"><span class="rtag tpink">美術館</span><span class="rtag tgreen">部分免費</span></div><div class="rname">內惟藝術中心</div><div class="rdesc">三館共構（藝術・電影・修復），設開放式修復中心，跨代呼應全齡需求。</div><div class="rurl">nwac.org.tw</div></a>
+      <a href="https://www.kmfa.gov.tw/" target="_blank" class="rc bg-culture"><div class="rtags"><span class="rtag tpink">美術館</span></div><div class="rname">高美講堂</div><div class="rdesc">搭配展覽策劃跨域系列講座，各領域專家主講，全年齡歡迎參與。</div><div class="rurl">kmfa.gov.tw</div></a>
+      <a href="https://www.nwac.org.tw/tw/about-repair" target="_blank" class="rc bg-culture"><div class="rtags"><span class="rtag tpink">美術館</span><span class="rtag tgreen">部分免費</span></div><div class="rname">內惟藝術中心</div><div class="rdesc">三館共構（藝術・電影・修復），設開放式修復中心，跨代呼應全齡需求。</div><div class="rurl">nwac.org.tw</div></a>
     </div>
   </div>
 
-  <!-- 運動局 -->
   <div class="ressec bgrp on rv" data-a="all senior">
     <div class="bhr"><div class="bico">🏃</div><div><div class="bname">運動發展局</div><div class="bsub">綜合企劃科・全民運動科</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://sports.kcg.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">運動局</span><span class="rtag tgold">移動式</span></div><div class="rname">行動健身房巡迴車</div><div class="rdesc">11行政區偏鄉據點，專業教練深入社區指導，115年新增第二台。</div><div class="rurl">sports.kcg.gov.tw</div></a>
-      <a href="https://sports.kcg.gov.tw/" target="_blank" class="rc"><div class="rtags"><span class="rtag tteal">運動局</span><span class="rtag tgray">全齡</span></div><div class="rname">高雄運動中心</div><div class="rdesc">15行政區設置，9座已開放，服務逾200萬人，115-116年再新增6座。</div><div class="rurl">15行政區・9座已開放</div></a>
+      <a href="https://sports.kcg.gov.tw/" target="_blank" class="rc bg-sports"><div class="rtags"><span class="rtag tteal">運動局</span><span class="rtag tgold">移動式</span></div><div class="rname">行動健身房巡迴車</div><div class="rdesc">11行政區偏鄉據點，專業教練深入社區指導，115年新增第二台。</div><div class="rurl">sports.kcg.gov.tw</div></a>
+      <a href="https://sports.kcg.gov.tw/" target="_blank" class="rc bg-sports"><div class="rtags"><span class="rtag tteal">運動局</span><span class="rtag tgray">全齡</span></div><div class="rname">高雄運動中心</div><div class="rdesc">15行政區設置，9座已開放，服務逾200萬人，115-116年再新增6座。</div><div class="rurl">15行政區・9座已開放</div></a>
     </div>
   </div>
 
-  <!-- 原民會 -->
   <div class="ressec bgrp on rv" data-a="all culture edu">
     <div class="bhr"><div class="bico">🪶</div><div><div class="bname">原住民族委員會</div><div class="bsub">高雄市原住民族部落大學</div></div><div class="bbar"></div></div>
     <div class="cgrid">
-      <a href="https://www.tbc.cip.gov.tw/kaohsiung/home" target="_blank" class="rc"><div class="rtags"><span class="rtag tgreen">原民會</span><span class="rtag tgreen">免學費</span></div><div class="rname">原住民族部落大學</div><div class="rdesc">推動市民免學費終身教育，傳揚原住民族傳統智識，與空大協同教學取學分。</div><div class="rurl">tbc.cip.gov.tw/kaohsiung</div></a>
+      <a href="https://www.tbc.cip.gov.tw/kaohsiung/home" target="_blank" class="rc bg-indig"><div class="rtags"><span class="rtag tgreen">原民會</span><span class="rtag tgreen">免學費</span></div><div class="rname">原住民族部落大學</div><div class="rdesc">推動市民免學費終身教育，傳揚原住民族傳統智識，與空大協同教學取學分。</div><div class="rurl">tbc.cip.gov.tw/kaohsiung</div></a>
     </div>
   </div>
 
-</div><!-- end resouter -->
-
-<!-- DISTRICTS -->
-<section class="distbg" id="districts">
+</div><section class="distbg" id="districts">
   <div class="distin">
     <div class="distleft rv">
       <h2 class="stitle" style="color:#fff;">學習資源遍布<br>38個行政區</h2>
@@ -316,7 +297,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   </div>
 </section>
 
-<!-- PLATFORMS -->
 <section class="pfbg" id="platforms">
   <div class="pfin">
     <div class="eye rv"><div class="eye-line"></div><span class="eye-tag">Quick Links</span></div>
