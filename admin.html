@@ -197,7 +197,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
 </head>
 <body>
 
-<!-- ── LOGIN (Google only) ── -->
 <div id="loginScreen">
   <div class="lcard">
     <div class="lemblem">
@@ -221,9 +220,7 @@ textarea.fi2{resize:vertical;min-height:90px;}
     <div class="ltitle">高雄城市學習網絡</div>
     <div class="lsub">管理後台 · Admin Dashboard</div>
     <div class="lerr" id="lerr"></div>
-    <!-- Google Sign-In Button -->
     <button class="g-btn" id="gSignInBtn" onclick="doGoogleLogin()">
-      <!-- Google Logo SVG -->
       <svg width="20" height="20" viewBox="0 0 48 48">
         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
         <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -240,7 +237,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
   </div>
 </div>
 
-<!-- ── ACCESS DENIED (logged in but no access & no pending request) ── -->
 <div id="accessDenied">
   <div class="ad-card">
     <div class="ad-icon">🔐</div>
@@ -258,7 +254,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
   </div>
 </div>
 
-<!-- ── APP ── -->
 <div id="app">
   <div class="topbar">
     <a href="index.html" class="tbrand">
@@ -300,7 +295,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
 
   <div class="main">
 
-    <!-- DASHBOARD -->
     <div class="tc on" id="tc-dash">
       <div class="phdr"><div class="ptitle" id="dashGreet">歡迎回來 👋</div><div class="psub">高雄城市學習網絡管理後台</div></div>
       <div class="stats-row" id="dashStats"></div>
@@ -308,7 +302,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
       <div class="panel" id="dashReqPanel" style="display:none"><div class="panel-t">🔔 待審核申請</div><div id="dashReqs"></div></div>
     </div>
 
-    <!-- IMAGES -->
     <div class="tc" id="tc-images">
       <div class="phdr"><div class="ptitle">🖼 圖片輪播管理</div><div class="psub">管理首頁圖片輪播區</div></div>
       <div class="alert alert-info">Cloudinary Upload Preset：<strong>kaohsiung_gallery</strong>，Asset folder：<strong>kaohsiung-gallery</strong>，Mode：<strong>Unsigned</strong>。</div>
@@ -326,7 +319,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
     </div>
 
-    <!-- ANNOUNCEMENTS -->
     <div class="tc" id="tc-ann">
       <div class="phdr" style="display:flex;align-items:flex-end;justify-content:space-between;">
         <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告</div></div>
@@ -341,7 +333,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
     </div>
 
-    <!-- USERS (admin only) -->
     <div class="tc" id="tc-users">
       <div class="phdr"><div class="ptitle">👥 使用者管理</div><div class="psub">管理所有已登入的使用者與管理員申請</div></div>
       <div class="panel">
@@ -361,7 +352,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
     </div>
 
-    <!-- PROFILE -->
     <div class="tc" id="tc-profile">
       <div class="phdr"><div class="ptitle">👤 帳號資料</div><div class="psub">您的 Google 帳號資訊</div></div>
       <div class="panel">
@@ -377,7 +367,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
   </div>
 </div>
 
-<!-- IMAGE MODAL -->
 <div class="mover" id="imgModal">
   <div class="mbox">
     <div class="mtitle">編輯圖片資訊</div>
@@ -395,7 +384,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
   </div>
 </div>
 
-<!-- ANNOUNCE MODAL -->
 <div class="mover" id="annModal">
   <div class="mbox">
     <div class="mtitle" id="annModalTitle">新增公告</div>
@@ -424,7 +412,6 @@ textarea.fi2{resize:vertical;min-height:90px;}
 
 <div class="toast" id="toast"></div>
 
-<!-- ── FIREBASE ── -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -457,9 +444,19 @@ window.doGoogleLogin=async()=>{
   lerr('');
   const btn=document.getElementById('gSignInBtn');
   btn.disabled=true;btn.textContent='登入中…';
-  try{await signInWithPopup(auth,provider);}
+  try{
+    await signInWithPopup(auth,provider);
+  }
   catch(e){
-    if(e.code!=='auth/popup-closed-by-user') lerr('登入失敗：'+e.message);
+    if(e.code!=='auth/popup-closed-by-user') {
+      // 硬核除錯：攔截 403 與網路錯誤，給予精準的 GCP 金鑰配置警告
+      let errorMsg = e.message;
+      if (errorMsg.includes('network') || errorMsg.includes('403') || errorMsg.includes('configuration')) {
+        errorMsg += " [致命錯誤：請至 GCP 檢查 API 金鑰的 HTTP Referrer 限制，確認已將 firebaseapp.com 加入白名單。]";
+      }
+      lerr('登入失敗：' + errorMsg);
+      console.error("[Auth Error]", e);
+    }
     btn.disabled=false;
     btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> 使用 Google 帳號登入`;
   }
