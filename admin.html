@@ -431,19 +431,24 @@ textarea.fi2{resize:vertical;min-height:90px;}
       <div class="fg2"><label class="fl2">發布局處</label><input type="text" class="fi2" id="aBureau" placeholder="例：教育局"></div>
     </div>
 
-    <div class="fg2"><label class="fl2">活動地點 (選填)</label><input type="text" class="fi2" id="aLocation" placeholder="例：高雄市教育局大禮堂"></div>
-    
     <div class="frow">
-      <div class="fg2"><label class="fl2">上架日期 (必填，預設今日)</label><input type="date" class="fi2" id="aPublishDate"></div>
       <div class="fg2"><label class="fl2">活動日期 (選填)</label><input type="date" class="fi2" id="aDate"></div>
+      <div class="fg2"><label class="fl2">活動時間 (選填)</label><input type="text" class="fi2" id="aTime" placeholder="例：09:00-11:30"></div>
     </div>
     
     <div class="frow">
+      <div class="fg2"><label class="fl2">活動地點 (選填)</label><input type="text" class="fi2" id="aLocation" placeholder="例：高雄市教育局大禮堂"></div>
+      <div class="fg2"><label class="fl2">連絡電話 (選填)</label><input type="text" class="fi2" id="aPhone" placeholder="例：07-3411373 分機 111"></div>
+    </div>
+
+    <div class="frow">
+      <div class="fg2"><label class="fl2">上架日期 (必填，預設今日)</label><input type="date" class="fi2" id="aPublishDate"></div>
       <div class="fg2"><label class="fl2">下架日期 (留空則不自動下架)</label><input type="date" class="fi2" id="aTakeDownDate"></div>
-      <div class="fg2" style="display:flex;gap:20px;align-items:flex-end;padding-bottom:10px;">
-        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aPinned"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--danger);font-weight:700;">📌 置頂公告</span></div>
-        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">允許前台顯示</span></div>
-      </div>
+    </div>
+    
+    <div class="fg2" style="display:flex;gap:20px;align-items:center;padding-bottom:10px;">
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aPinned"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--danger);font-weight:700;">📌 置頂公告</span></div>
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">允許前台顯示</span></div>
     </div>
 
     <div class="facts"><button class="btn btn-p" onclick="saveAnn()">儲存公告</button><button class="btn btn-ghost" onclick="closeModal('annModal')">取消</button></div>
@@ -815,6 +820,7 @@ function startAnnListener(){
     if(snap.empty) { tb.innerHTML=''; em.style.display=''; return; }
     em.style.display='none';
     
+    // 後台排序：置頂優先 -> 自訂排序小到大 -> 建立時間新到舊
     const docs = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b) => {
       if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
       if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
@@ -835,6 +841,7 @@ function startAnnListener(){
       const pinIcon = a.isPinned ? '<span style="color:var(--danger);" title="置頂顯示">📌 </span>' : '';
       const dateHtml = `<div style="margin-bottom:4px;">發布：${a.publishDate||'—'}</div><div style="margin-bottom:4px;">活動：${a.date||'—'}</div><div style="color:var(--tdim);">下架：${a.takeDownDate||'—'}</div>`;
       
+      // 公告縮圖生成
       const imgThumb = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_80,h_50,c_fill/')}" style="width:50px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;">` : `<div style="width:50px;height:36px;background:var(--bg3);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:14px;">📄</div>`;
       
       return `<tr draggable="true" data-id="${a.id}" data-pinned="${a.isPinned===true}" class="drag-row">
@@ -874,6 +881,8 @@ window.openAnnModal=async id=>{
     document.getElementById('aCat').value=a.category||'公告';
     document.getElementById('aBureau').value=a.bureau||'';
     document.getElementById('aLocation').value=a.location||'';
+    document.getElementById('aTime').value=a.time||'';
+    document.getElementById('aPhone').value=a.phone||'';
     document.getElementById('aPublishDate').value=a.publishDate||'';
     document.getElementById('aDate').value=a.date||'';
     document.getElementById('aTakeDownDate').value=a.takeDownDate||'';
@@ -895,6 +904,8 @@ window.openAnnModal=async id=>{
     document.getElementById('aCat').value='公告';
     document.getElementById('aBureau').value='';
     document.getElementById('aLocation').value='';
+    document.getElementById('aTime').value='';
+    document.getElementById('aPhone').value='';
     document.getElementById('aPublishDate').value=new Date().toISOString().split('T')[0];
     document.getElementById('aDate').value='';
     document.getElementById('aTakeDownDate').value='';
@@ -916,6 +927,7 @@ window.saveAnn=async()=>{
   if(!pubDate)return toast('請設定上架日期','err');
   
   const isPinned = document.getElementById('aPinned').checked;
+  // 若是新增，預設 order 放最後。若是編輯，維持原 order。
   let order = 0;
   if(id) {
     const oldDoc = await getDoc(doc(db,'announcements',id));
@@ -931,6 +943,8 @@ window.saveAnn=async()=>{
     category:document.getElementById('aCat').value,
     bureau:document.getElementById('aBureau').value.trim(),
     location:document.getElementById('aLocation').value.trim(),
+    time:document.getElementById('aTime').value.trim(),
+    phone:document.getElementById('aPhone').value.trim(),
     publishDate:pubDate,
     date:document.getElementById('aDate').value,
     takeDownDate:document.getElementById('aTakeDownDate').value,
@@ -973,6 +987,13 @@ window.seedTickers=async()=>{
     await addDoc(collection(db,'tickers'),{content:defs[i], order: cnt + i, createdAt:serverTimestamp(),createdBy:cu.email});
   }
   toast('✅ 預設跑馬燈匯入完成','ok');
+};
+
+// 更新單一跑馬燈排序
+window.updateTickerOrder = async (id, val) => {
+  const newOrder = parseInt(val) || 0;
+  await updateDoc(doc(db,'tickers', id), {order: newOrder});
+  toast('排序已更新', 'ok');
 };
 
 function startTickerListener(){
