@@ -278,6 +278,21 @@ textarea.fi2{resize:vertical;min-height:90px;}
     <div class="tc" id="tc-images">
       <div class="phdr"><div class="ptitle">🖼 圖片輪播管理</div><div class="psub">管理首頁圖片輪播區</div></div>
       <div class="alert alert-info">Cloudinary Upload Preset：<strong>kaohsiung_gallery</strong>，Asset folder：<strong>kaohsiung-gallery</strong>，Mode：<strong>Unsigned</strong>。</div>
+      
+      <div class="panel">
+        <div class="panel-t">⚙️ 首頁輪播設定</div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+          <label style="font-size:13px;color:var(--tdim);">顯示模式：</label>
+          <select class="fi2" id="cMode" style="width:auto;">
+            <option value="random">🔀 隨機抽取 (預設)</option>
+            <option value="ordered">🔢 依下方自訂排序</option>
+          </select>
+          <label style="font-size:13px;color:var(--tdim);">前台顯示張數：</label>
+          <input type="number" class="fi2" id="cLimit" style="width:80px;" min="1" max="50" value="10">
+          <button class="btn btn-ghost" onclick="saveCarouselSettings()">儲存設定</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-t">⬆ 上傳新圖片</div>
         <div class="upload-zone" id="dz" onclick="openUpload()">
@@ -455,7 +470,7 @@ const db=getFirestore(fbApp);
 const provider=new GoogleAuthProvider();
 
 let cu=null, cp=null;
-let unsubImg=null, unsubAnn=null, unsubTicker=null, unsubTickerSpeed=null;
+let unsubImg=null, unsubAnn=null, unsubTicker=null, unsubTickerSpeed=null, unsubCarousel=null;
 let uploadWidget=null;
 let annUploadWidget=null;
 
@@ -487,7 +502,7 @@ window.doGoogleLogin=async()=>{
 };
 
 window.doLogout=async()=>{
-  if(unsubImg)unsubImg();if(unsubAnn)unsubAnn();if(unsubTicker)unsubTicker();if(unsubTickerSpeed)unsubTickerSpeed();
+  if(unsubImg)unsubImg();if(unsubAnn)unsubAnn();if(unsubTicker)unsubTicker();if(unsubTickerSpeed)unsubTickerSpeed();if(unsubCarousel)unsubCarousel();
   await signOut(auth);
 };
 
@@ -620,7 +635,6 @@ window.makeSortable = function(tbodyId, type) {
       const id = row.dataset.id;
       if (type === 'announcements') {
         const isPinned = row.dataset.pinned === 'true';
-        // 依照要求防護邏輯：置頂與一般各自計算順序。硬拉也會在寫入後彈回！
         const newOrder = isPinned ? pinnedIdx++ : unpinnedIdx++;
         batch.update(doc(db, type, id), { order: newOrder });
       } else {
@@ -656,7 +670,26 @@ async function renderDash(){
   } else rp.style.display='none';
 }
 
-/* ── IMAGES (DRAG & DROP + WIDGET) ── */
+/* ── CAROUSEL SETTINGS & IMAGES ── */
+if(unsubCarousel) unsubCarousel();
+unsubCarousel = onSnapshot(doc(db,'settings','carousel'), snap => {
+  if(snap.exists()) {
+    const d = snap.data();
+    const mInput = document.getElementById('cMode');
+    const lInput = document.getElementById('cLimit');
+    if(mInput) mInput.value = d.mode || 'random';
+    if(lInput) lInput.value = d.limit || 10;
+  }
+});
+
+window.saveCarouselSettings = async() => {
+  const mode = document.getElementById('cMode').value;
+  const limit = parseInt(document.getElementById('cLimit').value);
+  if(!limit || limit < 1) return toast('顯示張數至少為 1', 'err');
+  await setDoc(doc(db, 'settings', 'carousel'), {mode, limit}, {merge:true});
+  toast('輪播設定已儲存', 'ok');
+};
+
 window.openUpload=function(){
   if(!uploadWidget)uploadWidget=cloudinary.createUploadWidget({
     cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,folder:'kaohsiung-gallery',
@@ -801,9 +834,17 @@ function startAnnListener(){
       const pinIcon = a.isPinned ? '<span style="color:var(--danger);" title="置頂顯示">📌 </span>' : '';
       const dateHtml = `<div style="margin-bottom:4px;">活：${a.date||'—'}</div><div style="color:var(--tdim);">下：${a.takeDownDate||'—'}</div>`;
       
+      // 公告縮圖生成
+      const imgThumb = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_80,h_50,c_fill/')}" style="width:50px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;">` : `<div style="width:50px;height:36px;background:var(--bg3);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:14px;">📄</div>`;
+      
       return `<tr draggable="true" data-id="${a.id}" data-pinned="${a.isPinned===true}" class="drag-row">
         <td class="drag-handle" title="按住拖曳排序">☰</td>
-        <td><div style="font-weight:500;">${pinIcon}${a.imgUrl?'🖼 ':''}${a.title}</div></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${imgThumb}
+            <div><div style="font-weight:500;">${pinIcon}${a.title}</div></div>
+          </div>
+        </td>
         <td><span class="badge b-user">${a.category||'公告'}</span></td>
         <td style="font-family:'Space Mono',monospace;font-size:11px;">${dateHtml}</td>
         <td>${statusBadge}</td>
@@ -929,6 +970,13 @@ window.seedTickers=async()=>{
   toast('✅ 預設跑馬燈匯入完成','ok');
 };
 
+// 更新單一跑馬燈排序
+window.updateTickerOrder = async (id, val) => {
+  const newOrder = parseInt(val) || 0;
+  await updateDoc(doc(db,'tickers', id), {order: newOrder});
+  toast('排序已更新', 'ok');
+};
+
 function startTickerListener(){
   if(unsubTickerSpeed)unsubTickerSpeed();
   unsubTickerSpeed=onSnapshot(doc(db,'settings','ticker'), snap => {
@@ -944,27 +992,25 @@ function startTickerListener(){
     if (snap.empty) { tb.innerHTML = ''; em.style.display = ''; return; }
     em.style.display = 'none';
     
+    // 前端排序：自訂排序小到大 -> 建立時間新到舊
     const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => {
       if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
       return (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0);
     });
     
-    tb.innerHTML = docs.map(t => `<tr draggable="true" data-id="${t.id}" class="drag-row">
-      <td class="drag-handle" title="按住拖曳排序">☰</td>
+    tb.innerHTML = docs.map(t => `<tr>
+      <td><input type="number" class="fi2" style="width:60px;padding:6px;text-align:center;" value="${t.order||0}" onchange="updateTickerOrder('${t.id}', this.value)"></td>
       <td style="font-weight:500;">${t.content}</td>
       <td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${fmtDate(t.createdAt)}</td>
       <td><button class="btn btn-sm btn-d" onclick="delTicker('${t.id}')">刪除</button></td>
     </tr>`).join('');
-    
-    // 啟動拖曳排序機制
-    makeSortable('tickerTbody', 'tickers');
   });
 }
 
 window.addTicker=async()=>{
   const content=document.getElementById('tContent').value.trim();
   if(!content)return toast('請輸入跑馬燈內容','err');
-  const cnt = (await getDocs(collection(db,'tickers'))).size;
+  const cnt = (await getDocs(collection(db,'tickers'))).size; // 自動排到最後
   await addDoc(collection(db,'tickers'),{content, order: cnt, createdAt:serverTimestamp(),createdBy:cu.email});
   document.getElementById('tContent').value='';
   toast('跑馬燈已新增','ok');
