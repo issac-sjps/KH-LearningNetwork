@@ -37,7 +37,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 /* ── SCROLL BAR ── */
 .scroll-bar{position:fixed;top:68px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));z-index:199;width:0;transition:width .1s;}
 
-/* ── TICKER (滿版無縫滾動) ── */
+/* ── TICKER ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
 .tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
@@ -86,7 +86,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .ann-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: var(--navy); }
 .ann-card:hover::before { transform: scaleY(1); }
 
-.ann-img { width: 320px; height: auto; object-fit: contain; flex-shrink: 0; border-radius: 6px; background-color: var(--bg3); align-self: flex-start; }
+/* 左側區塊：圖片與活動資訊卡 */
+.ann-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; align-self: flex-start;}
+.ann-img { width: 100%; height: auto; object-fit: contain; border-radius: 6px; background-color: var(--bg3); display: block;}
+.ann-info-card { background: var(--bg2); padding: 16px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: var(--tdim); }
+.ann-info-item { display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.ann-info-icon { width: 18px; text-align: center; flex-shrink: 0; }
+
 .ann-body { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
 .acat { display: inline-block; font-size: 11px; padding: 4px 12px; border-radius: 12px; font-family: 'Space Mono', monospace; letter-spacing: .1em; font-weight: 700; align-self: flex-start; margin-bottom: 12px; }
@@ -96,9 +102,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .cat-culture{background:#F9E8F2;color:var(--magenta);}
 .cat-def{background:var(--bg3);color:var(--navy);}
 
-.atitle { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: var(--navy); }
-.ameta-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--tdim); margin-bottom: 16px; background: var(--bg2); padding: 10px 14px; border-radius: 6px; }
-.ameta-item { display: flex; align-items: center; gap: 6px; }
+.atitle { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 16px; color: var(--navy); }
 
 /* 文字內容與折疊設計 */
 .aex { font-size: 15px; color: var(--text); line-height: 1.8; margin-bottom: 24px; flex: 1; }
@@ -157,15 +161,14 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   .cw { height: 420px; }
   .co { background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 60%, transparent 100%); }
   .cb{ left:20px; right:20px; top:auto; bottom:32px; transform:none; }
-  .cdesc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:16px; }
   .carr{ width:36px; height:36px; font-size:16px; top:40%; }
   #carr-l{ left:12px; } #carr-r{ right:12px; }
   .cc,.cdots{display:none;}
   
   .annwrap{padding:48px 20px;}
   
-  /* 手機版公告：轉為上圖下文堆疊 */
   .ann-card{flex-direction:column;gap:20px;padding:20px;}
+  .ann-left{width:100%;}
   .ann-img{width:100%; max-height: 400px; object-fit: cover; align-self: center; }
 
   /* 手機版：限制行數並顯示閱讀更多按鈕 */
@@ -366,7 +369,7 @@ onSnapshot(query(collection(db,'images')), s => {
   processCarousel();
 });
 
-/* ── ANNOUNCEMENTS (上架過濾、三重排序機制、手機折疊) ── */
+/* ── ANNOUNCEMENTS (上架過濾、三重排序機制、手機折疊、左側資訊卡) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
 let rawAnns = [];
 window.currentAnnSort = 'def';
@@ -420,25 +423,29 @@ function renderAnnouncements() {
   
   g.innerHTML = activeAnns.map(a => {
     const fullText = (a.content||'').replace(/\n/g, '<br>');
-    const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
     const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:18px;margin-right:8px;" title="置頂公告">📌</span>' : '';
     
-    const eventDateStr = a.date ? `📅 活動日期：${a.date}` : '';
-    const locStr = a.location ? `📍 地點：${a.location}` : '';
-    const metaHtml = (eventDateStr || locStr) ? 
-      `<div class="ameta-row">
-         ${eventDateStr ? `<div class="ameta-item">${eventDateStr}</div>` : ''}
-         ${locStr ? `<div class="ameta-item">${locStr}</div>` : ''}
-       </div>` : '';
+    // 左側資訊卡邏輯建構
+    const eventDateStr = a.date ? `<div class="ann-info-item"><span class="ann-info-icon">📅</span><span>活動日期：${a.date}</span></div>` : '';
+    const eventTimeStr = a.time ? `<div class="ann-info-item"><span class="ann-info-icon">⏰</span><span>活動時間：${a.time}</span></div>` : '';
+    const locStr = a.location ? `<div class="ann-info-item"><span class="ann-info-icon">📍</span><span>活動地點：${a.location}</span></div>` : '';
+    const phoneStr = a.phone ? `<div class="ann-info-item"><span class="ann-info-icon">📞</span><span>連絡電話：${a.phone}</span></div>` : '';
+    
+    const infoCardHtml = (eventDateStr || eventTimeStr || locStr || phoneStr) ? 
+      `<div class="ann-info-card">${eventDateStr}${eventTimeStr}${locStr}${phoneStr}</div>` : '';
+      
+    const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
+
+    const leftColHtml = (imgHtml || infoCardHtml) ? 
+      `<div class="ann-left">${imgHtml}${infoCardHtml}</div>` : '';
 
     return `<div class="ann-card">
-              ${imgHtml}
+              ${leftColHtml}
               <div class="ann-body">
                 <div style="margin-bottom:12px;">
                   <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
                 </div>
                 <div class="atitle">${pinHtml}${a.title}</div>
-                ${metaHtml}
                 <div class="aex">
                   <div class="aex-content">${fullText}</div>
                   <button class="read-more" onclick="toggleReadMore(this)">閱讀更多 ▼</button>
