@@ -37,7 +37,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 /* ── SCROLL BAR ── */
 .scroll-bar{position:fixed;top:68px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));z-index:199;width:0;transition:width .1s;}
 
-/* ── TICKER (移除 padding-left:100vw 讓它一開始就充滿畫面) ── */
+/* ── TICKER (滿版無縫滾動) ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
 .tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
@@ -157,12 +157,14 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   .cw { height: 420px; }
   .co { background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 60%, transparent 100%); }
   .cb{ left:20px; right:20px; top:auto; bottom:32px; transform:none; }
+  .cdesc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:16px; }
   .carr{ width:36px; height:36px; font-size:16px; top:40%; }
   #carr-l{ left:12px; } #carr-r{ right:12px; }
   .cc,.cdots{display:none;}
   
   .annwrap{padding:48px 20px;}
   
+  /* 手機版公告：轉為上圖下文堆疊 */
   .ann-card{flex-direction:column;gap:20px;padding:20px;}
   .ann-img{width:100%; max-height: 400px; object-fit: cover; align-self: center; }
 
@@ -191,8 +193,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <a href="resources.html">學習資源</a>
     <a href="vision.html">發展願景</a>
     <a href="gallery.html">相片錦集</a>
-    <a href="resources.html#districts">行政區</a>
-    <a href="resources.html#platforms">平台連結</a>
     <a href="admin.html" class="nbtn">管理後台 ▸</a>
   </div>
   <button class="hamburger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
@@ -302,7 +302,6 @@ onSnapshot(query(collection(db, 'tickers')), snap => {
     return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
   });
   const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
-  // 複製 4 份確保在任何超寬螢幕上，一開始就能填滿視窗，不會留白
   track.innerHTML = html.repeat(4);
 });
 
@@ -370,7 +369,7 @@ onSnapshot(query(collection(db,'images')), s => {
 /* ── ANNOUNCEMENTS (上架過濾、三重排序機制、手機折疊) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
 let rawAnns = [];
-window.currentAnnSort = 'def'; // 預設排序模式
+window.currentAnnSort = 'def';
 
 window.setAnnSort = function(mode) {
   window.currentAnnSort = mode;
@@ -388,35 +387,30 @@ window.toggleReadMore = function(btn) {
 function renderAnnouncements() {
   const today = new Date().toISOString().split('T')[0];
   
-  // 1. 先執行過濾條件 (必須啟用、且未下架、且已達上架日期)
   let activeAnns = rawAnns.filter(a => {
     if (a.isActive === false) return false;
     if (a.takeDownDate && a.takeDownDate < today) return false; 
-    if (a.publishDate && a.publishDate > today) return false; // 未達上架日期不顯示
+    if (a.publishDate && a.publishDate > today) return false; 
     return true;
   });
 
-  // 2. 依照所選模式排序
   activeAnns = activeAnns.sort((a, b) => {
     if (window.currentAnnSort === 'def') {
-      // 預設：置頂優先 -> 自訂排序小到大 -> 發布時間新到舊
       if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
       if ((a.order || 0) !== (b.order || 0)) return (a.order || 0) - (b.order || 0);
       return (b.publishDate || '0').localeCompare(a.publishDate || '0');
     } 
     else if (window.currentAnnSort === 'event') {
-      // 依活動日期：有日期的排前面，越近的排越上面 (由大到小排序，最新活動在前)
       const dateA = a.date || '0000-00-00';
       const dateB = b.date || '0000-00-00';
       return dateB.localeCompare(dateA);
     } 
     else if (window.currentAnnSort === 'pub') {
-      // 依發布日期：最新發布的排上面
       const pubA = a.publishDate || '0000-00-00';
       const pubB = b.publishDate || '0000-00-00';
       return pubB.localeCompare(pubA);
     }
-  }).slice(0, 20); // 最多渲染 20 筆
+  }).slice(0, 20); 
 
   const g = document.getElementById('annGrid');
   if(activeAnns.length === 0){
@@ -425,12 +419,10 @@ function renderAnnouncements() {
   }
   
   g.innerHTML = activeAnns.map(a => {
-    // 內文保留換行，加入 aex-content 外掛層以支援手機版截斷
     const fullText = (a.content||'').replace(/\n/g, '<br>');
     const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
     const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:18px;margin-right:8px;" title="置頂公告">📌</span>' : '';
     
-    // 活動日期與地點 UI
     const eventDateStr = a.date ? `📅 活動日期：${a.date}` : '';
     const locStr = a.location ? `📍 地點：${a.location}` : '';
     const metaHtml = (eventDateStr || locStr) ? 
