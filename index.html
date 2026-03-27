@@ -37,14 +37,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 /* ── SCROLL BAR ── */
 .scroll-bar{position:fixed;top:68px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));z-index:199;width:0;transition:width .1s;}
 
-/* ── TICKER (移除黃色標籤，乾淨滿版) ── */
+/* ── TICKER (移除 padding-left:100vw 讓它一開始就充滿畫面) ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
-.tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;padding-left:100vw;}
-@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-100%);}}
+.tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;}
+@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
 .tk-item::before{content:'◆';font-size:7px;opacity:.55;}
 
-/* ── CAROUSEL (移除黃色 .ctag) ── */
+/* ── CAROUSEL ── */
 .carousel{position:relative;background:#000;overflow:hidden;}
 .cw{position:relative;width:100%;height:520px;overflow:hidden;transition:height .3s;}
 .cs{position:absolute;inset:0;opacity:0;transition:opacity .8s;display:flex;}
@@ -73,8 +73,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .eye{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 .eye-line{width:28px;height:2px;background:var(--gold);}
 .eye-tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--teal);text-transform:uppercase;}
-.stitle{font-family:'Noto Serif TC',serif;font-size:clamp(24px,2.5vw,36px);font-weight:600;color:var(--navy);margin-bottom:8px;}
-.ssub{font-size:14px;color:var(--tdim);line-height:1.8;max-width:560px;margin-bottom:32px;}
+
+.sort-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+.sort-lbl { font-size: 14px; font-weight: 700; color: var(--navy); }
+.sort-btn { background: #fff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: var(--tdim); font-family: 'Noto Sans TC', sans-serif;}
+.sort-btn:hover { border-color: var(--navy); color: var(--navy); }
+.sort-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); font-weight: 700;}
 
 .ann-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
 .ann-card { display: flex; flex-direction: row; align-items: flex-start; gap: 32px; background: #fff; border: 1px solid var(--border); border-radius: var(--r); padding: 28px; transition: all .25s; position: relative; text-decoration: none; color: inherit; }
@@ -92,8 +96,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .cat-culture{background:#F9E8F2;color:var(--magenta);}
 .cat-def{background:var(--bg3);color:var(--navy);}
 
-.atitle { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 16px; color: var(--navy); }
+.atitle { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: var(--navy); }
+.ameta-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--tdim); margin-bottom: 16px; background: var(--bg2); padding: 10px 14px; border-radius: 6px; }
+.ameta-item { display: flex; align-items: center; gap: 6px; }
+
+/* 文字內容與折疊設計 */
 .aex { font-size: 15px; color: var(--text); line-height: 1.8; margin-bottom: 24px; flex: 1; }
+.aex-content { display: block; }
+.read-more { display: none; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--navy2); background: none; border: none; padding: 0; cursor: pointer; font-family: 'Noto Sans TC', sans-serif;}
+
 .amet { display: flex; justify-content: space-between; margin-top: auto; border-top: 1px solid var(--border); padding-top: 16px; }
 .adate { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--tdim); }
 .abureau { font-size: 12px; color: var(--navy); font-weight: 700; }
@@ -146,7 +157,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   .cw { height: 420px; }
   .co { background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 60%, transparent 100%); }
   .cb{ left:20px; right:20px; top:auto; bottom:32px; transform:none; }
-  .cdesc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:16px; }
   .carr{ width:36px; height:36px; font-size:16px; top:40%; }
   #carr-l{ left:12px; } #carr-r{ right:12px; }
   .cc,.cdots{display:none;}
@@ -155,6 +165,11 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   
   .ann-card{flex-direction:column;gap:20px;padding:20px;}
   .ann-img{width:100%; max-height: 400px; object-fit: cover; align-self: center; }
+
+  /* 手機版：限制行數並顯示閱讀更多按鈕 */
+  .aex-content { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .aex-content.expanded { display: block; -webkit-line-clamp: unset; }
+  .read-more { display: inline-block; }
 
   .statsbg{padding:32px 20px;}
   .quickbg{padding:32px 20px;}
@@ -199,8 +214,20 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 <section class="annwrap" id="announcements">
   <div class="sec-inner">
     <div class="eye rv"><div class="eye-line"></div><span class="eye-tag">Latest Announcements</span></div>
-    <h2 class="stitle rv">最新公告</h2>
-    <p class="ssub rv">由各局處管理員發布的學習資源公告與活動資訊</p>
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+      <div>
+        <h2 class="stitle rv" style="margin-bottom:4px;">最新公告</h2>
+        <p class="ssub rv" style="margin-bottom:0;">由各局處管理員發布的學習資源公告與活動資訊</p>
+      </div>
+      <div class="sort-bar rv">
+        <span class="sort-lbl">排序方式：</span>
+        <button class="sort-btn active" id="sort-def" onclick="setAnnSort('def')">預設推薦</button>
+        <button class="sort-btn" id="sort-event" onclick="setAnnSort('event')">📅 依活動日期</button>
+        <button class="sort-btn" id="sort-pub" onclick="setAnnSort('pub')">📢 依發布日期</button>
+      </div>
+    </div>
+
     <div class="ann-grid" id="annGrid">
       <div class="ann-empty"><p style="font-size:28px">⏳</p><p style="margin-top:8px;">載入中…</p></div>
     </div>
@@ -256,17 +283,16 @@ const db=getFirestore(initializeApp({
   appId:"1:140386001536:web:fa6902b4479f1a09273c65"
 }));
 
-/* ── TICKER 速度全域同步 ── */
+/* ── TICKER 速度全域同步與滿版複製 ── */
 onSnapshot(doc(db, 'settings', 'ticker'), snap => {
   const spd = snap.exists() ? snap.data().speed || 32 : 32;
   document.documentElement.style.setProperty('--t-speed', spd + 's');
 });
 
-/* ── TICKER 內容動態載入與自訂排序 ── */
 onSnapshot(query(collection(db, 'tickers')), snap => {
   const track = document.getElementById('tickerTrack');
   if (snap.empty) {
-    track.innerHTML = '<span class="tk-item">目前無最新跑馬燈資訊</span>'.repeat(5);
+    track.innerHTML = '<span class="tk-item">目前無最新跑馬燈資訊</span>'.repeat(10);
     return;
   }
   const docs = snap.docs.map(d => d.data()).sort((a, b) => {
@@ -274,7 +300,8 @@ onSnapshot(query(collection(db, 'tickers')), snap => {
     return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
   });
   const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
-  track.innerHTML = html + html;
+  // 複製 4 份確保在任何超寬螢幕上，一開始就能填滿視窗，不會留白
+  track.innerHTML = html.repeat(4);
 });
 
 /* ── CAROUSEL (支援全域隨機或自訂排序) ── */
@@ -286,7 +313,6 @@ function buildC(imgs){
     {title:'城市即學堂',desc:'高雄市跨局處城市學習網絡，整合9大局處資源，讓每位市民都能在生活圈找到學習管道。',link:'resources.html',lt:'探索學習資源'}
   ];
   const w=document.getElementById('cWrap'),d=document.getElementById('cDots');
-  // 注意：在此處移除了 ctag 的渲染
   w.innerHTML=slides.map((s,i)=>`<div class="cs${i===0?' on':''}" id="cs${i}">
     ${s.url?`<img src="${s.url.replace('/upload/','/upload/w_1920,q_auto,f_auto/')}" alt="${s.caption||''}">`:`<div class="${s.ph||'cph1'}"></div>`}
     <div class="co"></div>
@@ -339,55 +365,103 @@ onSnapshot(query(collection(db,'images')), s => {
   processCarousel();
 });
 
-/* ── ANNOUNCEMENTS (下架過濾與多重排序，完整顯示) ── */
+/* ── ANNOUNCEMENTS (上架過濾、三重排序機制、手機折疊) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
-onSnapshot(
-  query(collection(db,'announcements')), 
-  snap=>{
-    const today = new Date().toISOString().split('T')[0];
-    const docs = snap.docs.map(d => d.data());
-    
-    const activeAnns = docs.filter(a => {
-      if (a.isActive === false) return false;
-      if (a.takeDownDate && a.takeDownDate < today) return false; 
-      return true;
-    })
-    .sort((a, b) => {
+let rawAnns = [];
+window.currentAnnSort = 'def'; // 預設排序模式
+
+window.setAnnSort = function(mode) {
+  window.currentAnnSort = mode;
+  document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('sort-' + mode).classList.add('active');
+  renderAnnouncements();
+};
+
+window.toggleReadMore = function(btn) {
+  const content = btn.previousElementSibling;
+  content.classList.toggle('expanded');
+  btn.innerText = content.classList.contains('expanded') ? '收起內容 ▲' : '閱讀更多 ▼';
+};
+
+function renderAnnouncements() {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // 1. 先執行過濾條件 (必須啟用、且未下架、且已達上架日期)
+  let activeAnns = rawAnns.filter(a => {
+    if (a.isActive === false) return false;
+    if (a.takeDownDate && a.takeDownDate < today) return false; 
+    if (a.publishDate && a.publishDate > today) return false; // 未達上架日期不顯示
+    return true;
+  });
+
+  // 2. 依照所選模式排序
+  activeAnns = activeAnns.sort((a, b) => {
+    if (window.currentAnnSort === 'def') {
+      // 預設：置頂優先 -> 自訂排序小到大 -> 發布時間新到舊
       if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
       if ((a.order || 0) !== (b.order || 0)) return (a.order || 0) - (b.order || 0);
-      return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
-    })
-    .slice(0, 20);
-
-    const g=document.getElementById('annGrid');
-    if(activeAnns.length === 0){
-      g.innerHTML='<div class="ann-empty"><p style="font-size:28px">📢</p><p style="margin-top:8px;">目前尚無公告，請管理員登入後發布。</p></div>';
-      return;
+      return (b.publishDate || '0').localeCompare(a.publishDate || '0');
+    } 
+    else if (window.currentAnnSort === 'event') {
+      // 依活動日期：有日期的排前面，越近的排越上面 (由大到小排序，最新活動在前)
+      const dateA = a.date || '0000-00-00';
+      const dateB = b.date || '0000-00-00';
+      return dateB.localeCompare(dateA);
+    } 
+    else if (window.currentAnnSort === 'pub') {
+      // 依發布日期：最新發布的排上面
+      const pubA = a.publishDate || '0000-00-00';
+      const pubB = b.publishDate || '0000-00-00';
+      return pubB.localeCompare(pubA);
     }
+  }).slice(0, 20); // 最多渲染 20 筆
+
+  const g = document.getElementById('annGrid');
+  if(activeAnns.length === 0){
+    g.innerHTML='<div class="ann-empty"><p style="font-size:28px">📢</p><p style="margin-top:8px;">目前尚無符合條件的公告。</p></div>';
+    return;
+  }
+  
+  g.innerHTML = activeAnns.map(a => {
+    // 內文保留換行，加入 aex-content 外掛層以支援手機版截斷
+    const fullText = (a.content||'').replace(/\n/g, '<br>');
+    const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
+    const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:18px;margin-right:8px;" title="置頂公告">📌</span>' : '';
     
-    g.innerHTML = activeAnns.map(a => {
-      const fullText = (a.content||'').replace(/\n/g, '<br>');
-      const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
-      const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:18px;margin-right:8px;" title="置頂公告">📌</span>' : '';
-      
-      return `<a href="javascript:void(0)" class="ann-card" style="cursor:default;">
-                ${imgHtml}
-                <div class="ann-body">
-                  <div style="margin-bottom:12px;">
-                    <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
-                  </div>
-                  <div class="atitle">${pinHtml}${a.title}</div>
-                  <div class="aex">${fullText}</div>
-                  <div class="amet">
-                    <span class="adate">📅 發布日期：${a.date||'—'}</span>
-                    <span class="abureau">🏢 ${a.bureau||''}</span>
-                  </div>
+    // 活動日期與地點 UI
+    const eventDateStr = a.date ? `📅 活動日期：${a.date}` : '';
+    const locStr = a.location ? `📍 地點：${a.location}` : '';
+    const metaHtml = (eventDateStr || locStr) ? 
+      `<div class="ameta-row">
+         ${eventDateStr ? `<div class="ameta-item">${eventDateStr}</div>` : ''}
+         ${locStr ? `<div class="ameta-item">${locStr}</div>` : ''}
+       </div>` : '';
+
+    return `<div class="ann-card">
+              ${imgHtml}
+              <div class="ann-body">
+                <div style="margin-bottom:12px;">
+                  <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
                 </div>
-              </a>`;
-    }).join('');
-  },
-  _=>{document.getElementById('annGrid').innerHTML='<div class="ann-empty"><p>無法載入，請稍後再試。</p></div>';}
-);
+                <div class="atitle">${pinHtml}${a.title}</div>
+                ${metaHtml}
+                <div class="aex">
+                  <div class="aex-content">${fullText}</div>
+                  <button class="read-more" onclick="toggleReadMore(this)">閱讀更多 ▼</button>
+                </div>
+                <div class="amet">
+                  <span class="abureau">🏢 ${a.bureau||''}</span>
+                  <span class="adate">發布日期：${a.publishDate||'—'}</span>
+                </div>
+              </div>
+            </div>`;
+  }).join('');
+}
+
+onSnapshot(query(collection(db,'announcements')), snap => {
+  rawAnns = snap.docs.map(d => d.data());
+  renderAnnouncements();
+}, _=>{ document.getElementById('annGrid').innerHTML='<div class="ann-empty"><p>無法載入，請稍後再試。</p></div>'; });
 
 /* ── SCROLL PROGRESS ── */
 window.addEventListener('scroll',()=>{
