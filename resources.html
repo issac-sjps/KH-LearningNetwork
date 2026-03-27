@@ -33,7 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:8px;}
 @media(max-width:860px){
   nav{padding:0 20px;}
-  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-height:calc(100vh - 68px);overflow-y:auto;}
+  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
   nav.open .nl{display:flex;}
   .nl a{width:100%;text-align:center;padding:12px;}
   .hamburger{display:block;}
@@ -76,7 +76,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .bbar{flex:1;height:1px;background:var(--border);}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 
-/* ── RESOURCE CARDS WITH COLOR CODING ── */
 .rc{border:1px solid var(--border);border-radius:var(--r);padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:all .3s;position:relative;}
 .rc.bg-edu { background: #F4F8FF; border-color: #DDE8F6; }
 .rc.bg-work { background: #F0F9F9; border-color: #D5EEEE; }
@@ -148,10 +147,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 /* ── REVEAL ── */
 .rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
 .rv.vis{opacity:1;transform:translateY(0);}
-
-/* ── FAB ── */
-.fab{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--navy);color:#fff;text-decoration:none;padding:11px 18px;border-radius:24px;font-size:12px;font-weight:700;letter-spacing:.05em;box-shadow:0 4px 20px rgba(0,63,136,.35);transition:all .25s;display:flex;align-items:center;gap:8px;}
-.fab:hover{background:var(--navy2);transform:translateY(-2px);}
 </style>
 </head>
 <body>
@@ -168,8 +163,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <a href="resources.html" class="active">學習資源</a>
     <a href="vision.html">發展願景</a>
     <a href="gallery.html">相片錦集</a>
-    <a href="#districts">行政區</a>
-    <a href="#platforms">平台連結</a>
     <a href="admin.html" class="nbtn">管理後台 ▸</a>
   </div>
   <button class="hamburger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
@@ -269,7 +262,9 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     </div>
   </div>
 
-</div><section class="distbg" id="districts">
+</div>
+
+<section class="distbg" id="districts">
   <div class="distin">
     <div class="distleft rv">
       <h2 class="stitle" style="color:#fff;">學習資源遍布<br>38個行政區</h2>
@@ -330,16 +325,13 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
 </footer>
 
-<a href="admin.html" class="fab">⚙ 管理後台</a>
+<script src="chatbot.js"></script>
 
 <script>
-/* ── SCROLL BAR ── */
 window.addEventListener('scroll',()=>{
   document.getElementById('scrollBar').style.width=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';
 });
 
-/* ── AUDIENCE FILTER ── */
-// Read URL param on load
 const urlF=new URLSearchParams(location.search).get('f')||'all';
 document.querySelectorAll('.atab').forEach(t=>{
   if(t.dataset.f===urlF){t.classList.add('on');}else{t.classList.remove('on');}
@@ -359,7 +351,6 @@ function filterGroups(f){
   });
 }
 
-/* ── REVEAL ── */
 const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target);}}),{threshold:.07,rootMargin:'0px 0px -30px 0px'});
 document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
 </script>
