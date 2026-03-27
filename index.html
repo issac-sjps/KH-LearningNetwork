@@ -14,6 +14,8 @@
   --bg:#fff;--bg2:#F2F8FF;--bg3:#E8F2FC;
   --text:#1A2840;--tdim:#5A6A80;--border:#C8DDEF;
   --shadow:0 4px 24px rgba(0,63,136,.10);--r:8px;
+  /* 跑馬燈動態速度變數，預設 32s */
+  --t-speed: 32s;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -45,7 +47,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 
 /* ── TICKER ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
-.tk-track{display:flex;gap:40px;animation:tick 32s linear infinite;white-space:nowrap;}
+.tk-lbl{background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.2em;padding:4px 16px;white-space:nowrap;flex-shrink:0;margin-right:16px;}
+/* 核心：動畫時間綁定 CSS 變數 */
+.tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
 .tk-item::before{content:'◆';font-size:7px;opacity:.55;}
@@ -158,10 +162,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 
 /* ── COUNTER ── */
 .cnt{display:inline-block;}
-
-/* ── FAB ── */
-.fab{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--navy);color:#fff;text-decoration:none;padding:11px 18px;border-radius:24px;font-size:12px;font-weight:700;letter-spacing:.05em;box-shadow:0 4px 20px rgba(0,63,136,.35);transition:all .25s;display:flex;align-items:center;gap:8px;}
-.fab:hover{background:var(--navy2);transform:translateY(-2px);}
 </style>
 </head>
 <body>
@@ -244,11 +244,11 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
 </footer>
 
-<a href="admin.html" class="fab">⚙ 管理後台</a>
+<script src="chatbot.js"></script>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,query,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getFirestore,collection,query,onSnapshot,doc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const db=getFirestore(initializeApp({
   apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",
@@ -259,18 +259,21 @@ const db=getFirestore(initializeApp({
   appId:"1:140386001536:web:fa6902b4479f1a09273c65"
 }));
 
-/* ── TICKER (動態載入) ── */
+/* ── TICKER 速度全域同步 ── */
+onSnapshot(doc(db, 'settings', 'ticker'), snap => {
+  const spd = snap.exists() ? snap.data().speed || 32 : 32;
+  document.documentElement.style.setProperty('--t-speed', spd + 's');
+});
+
+/* ── TICKER 內容動態載入 ── */
 onSnapshot(query(collection(db, 'tickers')), snap => {
   const track = document.getElementById('tickerTrack');
   if (snap.empty) {
-    const emptyHtml = '<span class="tk-item">目前無最新跑馬燈資訊</span>';
-    track.innerHTML = emptyHtml.repeat(5);
+    track.innerHTML = '<span class="tk-item">目前無最新跑馬燈資訊</span>'.repeat(5);
     return;
   }
-  // 依建立時間排序，並產生 HTML
   const docs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
   const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
-  // 複製兩份以確保動畫無縫銜接
   track.innerHTML = html + html;
 });
 
