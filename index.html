@@ -14,7 +14,6 @@
   --bg:#fff;--bg2:#F2F8FF;--bg3:#E8F2FC;
   --text:#1A2840;--tdim:#5A6A80;--border:#C8DDEF;
   --shadow:0 4px 24px rgba(0,63,136,.10);--r:8px;
-  /* 跑馬燈動態速度變數，預設 32s */
   --t-speed: 32s;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -48,7 +47,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 /* ── TICKER ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
 .tk-lbl{background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.2em;padding:4px 16px;white-space:nowrap;flex-shrink:0;margin-right:16px;}
-/* 核心：動畫時間綁定 CSS 變數 */
 .tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
@@ -265,14 +263,18 @@ onSnapshot(doc(db, 'settings', 'ticker'), snap => {
   document.documentElement.style.setProperty('--t-speed', spd + 's');
 });
 
-/* ── TICKER 內容動態載入 ── */
+/* ── TICKER 內容動態載入與自訂排序 ── */
 onSnapshot(query(collection(db, 'tickers')), snap => {
   const track = document.getElementById('tickerTrack');
   if (snap.empty) {
     track.innerHTML = '<span class="tk-item">目前無最新跑馬燈資訊</span>'.repeat(5);
     return;
   }
-  const docs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+  // 依據後台 order (小到大) 排序，若 order 相同則比較建立時間 (新到舊)
+  const docs = snap.docs.map(d => d.data()).sort((a, b) => {
+    if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
+    return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
+  });
   const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
   track.innerHTML = html + html;
 });
@@ -329,15 +331,27 @@ onSnapshot(query(collection(db,'images')), s => {
   buildC(activeImgs);
 }, _ => buildC([]));
 
-/* ── ANNOUNCEMENTS (前端過濾排序) ── */
+/* ── ANNOUNCEMENTS (下架過濾與多重排序) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
 onSnapshot(
   query(collection(db,'announcements')), 
   snap=>{
+    const today = new Date().toISOString().split('T')[0];
     const docs = snap.docs.map(d => d.data());
-    const activeAnns = docs.filter(a => a.isActive !== false)
-                           .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-                           .slice(0, 4); 
+    
+    // 1. 過濾：停用、或已達下架日期者不顯示
+    const activeAnns = docs.filter(a => {
+      if (a.isActive === false) return false;
+      if (a.takeDownDate && a.takeDownDate < today) return false; 
+      return true;
+    })
+    // 2. 排序：(1)置頂優先 (2)Order數字小優先 (3)建立時間新優先
+    .sort((a, b) => {
+      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+      if ((a.order || 0) !== (b.order || 0)) return (a.order || 0) - (b.order || 0);
+      return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
+    })
+    .slice(0, 4); 
 
     const g=document.getElementById('annGrid');
     document.getElementById('annMore').style.display = activeAnns.length >= 4 ? '' : 'none';
@@ -349,11 +363,12 @@ onSnapshot(
     g.innerHTML = activeAnns.map(a => {
       const ex = (a.content||'').substring(0,60);
       const imgHtml = a.imgUrl ? `<div class="ann-img" style="background-image:url(${a.imgUrl.replace('/upload/','/upload/w_400,q_auto,f_auto/')})"></div>` : '';
+      const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:12px;margin-right:4px;" title="置頂公告">📌</span>' : '';
       return `<a href="#" class="ann-card">
                 ${imgHtml}
                 <div class="ann-body">
                   <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
-                  <div class="atitle">${a.title}</div>
+                  <div class="atitle">${pinHtml}${a.title}</div>
                   <div class="aex">${ex}${(a.content||'').length>60?'…':''}</div>
                   <div class="amet"><span class="adate">${a.date||''}</span><span class="abureau">${a.bureau||''}</span></div>
                 </div>
