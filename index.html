@@ -45,7 +45,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 
 /* ── TICKER ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
-.tk-lbl{background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.2em;padding:4px 16px;white-space:nowrap;flex-shrink:0;margin-right:16px;}
 .tk-track{display:flex;gap:40px;animation:tick 32s linear infinite;white-space:nowrap;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
@@ -85,6 +84,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
   #carr-l{ left:12px; } #carr-r{ right:12px; }
   .cc,.cdots{display:none;}
   .annwrap{padding:48px 20px;}
+  .ann-grid{grid-template-columns:1fr;}
+  .ann-card{flex-direction:column;gap:12px;padding:16px;}
+  .ann-img{width:100%;height:160px;}
   .statsbg{padding:32px 20px;}
   .statsin{grid-template-columns:1fr 1fr;}
   .quickbg{padding:32px 20px;}
@@ -100,7 +102,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .stitle{font-family:'Noto Serif TC',serif;font-size:clamp(24px,2.5vw,36px);font-weight:600;color:var(--navy);margin-bottom:8px;}
 .ssub{font-size:14px;color:var(--tdim);line-height:1.8;max-width:560px;margin-bottom:32px;}
 
-/* 公告網格改為兩欄，為圖片與文字留出空間 */
 .ann-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
 .ann-card{display:flex;align-items:stretch;gap:16px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;color:inherit;}
 .ann-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
@@ -124,13 +125,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .ann-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);}
 .ann-more{display:block;text-align:center;margin-top:24px;font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;letter-spacing:.04em;}
 .ann-more:hover{text-decoration:underline;}
-
-/* 手機版公告佈局：轉為垂直堆疊 */
-@media(max-width:768px){
-  .ann-grid{grid-template-columns:1fr;}
-  .ann-card{flex-direction:column;gap:12px;padding:16px;}
-  .ann-img{width:100%;height:160px;}
-}
 
 /* ── STATS ── */
 .statsbg{background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));padding:48px 72px;}
@@ -191,24 +185,8 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 <div class="scroll-bar" id="scrollBar"></div>
 
 <div class="ticker">
-  <div class="tk-lbl">最新</div>
-  <div class="tk-track">
-    <span class="tk-item">樂齡學習中心・38行政區全覆蓋</span>
-    <span class="tk-item">淨零學院・11大國際標準認證持續招生</span>
-    <span class="tk-item">高美講堂・藝術跨域系列講座</span>
-    <span class="tk-item">勞工大學・每季新開課程線上報名</span>
-    <span class="tk-item">智慧圖書館・24小時自助借閱服務</span>
-    <span class="tk-item">行動健身房巡迴車・115年新增第二台</span>
-    <span class="tk-item">銀髮人才服務・55歲以上就業媒合</span>
-    <span class="tk-item">原住民族部落大學・免學費終身教育</span>
-    <span class="tk-item">樂齡學習中心・38行政區全覆蓋</span>
-    <span class="tk-item">淨零學院・11大國際標準認證持續招生</span>
-    <span class="tk-item">高美講堂・藝術跨域系列講座</span>
-    <span class="tk-item">勞工大學・每季新開課程線上報名</span>
-    <span class="tk-item">智慧圖書館・24小時自助借閱服務</span>
-    <span class="tk-item">行動健身房巡迴車・115年新增第二台</span>
-    <span class="tk-item">銀髮人才服務・55歲以上就業媒合</span>
-    <span class="tk-item">原住民族部落大學・免學費終身教育</span>
+  <div class="tk-track" id="tickerTrack">
+    <span class="tk-item">載入中...</span>
   </div>
 </div>
 
@@ -263,8 +241,10 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <span class="fttag">淨零永續</span>
     <span class="fttag">友善高齡</span>
   </div>
-    <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS · <a href="admin.html" style="color:inherit;text-decoration:none;opacity:0.6;">Admin</a></div>
+  <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
 </footer>
+
+<a href="admin.html" class="fab">⚙ 管理後台</a>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -278,6 +258,21 @@ const db=getFirestore(initializeApp({
   messagingSenderId:"140386001536",
   appId:"1:140386001536:web:fa6902b4479f1a09273c65"
 }));
+
+/* ── TICKER (動態載入) ── */
+onSnapshot(query(collection(db, 'tickers')), snap => {
+  const track = document.getElementById('tickerTrack');
+  if (snap.empty) {
+    const emptyHtml = '<span class="tk-item">目前無最新跑馬燈資訊</span>';
+    track.innerHTML = emptyHtml.repeat(5);
+    return;
+  }
+  // 依建立時間排序，並產生 HTML
+  const docs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+  const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
+  // 複製兩份以確保動畫無縫銜接
+  track.innerHTML = html + html;
+});
 
 /* ── CAROUSEL (隨機抽 10 張) ── */
 const DEF=[
@@ -318,7 +313,6 @@ onSnapshot(query(collection(db,'images')), s => {
   const docs = s.docs.map(d => ({id:d.id, ...d.data()}));
   let activeImgs = docs.filter(d => d.isActive !== false);
 
-  // 硬核洗牌演算法 (Fisher-Yates Shuffle)，隨機抽取 10 張
   if (activeImgs.length > 10) {
     for (let i = activeImgs.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -326,20 +320,18 @@ onSnapshot(query(collection(db,'images')), s => {
     }
     activeImgs = activeImgs.slice(0, 10);
   } else {
-    // 若少於 10 張，維持原有排序
     activeImgs.sort((a, b) => (a.order||0) - (b.order||0));
   }
 
   buildC(activeImgs);
 }, _ => buildC([]));
 
-/* ── ANNOUNCEMENTS (前端過濾排序，免設索引) ── */
+/* ── ANNOUNCEMENTS (前端過濾排序) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
 onSnapshot(
   query(collection(db,'announcements')), 
   snap=>{
     const docs = snap.docs.map(d => d.data());
-    // 前端過濾與排序，取最新 4 筆顯示
     const activeAnns = docs.filter(a => a.isActive !== false)
                            .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
                            .slice(0, 4); 
