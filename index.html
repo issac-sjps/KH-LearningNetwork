@@ -68,7 +68,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .carr:hover{background:rgba(255,255,255,.3);}
 #carr-l{left:24px;}#carr-r{right:24px;}
 
-/* ── ANNOUNCEMENTS ── */
+/* ── ANNOUNCEMENTS (重新排版為單欄完整顯示) ── */
 .annwrap{background:var(--bg2);border-top:3px solid var(--navy);padding:80px 72px;}
 .annwrap .sec-inner{max-width:1440px;margin:0 auto;}
 .eye{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
@@ -77,36 +77,38 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .stitle{font-family:'Noto Serif TC',serif;font-size:clamp(24px,2.5vw,36px);font-weight:600;color:var(--navy);margin-bottom:8px;}
 .ssub{font-size:14px;color:var(--tdim);line-height:1.8;max-width:560px;margin-bottom:32px;}
 
-.ann-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
-.ann-card{display:flex;align-items:stretch;gap:16px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;color:inherit;}
-.ann-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
-.ann-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--navy);}
-.ann-card:hover::before{transform:scaleX(1);}
+/* 核心：改為 1 欄清單排版 */
+.ann-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+.ann-card { display: flex; flex-direction: row; align-items: flex-start; gap: 32px; background: #fff; border: 1px solid var(--border); border-radius: var(--r); padding: 28px; transition: all .25s; position: relative; text-decoration: none; color: inherit; }
+.ann-card::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px; background: var(--navy); transform: scaleY(0); transform-origin: top; transition: transform .3s; }
+.ann-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: var(--navy); }
+.ann-card:hover::before { transform: scaleY(1); }
 
-.ann-img{width:140px;flex-shrink:0;background-size:cover;background-position:center;border-radius:6px;background-color:var(--bg3);}
-.ann-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+/* 公告圖片：使用 img 標籤讓高度自適應，不再被裁切 */
+.ann-img { width: 320px; height: auto; object-fit: contain; flex-shrink: 0; border-radius: 6px; background-color: var(--bg3); align-self: flex-start; }
+.ann-body { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-.acat{display:inline-block;font-size:10px;padding:3px 10px;border-radius:12px;margin-bottom:10px;font-family:'Space Mono',monospace;letter-spacing:.1em;font-weight:700;align-self:flex-start;}
+.acat { display: inline-block; font-size: 11px; padding: 4px 12px; border-radius: 12px; font-family: 'Space Mono', monospace; letter-spacing: .1em; font-weight: 700; align-self: flex-start; margin-bottom: 12px; }
 .cat-edu{background:#E0F5FA;color:var(--teal);}
 .cat-work{background:#FFF5D6;color:#B07800;}
 .cat-eco{background:#E8F5EE;color:var(--green);}
 .cat-culture{background:#F9E8F2;color:var(--magenta);}
 .cat-def{background:var(--bg3);color:var(--navy);}
-.atitle{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.aex{font-size:13px;color:var(--tdim);line-height:1.7;margin-bottom:12px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.amet{display:flex;justify-content:space-between;margin-top:auto;}
-.adate{font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);}
-.abureau{font-size:11px;color:var(--navy);font-weight:500;}
-.ann-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);}
-.ann-more{display:block;text-align:center;margin-top:24px;font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;letter-spacing:.04em;}
-.ann-more:hover{text-decoration:underline;}
+
+.atitle { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 16px; color: var(--navy); }
+/* 移除行數限制，讓文字完整向下延伸 */
+.aex { font-size: 15px; color: var(--text); line-height: 1.8; margin-bottom: 24px; flex: 1; }
+.amet { display: flex; justify-content: space-between; margin-top: auto; border-top: 1px solid var(--border); padding-top: 16px; }
+.adate { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--tdim); }
+.abureau { font-size: 12px; color: var(--navy); font-weight: 700; }
+.ann-empty { grid-column: 1/-1; text-align: center; padding: 60px; color: var(--tdim); }
 
 /* ── STATS ── */
 .statsbg{background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));padding:48px 72px;}
 .statsin{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.15);}
 .sbox{padding:32px 24px;text-align:center;}
 .snum{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;color:var(--gold);display:block;line-height:1;}
-.slbl{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px;display:block;white-space:nowrap;}
+.slbl{font-size:13px;color:rgba(255,255,255,.9);margin-top:8px;display:block;font-weight:500;letter-spacing:1px;}
 
 /* ── QUICK LINKS ── */
 .quickbg{background:var(--navy);padding:48px 72px;}
@@ -130,11 +132,15 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 /* ── REVEAL ── */
 .rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
 .rv.vis{opacity:1;transform:translateY(0);}
-
-/* ── COUNTER ── */
 .cnt{display:inline-block;}
 
-/* ── 平板與手機版核心優化 (全面收斂至 860px 斷點) ── */
+/* ── 平板與手機版核心優化 (全面收斂至 1024px 與 860px 斷點) ── */
+@media(max-width:1024px){
+  /* 修正 STATS 在平板/iPad 擠壓破圖的問題，強制轉為 2x2 網格 */
+  .statsin { grid-template-columns: repeat(2, 1fr); }
+  .sbox { padding: 32px 16px; }
+}
+
 @media(max-width:860px){
   nav{padding:0 20px;}
   .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-height:calc(100vh - 68px);overflow-y:auto;}
@@ -151,16 +157,12 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   .cc,.cdots{display:none;}
   
   .annwrap{padding:48px 20px;}
-  .ann-grid{grid-template-columns:1fr;}
-  .ann-card{flex-direction:column;gap:12px;padding:16px;}
-  .ann-img{width:100%;height:160px;}
+  
+  /* 手機版公告：轉為上圖下文堆疊 */
+  .ann-card{flex-direction:column;gap:20px;padding:20px;}
+  .ann-img{width:100%; max-height: 400px; object-fit: cover; align-self: center; }
 
-  /* 強制 2x2 顯示 */
   .statsbg{padding:32px 20px;}
-  .statsin{grid-template-columns:1fr 1fr;}
-  .sbox{padding:24px 16px;}
-  .snum{font-size:36px;}
-
   .quickbg{padding:32px 20px;}
   footer{padding:32px 20px;flex-direction:column;align-items:flex-start;gap:20px;}
 }
@@ -208,7 +210,6 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <div class="ann-grid" id="annGrid">
       <div class="ann-empty"><p style="font-size:28px">⏳</p><p style="margin-top:8px;">載入中…</p></div>
     </div>
-    <a href="#" class="ann-more rv" id="annMore" style="display:none">查看所有公告 →</a>
   </div>
 </section>
 
@@ -274,7 +275,6 @@ onSnapshot(query(collection(db, 'tickers')), snap => {
     track.innerHTML = '<span class="tk-item">目前無最新跑馬燈資訊</span>'.repeat(5);
     return;
   }
-  // 依據後台 order (小到大) 排序，若 order 相同則比較建立時間 (新到舊)
   const docs = snap.docs.map(d => d.data()).sort((a, b) => {
     if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
     return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
@@ -335,7 +335,7 @@ onSnapshot(query(collection(db,'images')), s => {
   buildC(activeImgs);
 }, _ => buildC([]));
 
-/* ── ANNOUNCEMENTS (下架過濾與多重排序) ── */
+/* ── ANNOUNCEMENTS (下架過濾與多重排序，完整顯示) ── */
 const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
 onSnapshot(
   query(collection(db,'announcements')), 
@@ -343,38 +343,42 @@ onSnapshot(
     const today = new Date().toISOString().split('T')[0];
     const docs = snap.docs.map(d => d.data());
     
-    // 1. 過濾：停用、或已達下架日期者不顯示
     const activeAnns = docs.filter(a => {
       if (a.isActive === false) return false;
       if (a.takeDownDate && a.takeDownDate < today) return false; 
       return true;
     })
-    // 2. 排序：(1)置頂優先 (2)Order數字小優先 (3)建立時間新優先
     .sort((a, b) => {
       if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
       if ((a.order || 0) !== (b.order || 0)) return (a.order || 0) - (b.order || 0);
       return (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0);
     })
-    .slice(0, 4); 
+    .slice(0, 20); // 延長顯示筆數，讓使用者可以向下滾動瀏覽
 
     const g=document.getElementById('annGrid');
-    document.getElementById('annMore').style.display = activeAnns.length >= 4 ? '' : 'none';
     if(activeAnns.length === 0){
       g.innerHTML='<div class="ann-empty"><p style="font-size:28px">📢</p><p style="margin-top:8px;">目前尚無公告，請管理員登入後發布。</p></div>';
       return;
     }
     
     g.innerHTML = activeAnns.map(a => {
-      const ex = (a.content||'').substring(0,60);
-      const imgHtml = a.imgUrl ? `<div class="ann-img" style="background-image:url(${a.imgUrl.replace('/upload/','/upload/w_400,q_auto,f_auto/')})"></div>` : '';
-      const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:12px;margin-right:4px;" title="置頂公告">📌</span>' : '';
-      return `<a href="#" class="ann-card">
+      // 保留所有換行符號，取消字數裁切限制，呈現完整內容
+      const fullText = (a.content||'').replace(/\n/g, '<br>');
+      const imgHtml = a.imgUrl ? `<img src="${a.imgUrl.replace('/upload/','/upload/w_800,q_auto,f_auto/')}" class="ann-img" alt="公告圖片">` : '';
+      const pinHtml = a.isPinned ? '<span style="color:var(--danger);font-size:18px;margin-right:8px;" title="置頂公告">📌</span>' : '';
+      
+      return `<a href="javascript:void(0)" class="ann-card" style="cursor:default;">
                 ${imgHtml}
                 <div class="ann-body">
-                  <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
+                  <div style="margin-bottom:12px;">
+                    <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
+                  </div>
                   <div class="atitle">${pinHtml}${a.title}</div>
-                  <div class="aex">${ex}${(a.content||'').length>60?'…':''}</div>
-                  <div class="amet"><span class="adate">${a.date||''}</span><span class="abureau">${a.bureau||''}</span></div>
+                  <div class="aex">${fullText}</div>
+                  <div class="amet">
+                    <span class="adate">📅 發布日期：${a.date||'—'}</span>
+                    <span class="abureau">🏢 ${a.bureau||''}</span>
+                  </div>
                 </div>
               </a>`;
     }).join('');
