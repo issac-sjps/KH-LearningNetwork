@@ -37,14 +37,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 /* ── SCROLL BAR ── */
 .scroll-bar{position:fixed;top:68px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));z-index:199;width:0;transition:width .1s;}
 
-/* ── TICKER (移除黃框，滿版滾動) ── */
+/* ── TICKER (移除黃色標籤，乾淨滿版) ── */
 .ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
 .tk-track{display:flex;gap:40px;animation:tick var(--t-speed) linear infinite;white-space:nowrap;padding-left:100vw;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-100%);}}
 .tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
 .tk-item::before{content:'◆';font-size:7px;opacity:.55;}
 
-/* ── CAROUSEL ── */
+/* ── CAROUSEL (移除黃色 .ctag) ── */
 .carousel{position:relative;background:#000;overflow:hidden;}
 .cw{position:relative;width:100%;height:520px;overflow:hidden;transition:height .3s;}
 .cs{position:absolute;inset:0;opacity:0;transition:opacity .8s;display:flex;}
@@ -52,7 +52,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .cs img{width:100%;height:100%;object-fit:cover;}
 .co{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7),rgba(0,0,0,.2) 70%,transparent);}
 .cb{position:absolute;left:72px;top:50%;transform:translateY(-50%);color:#fff;max-width:540px;z-index:2;}
-.ctag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:block;}
 .ctitle{font-family:'Noto Serif TC',serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.2;margin-bottom:12px;}
 .cdesc{font-size:14px;opacity:.85;line-height:1.75;margin-bottom:24px;}
 .clink{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--navy);padding:10px 22px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px;transition:all .2s;}
@@ -131,7 +130,7 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
 .rv.vis{opacity:1;transform:translateY(0);}
 .cnt{display:inline-block;}
 
-/* ── 平板與手機版核心優化 (全面收斂) ── */
+/* ── 平板與手機版核心優化 ── */
 @media(max-width:1024px){
   .statsin { grid-template-columns: repeat(2, 1fr); }
   .sbox { padding: 32px 16px; }
@@ -153,6 +152,7 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
   .cc,.cdots{display:none;}
   
   .annwrap{padding:48px 20px;}
+  
   .ann-card{flex-direction:column;gap:20px;padding:20px;}
   .ann-img{width:100%; max-height: 400px; object-fit: cover; align-self: center; }
 
@@ -282,15 +282,15 @@ let cMode = 'random', cLimit = 10, rawImgs = [];
 let slides=[],cur=0,timer=null;
 
 function buildC(imgs){
-  slides=imgs.length?imgs: [
-    {title:'城市即學堂',desc:'高雄市跨局處城市學習網絡，整合9大局處資源，讓每位市民都能在生活圈找到學習管道。',tag:'Kaohsiung Learning City',ph:'cph1',link:'resources.html',lt:'探索學習資源'}
+  slides=imgs.length?imgs:[
+    {title:'城市即學堂',desc:'高雄市跨局處城市學習網絡，整合9大局處資源，讓每位市民都能在生活圈找到學習管道。',link:'resources.html',lt:'探索學習資源'}
   ];
   const w=document.getElementById('cWrap'),d=document.getElementById('cDots');
+  // 注意：在此處移除了 ctag 的渲染
   w.innerHTML=slides.map((s,i)=>`<div class="cs${i===0?' on':''}" id="cs${i}">
     ${s.url?`<img src="${s.url.replace('/upload/','/upload/w_1920,q_auto,f_auto/')}" alt="${s.caption||''}">`:`<div class="${s.ph||'cph1'}"></div>`}
     <div class="co"></div>
     <div class="cb">
-      <span class="ctag">${s.tag||'高雄城市學習網絡'}</span>
       <h2 class="ctitle">${s.caption||s.title||''}</h2>
       <p class="cdesc">${s.desc||''}</p>
       ${(s.link||s.lt)?`<a href="${s.link||'#'}" class="clink">${s.lt||'了解更多'} →</a>`:''}
