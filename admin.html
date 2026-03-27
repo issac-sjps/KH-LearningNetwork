@@ -3,380 +3,887 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>高雄城市學習網絡</title>
+<title>管理後台 — 高雄城市學習網絡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@600;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <style>
-/* ── 全域變數 ── */
 :root{
-  --navy:#003F88;--navy2:#0062CC;--teal:#0098B4;
-  --gold:#F5A800;--green:#1A8A50;--magenta:#D6006E;
-  --bg:#fff;--bg2:#F2F8FF;--bg3:#E8F2FC;
-  --text:#1A2840;--tdim:#5A6A80;--border:#C8DDEF;
-  --shadow:0 4px 24px rgba(0,63,136,.10);--r:8px;
+  --navy:#003F88;--navy2:#0062CC;--teal:#0098B4;--gold:#F5A800;
+  --danger:#D63031;--success:#00B894;
+  --bg:#F2F6FC;--white:#fff;--border:#D0DDEF;
+  --text:#1A2840;--tdim:#5A6A80;
+  --shadow:0 2px 16px rgba(0,63,136,.1);--shadowmd:0 4px 24px rgba(0,63,136,.15);
+  --r:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;overflow-x:hidden;}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--navy);border-radius:3px;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;}
+input,textarea,select,button{font-family:'Noto Sans TC',sans-serif;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);height:68px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);}
-.nb{display:flex;align-items:center;gap:14px;text-decoration:none;}
-.nb-emblem{width:44px;height:44px;flex-shrink:0;}
-.nt{color:#fff;font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;letter-spacing:.05em;line-height:1.3;}
-.nt span{display:block;font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.25em;opacity:.6;font-weight:400;text-transform:uppercase;}
-.nl{display:flex;align-items:center;gap:4px;}
-.nl a{color:rgba(255,255,255,.78);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:4px;transition:all .2s;white-space:nowrap;}
-.nl a:hover{color:#fff;background:rgba(255,255,255,.12);}
-.nl .nbtn{background:var(--gold);color:var(--navy);font-weight:700;letter-spacing:.06em;padding:7px 18px;}
-.nl .nbtn:hover{background:#ffc02a;color:var(--navy);}
-.hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:8px;}
-@media(max-width:860px){
-  nav{padding:0 20px;}
-  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-height:calc(100vh - 68px);overflow-y:auto;}
-  nav.open .nl{display:flex;}
-  .nl a{width:100%;text-align:center;padding:12px;}
-  .hamburger{display:block;}
+/* ── LOGIN ── */
+#loginScreen{
+  position:fixed;inset:0;
+  background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));
+  display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;
 }
-
-/* ── SCROLL BAR ── */
-.scroll-bar{position:fixed;top:68px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));z-index:199;width:0;transition:width .1s;}
-
-/* ── TICKER ── */
-.ticker{background:var(--teal);padding:10px 0;overflow:hidden;display:flex;align-items:center;margin-top:68px;}
-.tk-track{display:flex;gap:40px;animation:tick 32s linear infinite;white-space:nowrap;}
-@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.tk-item{color:#fff;font-size:13px;display:flex;align-items:center;gap:8px;}
-.tk-item::before{content:'◆';font-size:7px;opacity:.55;}
-
-/* ── CAROUSEL ── */
-.carousel{position:relative;background:#000;overflow:hidden;}
-.cw{position:relative;width:100%;height:520px;overflow:hidden;transition:height .3s;}
-.cs{position:absolute;inset:0;opacity:0;transition:opacity .8s;display:flex;}
-.cs.on{opacity:1;z-index:1;}
-.cs img{width:100%;height:100%;object-fit:cover;}
-.co{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7),rgba(0,0,0,.2) 70%,transparent);}
-.cb{position:absolute;left:72px;top:50%;transform:translateY(-50%);color:#fff;max-width:540px;z-index:2;}
-.ctag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:block;}
-.ctitle{font-family:'Noto Serif TC',serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.2;margin-bottom:12px;}
-.cdesc{font-size:14px;opacity:.85;line-height:1.75;margin-bottom:24px;}
-.clink{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--navy);padding:10px 22px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px;transition:all .2s;}
-.clink:hover{background:#ffc02a;}
-.cph1{background:linear-gradient(135deg,#003F88,#0062CC,#0098B4);width:100%;height:100%;}
-.cph2{background:linear-gradient(135deg,#006045,#1A8A50,#0098B4);width:100%;height:100%;}
-.cph3{background:linear-gradient(135deg,#7B0050,#D6006E,#F5A800);width:100%;height:100%;}
-.cc{position:absolute;bottom:28px;left:72px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,.55);z-index:5;letter-spacing:.15em;}
-.cdots{position:absolute;bottom:24px;right:72px;display:flex;gap:8px;z-index:5;}
-.cdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;transition:all .3s;}
-.cdot.on{background:#fff;width:24px;border-radius:4px;}
-.carr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;font-size:18px;transition:all .25s;backdrop-filter:blur(4px);}
-.carr:hover{background:rgba(255,255,255,.3);}
-#carr-l{left:24px;}#carr-r{right:24px;}
-
-/* 手機版核心優化 */
-@media(max-width:768px){
-  .cw { height: 420px; }
-  .co { background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 60%, transparent 100%); }
-  .cb{ left:20px; right:20px; top:auto; bottom:32px; transform:none; }
-  .cdesc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:16px; }
-  .carr{ width:36px; height:36px; font-size:16px; top:40%; }
-  #carr-l{ left:12px; } #carr-r{ right:12px; }
-  .cc,.cdots{display:none;}
-  .annwrap{padding:48px 20px;}
-  .ann-grid{grid-template-columns:1fr;}
-  .ann-card{flex-direction:column;gap:12px;padding:16px;}
-  .ann-img{width:100%;height:160px;}
-  .statsbg{padding:32px 20px;}
-  .statsin{grid-template-columns:1fr 1fr;}
-  .quickbg{padding:32px 20px;}
-  footer{padding:32px 20px;flex-direction:column;align-items:flex-start;gap:20px;}
+.lcard{
+  background:var(--white);border-radius:16px;
+  padding:52px 44px;width:100%;max-width:420px;
+  box-shadow:0 24px 64px rgba(0,0,0,.28);
+  text-align:center;
 }
+.lemblem{width:64px;height:64px;margin:0 auto 20px;}
+.ltitle{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.lsub{font-size:13px;color:var(--tdim);margin-bottom:36px;}
+.lerr{
+  background:#fff0f0;border:1px solid #ffcdd2;color:var(--danger);
+  padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:20px;display:none;
+}
+.g-btn{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  width:100%;padding:14px 24px;
+  background:#fff;border:1.5px solid #dadce0;border-radius:8px;
+  cursor:pointer;transition:all .25s;
+  font-size:15px;font-weight:500;color:#3c4043;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+.g-btn:hover{background:#f8f9fa;border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.g-btn svg{flex-shrink:0;}
+.ldivider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--tdim);font-size:12px;}
+.ldivider::before,.ldivider::after{content:'';flex:1;height:1px;background:var(--border);}
+.lhint{font-size:12px;color:var(--tdim);line-height:1.7;margin-top:24px;}
+.lhint strong{color:var(--navy);}
 
-/* ── ANNOUNCEMENTS ── */
-.annwrap{background:var(--bg2);border-top:3px solid var(--navy);padding:80px 72px;}
-.annwrap .sec-inner{max-width:1440px;margin:0 auto;}
-.eye{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.eye-line{width:28px;height:2px;background:var(--gold);}
-.eye-tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--teal);text-transform:uppercase;}
-.stitle{font-family:'Noto Serif TC',serif;font-size:clamp(24px,2.5vw,36px);font-weight:600;color:var(--navy);margin-bottom:8px;}
-.ssub{font-size:14px;color:var(--tdim);line-height:1.8;max-width:560px;margin-bottom:32px;}
+/* ── APP LAYOUT ── */
+#app{display:none;}
+#app.show{display:grid;min-height:100vh;grid-template-columns:240px 1fr;grid-template-rows:60px 1fr;}
 
-.ann-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
-.ann-card{display:flex;align-items:stretch;gap:16px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;color:inherit;}
-.ann-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
-.ann-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--navy);}
-.ann-card:hover::before{transform:scaleX(1);}
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.tbrand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.tbrand-txt{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;color:var(--navy);}
+.tbrand-txt span{display:block;font-size:9px;font-family:'Space Mono',monospace;color:var(--tdim);letter-spacing:.15em;font-weight:400;}
+.tright{display:flex;align-items:center;gap:14px;}
+.uav{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--border);}
+.uav img{width:100%;height:100%;object-fit:cover;}
+.uav-placeholder{width:36px;height:36px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;}
+.uinfo{line-height:1.3;}
+.uname{font-size:13px;font-weight:500;}
+.urole{font-size:10px;color:var(--tdim);font-family:'Space Mono',monospace;}
+.tbtn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.04em;}
+.tbtn-view{background:var(--bg);color:var(--navy);border:1px solid var(--border);}.tbtn-view:hover{background:#e8f0fe;}
+.tbtn-out{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}.tbtn-out:hover{background:#ffcdd2;}
 
-.ann-img{width:140px;flex-shrink:0;background-size:cover;background-position:center;border-radius:6px;background-color:var(--bg3);}
-.ann-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+/* SIDEBAR */
+.sidebar{background:var(--navy);padding:20px 0;overflow-y:auto;}
+.sg-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;color:rgba(255,255,255,.3);padding:0 20px 6px;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);font-size:13px;}
+.ni:hover{background:rgba(255,255,255,.08);color:#fff;}
+.ni.on{background:rgba(245,168,0,.15);color:var(--gold);border-right:3px solid var(--gold);}
+.ni-ico{font-size:17px;min-width:22px;}
+.ni-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:10px;font-weight:700;}
+.sdiv{height:1px;background:rgba(255,255,255,.08);margin:8px 20px;}
 
-.acat{display:inline-block;font-size:10px;padding:3px 10px;border-radius:12px;margin-bottom:10px;font-family:'Space Mono',monospace;letter-spacing:.1em;font-weight:700;align-self:flex-start;}
-.cat-edu{background:#E0F5FA;color:var(--teal);}
-.cat-work{background:#FFF5D6;color:#B07800;}
-.cat-eco{background:#E8F5EE;color:var(--green);}
-.cat-culture{background:#F9E8F2;color:var(--magenta);}
-.cat-def{background:var(--bg3);color:var(--navy);}
-.atitle{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.aex{font-size:13px;color:var(--tdim);line-height:1.7;margin-bottom:12px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.amet{display:flex;justify-content:space-between;margin-top:auto;}
-.adate{font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);}
-.abureau{font-size:11px;color:var(--navy);font-weight:500;}
-.ann-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);}
-.ann-more{display:block;text-align:center;margin-top:24px;font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;letter-spacing:.04em;}
-.ann-more:hover{text-decoration:underline;}
+/* MAIN */
+.main{padding:28px;overflow-y:auto;max-height:calc(100vh - 60px);}
+.phdr{margin-bottom:24px;}
+.ptitle{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.psub{font-size:13px;color:var(--tdim);}
 
-/* ── STATS ── */
-.statsbg{background:linear-gradient(135deg,var(--navy),#005BAA 50%,var(--teal));padding:48px 72px;}
-.statsin{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.15);}
-.sbox{padding:32px 24px;text-align:center;}
-.snum{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;color:var(--gold);display:block;line-height:1;}
-.slbl{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px;display:block;}
+/* PANELS */
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:20px;}
+.panel-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
-/* ── QUICK LINKS ── */
-.quickbg{background:var(--navy);padding:48px 72px;}
-.quickin{max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:24px;}
-.quick-label{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:600;color:#fff;flex-shrink:0;}
-.quick-links{display:flex;flex-wrap:wrap;gap:12px;}
-.ql{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);text-decoration:none;padding:8px 18px;border-radius:4px;font-size:13px;transition:all .2s;}
-.ql:hover{background:rgba(255,255,255,.2);color:#fff;}
-.ql.primary{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700;}
-.ql.primary:hover{background:#ffc02a;color:var(--navy);}
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;}
+.sc.accent{background:var(--navy);border-color:var(--navy);}
+.sc-n{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--navy);display:block;}
+.sc.accent .sc-n{color:var(--gold);}
+.sc-l{font-size:12px;color:var(--tdim);margin-top:4px;}
+.sc.accent .sc-l{color:rgba(255,255,255,.65);}
 
-/* ── FOOTER ── */
-footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.ft-left{display:flex;align-items:center;gap:14px;}
-.ft-brand{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:#fff;}
-.ft-brand span{display:block;font-size:11px;font-weight:300;color:rgba(255,255,255,.5);margin-top:2px;}
-.ft-tags{display:flex;gap:8px;flex-wrap:wrap;}
-.fttag{font-size:10px;padding:3px 10px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.4);border-radius:10px;font-family:'Space Mono',monospace;}
-.ft-copy{font-size:11px;color:rgba(255,255,255,.25);}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.04em;}
+.btn-p{background:var(--navy);color:#fff;}.btn-p:hover{background:var(--navy2);}
+.btn-t{background:var(--teal);color:#fff;}.btn-t:hover{background:#007A91;}
+.btn-d{background:var(--danger);color:#fff;}.btn-d:hover{background:#b22424;}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{background:#e8effa;border-color:var(--navy);}
+.btn-sm{padding:5px 14px;font-size:12px;}
 
-/* ── REVEAL ── */
-.rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
-.rv.vis{opacity:1;transform:translateY(0);}
+/* GALLERY */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;background:transparent;}
+.upload-zone:hover{border-color:var(--navy);background:#f0f4ff;}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.gi{position:relative;border-radius:6px;overflow:hidden;background:#f0f4f8;aspect-ratio:16/9;}
+.gi img{width:100%;height:100%;object-fit:cover;display:block;}
+.gi-ov{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .25s;display:flex;align-items:flex-end;}
+.gi:hover .gi-ov{background:rgba(0,0,0,.55);}
+.gi-acts{padding:8px;display:flex;gap:5px;width:100%;opacity:0;transition:opacity .25s;}
+.gi:hover .gi-acts{opacity:1;}
+.gi-cap{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;max-width:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gi-order{position:absolute;top:6px;right:6px;background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
 
-/* ── COUNTER ── */
-.cnt{display:inline-block;}
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:11px;font-family:'Space Mono',monospace;color:var(--tdim);letter-spacing:.15em;padding:10px 14px;border-bottom:2px solid var(--border);text-transform:uppercase;}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8faff;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+.b-on{background:#e8f5ee;color:var(--success);}
+.b-off{background:#f5f5f5;color:#999;}
+.b-pend{background:#fff8e0;color:#8a6000;}
+.b-admin{background:#e0f0ff;color:var(--navy);}
+.b-user{background:#f5f5f5;color:#666;}
 
-/* ── FAB ── */
-.fab{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--navy);color:#fff;text-decoration:none;padding:11px 18px;border-radius:24px;font-size:12px;font-weight:700;letter-spacing:.05em;box-shadow:0 4px 20px rgba(0,63,136,.35);transition:all .25s;display:flex;align-items:center;gap:8px;}
-.fab:hover{background:var(--navy2);transform:translateY(-2px);}
+/* FORM */
+.fg2{margin-bottom:16px;}
+.fl2{display:block;font-size:12px;color:var(--tdim);margin-bottom:6px;font-weight:500;}
+.fi2{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);transition:border-color .2s;}
+.fi2:focus{outline:none;border-color:var(--navy);}
+textarea.fi2{resize:vertical;min-height:90px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.facts{display:flex;gap:10px;margin-top:20px;}
+
+/* TOGGLE */
+.tog-wrap{display:flex;align-items:center;gap:10px;margin-top:6px;}
+.tog{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;}
+.tog input{opacity:0;width:0;height:0;position:absolute;}
+.tog-tr{position:absolute;inset:0;background:#ccc;border-radius:11px;transition:.3s;}
+.tog input:checked+.tog-tr{background:var(--success);}
+.tog-th{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.tog input:checked~.tog-th{left:21px;}
+
+/* ALERT */
+.alert{padding:12px 16px;border-radius:6px;font-size:13px;margin-bottom:16px;}
+.alert-info{background:#e0f0ff;color:var(--navy);border:1px solid #b0d4f4;}
+.alert-warn{background:#fff8e0;color:#8a6000;border:1px solid #f5d88a;}
+.alert-ok{background:#e8f5ee;color:var(--success);border:1px solid #b0e0c4;}
+.alert-err{background:#fff0f0;color:var(--danger);border:1px solid #ffcdd2;}
+
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+.mover.open{display:flex;}
+.mbox{background:var(--white);border-radius:12px;padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadowmd);}
+.mtitle{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:var(--navy);margin-bottom:20px;}
+
+/* TAB */
+.tc{display:none;}.tc.on{display:block;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .35s;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--success);}
+.toast.err{background:var(--danger);}
+
+/* REQ BOX */
+.req-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+
+/* ACCESS DENIED */
+#accessDenied{display:none;position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),#005BAA);z-index:800;align-items:center;justify-content:center;}
+#accessDenied.show{display:flex;}
+.ad-card{background:#fff;border-radius:16px;padding:48px 40px;max-width:460px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.ad-icon{font-size:52px;margin-bottom:16px;}
+.ad-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:10px;}
+.ad-sub{font-size:13px;color:var(--tdim);line-height:1.75;margin-bottom:28px;}
+
+@media(max-width:768px){#app.show{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
-<nav id="mainNav">
-  <a href="index.html" class="nb">
-    <div class="nb-emblem">
-      <img src="https://issac-sjps.github.io/KH-LearningNetwork/Emblem_of_Kaohsiung_City.svg" alt="高雄市徽" width="44" height="44" style="display:block;">
+<div id="loginScreen">
+  <div class="lcard">
+    <div class="lemblem">
+      <img src="https://issac-sjps.github.io/KH-LearningNetwork/Emblem_of_Kaohsiung_City.svg" alt="高雄市徽" width="64" height="64" style="display:block;">
     </div>
-    <div class="nt">高雄城市學習網絡<span>Kaohsiung City Learning Network</span></div>
-  </a>
-  <div class="nl">
-    <a href="#announcements">最新公告</a>
-    <a href="resources.html">學習資源</a>
-    <a href="resources.html#districts">行政區</a>
-    <a href="resources.html#platforms">平台連結</a>
-    <a href="admin.html" class="nbtn">管理後台 ▸</a>
-  </div>
-  <button class="hamburger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
-</nav>
-<div class="scroll-bar" id="scrollBar"></div>
-
-<div class="ticker">
-  <div class="tk-track" id="tickerTrack">
-    <span class="tk-item">載入中...</span>
+    <div class="ltitle">高雄城市學習網絡</div>
+    <div class="lsub">管理後台 · Admin Dashboard</div>
+    <div class="lerr" id="lerr"></div>
+    <button class="g-btn" id="gSignInBtn" onclick="doGoogleLogin()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      使用 Google 帳號登入
+    </button>
+    <div class="lhint">登入後如需管理員權限，可在後台提出申請。<br>管理員由 <strong>issac@sjps.kh.edu.tw</strong> 核准。</div>
   </div>
 </div>
 
-<section class="carousel" id="top">
-  <div class="cw" id="cWrap"></div>
-  <button class="carr" id="carr-l" onclick="cStep(-1)">‹</button>
-  <button class="carr" id="carr-r" onclick="cStep(1)">›</button>
-  <div class="cc" id="cCnt">01 / 03</div>
-  <div class="cdots" id="cDots"></div>
-</section>
-
-<section class="annwrap" id="announcements">
-  <div class="sec-inner">
-    <div class="eye rv"><div class="eye-line"></div><span class="eye-tag">Latest Announcements</span></div>
-    <h2 class="stitle rv">最新公告</h2>
-    <p class="ssub rv">由各局處管理員發布的學習資源公告與活動資訊</p>
-    <div class="ann-grid" id="annGrid">
-      <div class="ann-empty"><p style="font-size:28px">⏳</p><p style="margin-top:8px;">載入中…</p></div>
+<div id="accessDenied">
+  <div class="ad-card">
+    <div class="ad-icon">🔐</div>
+    <div class="ad-title">尚無管理員權限</div>
+    <div class="ad-sub" id="adSub">您已成功登入，但尚未取得管理員權限。請填寫申請表，等待核准後即可使用後台。</div>
+    <div id="adForm">
+      <div class="fg2" style="text-align:left;"><label class="fl2">申請人所屬單位</label><input type="text" class="fi2" id="adUnit" placeholder="例：高雄市政府教育局社會教育科"></div>
+      <div class="fg2" style="text-align:left;"><label class="fl2">申請管理員原因</label><textarea class="fi2" id="adReason" placeholder="請說明您需要管理後台權限的原因及工作職責…"></textarea></div>
+      <button class="btn btn-p" style="width:100%;justify-content:center;" onclick="submitReqFromDenied()">送出申請</button>
     </div>
-    <a href="#" class="ann-more rv" id="annMore" style="display:none">查看所有公告 →</a>
-  </div>
-</section>
-
-<div class="statsbg">
-  <div class="statsin">
-    <div class="sbox rv"><span class="snum cnt" data-t="9">0</span><span class="slbl">跨局處串聯</span></div>
-    <div class="sbox rv"><span class="snum cnt" data-t="18">0</span><span class="slbl">學習資源管道</span></div>
-    <div class="sbox rv"><span class="snum cnt" data-t="38">0</span><span class="slbl">行政區全覆蓋</span></div>
-    <div class="sbox rv"><span class="snum cnt" data-t="22">0</span><span class="slbl">環境教育場所</span></div>
+    <div id="adPendingMsg" style="display:none;">
+      <div class="alert alert-warn" style="text-align:left;">⏳ 您的申請已送出，請等待管理員審核。審核後請重新整理頁面。</div>
+    </div>
+    <button class="tbtn tbtn-out" style="margin-top:16px;width:100%;" onclick="doLogout()">登出</button>
   </div>
 </div>
 
-<div class="quickbg">
-  <div class="quickin">
-    <div class="quick-label">探索學習資源 →</div>
-    <div class="quick-links">
-      <a href="resources.html" class="ql primary">🗺 全部資源</a>
-      <a href="resources.html?f=senior" class="ql">🌸 樂齡族群</a>
-      <a href="resources.html?f=work" class="ql">💼 職涯發展</a>
-      <a href="resources.html?f=eco" class="ql">🌿 永續環境</a>
-      <a href="resources.html?f=culture" class="ql">🎨 文化藝術</a>
+<div id="app">
+  <div class="topbar">
+    <a href="index.html" class="tbrand">
+      <img src="https://issac-sjps.github.io/KH-LearningNetwork/Emblem_of_Kaohsiung_City.svg" alt="高雄市徽" width="32" height="32" style="display:block;">
+      <div class="tbrand-txt">高雄城市學習網絡<span>Admin Dashboard</span></div>
+    </a>
+    <div class="tright">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="uAv" class="uav-placeholder">?</div>
+        <div class="uinfo"><div class="uname" id="uName">-</div><div class="urole" id="uRole">-</div></div>
+      </div>
+      <button class="tbtn tbtn-view" onclick="window.open('index.html','_blank')">🌐 查看網站</button>
+      <button class="tbtn tbtn-out" onclick="doLogout()">登出</button>
     </div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding:12px 0;">
+      <div class="sg-lbl">主要功能</div>
+      <div class="ni on" onclick="goTab('dash')"><span class="ni-ico">📊</span>總覽</div>
+      <div class="ni" onclick="goTab('images')"><span class="ni-ico">🖼</span>圖片輪播管理</div>
+      <div class="ni" onclick="goTab('ann')"><span class="ni-ico">📢</span>公告管理</div>
+      <div class="ni" onclick="goTab('ticker')"><span class="ni-ico">📜</span>跑馬燈管理</div>
+      <div class="sdiv"></div>
+      <div class="sg-lbl">管理員功能</div>
+      <div class="ni" id="navUsers" onclick="goTab('users')" style="display:none;"><span class="ni-ico">👥</span>使用者管理<span class="ni-badge" id="reqBadge" style="display:none">0</span></div>
+      <div class="sdiv"></div>
+      <div class="sg-lbl">帳號</div>
+      <div class="ni" onclick="goTab('profile')"><span class="ni-ico">👤</span>帳號資料</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="tc on" id="tc-dash">
+      <div class="phdr"><div class="ptitle" id="dashGreet">歡迎回來 👋</div><div class="psub">高雄城市學習網絡管理後台</div></div>
+      <div class="stats-row" id="dashStats"></div>
+      <div class="panel"><div class="panel-t">📋 最新公告（前5筆）</div><div id="dashAnn"></div></div>
+      <div class="panel" id="dashReqPanel" style="display:none"><div class="panel-t">🔔 待審核申請</div><div id="dashReqs"></div></div>
+    </div>
+
+    <div class="tc" id="tc-images">
+      <div class="phdr"><div class="ptitle">🖼 圖片輪播管理</div><div class="psub">管理首頁圖片輪播區</div></div>
+      <div class="alert alert-info">Cloudinary Upload Preset：<strong>kaohsiung_gallery</strong>，Asset folder：<strong>kaohsiung-gallery</strong>，Mode：<strong>Unsigned</strong>。</div>
+      <div class="panel">
+        <div class="panel-t">⬆ 上傳新圖片</div>
+        <div class="upload-zone" id="dz" onclick="openUpload()">
+          <div style="font-size:40px;margin-bottom:10px;">☁️</div>
+          <div style="font-size:14px;color:var(--text);font-weight:500;">點擊開啟上傳，或將圖片拖曳至此框內</div>
+          <div style="font-size:12px;color:var(--tdim);margin-top:6px;">支援多圖拖曳上傳，建議尺寸 1920×800px</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-t">🖼 圖片庫（<span id="imgCount">0</span> 張）</div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-ann">
+      <div class="phdr" style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告，可選擇附加圖片</div></div>
+        <button class="btn btn-p" onclick="openAnnModal()">＋ 新增公告</button>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>標題</th><th>分類</th><th>局處</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
+          <tbody id="annTbody"></tbody>
+        </table>
+        <div id="annEmpty" style="text-align:center;padding:40px;color:var(--tdim);display:none;">目前無公告。</div>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-ticker">
+      <div class="phdr"><div class="ptitle">📜 跑馬燈管理</div><div class="psub">管理首頁頂部滾動文字</div></div>
+      <div class="panel">
+        <div class="panel-t">＋ 新增跑馬燈</div>
+        <div style="display:flex;gap:10px;">
+          <input type="text" class="fi2" id="tContent" placeholder="輸入跑馬燈文字內容...">
+          <button class="btn btn-p" onclick="addTicker()">新增</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>內容</th><th>發布時間</th><th>操作</th></tr></thead>
+          <tbody id="tickerTbody"></tbody>
+        </table>
+        <div id="tickerEmpty" style="text-align:center;padding:40px;color:var(--tdim);display:none;">目前無跑馬燈。</div>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-users">
+      <div class="phdr"><div class="ptitle">👥 使用者管理</div><div class="psub">管理所有已登入的使用者與管理員申請</div></div>
+      <div class="panel">
+        <div class="panel-t">🔔 管理員申請（待審核）</div>
+        <div id="reqsEmpty" style="text-align:center;padding:32px;color:var(--tdim);">目前無待審核申請。</div>
+        <div id="reqsList"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-t">👤 所有使用者</div>
+        <table><thead><tr><th>名稱</th><th>Email</th><th>角色</th><th>加入時間</th><th>操作</th></tr></thead><tbody id="userTbody"></tbody></table>
+      </div>
+      <div class="panel">
+        <div class="panel-t">🔑 管理員 Email 白名單</div>
+        <p style="font-size:13px;color:var(--tdim);margin-bottom:14px;">白名單內的 Email 登入後自動取得管理員權限</p>
+        <div id="wlDisplay" style="margin-bottom:14px;"></div>
+        <div style="display:flex;gap:10px;"><input type="email" class="fi2" id="wlEmail" placeholder="新增 Email" style="max-width:320px;"><button class="btn btn-p" onclick="addWl()">新增</button></div>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-profile">
+      <div class="phdr"><div class="ptitle">👤 帳號資料</div><div class="psub">您的 Google 帳號資訊</div></div>
+      <div class="panel">
+        <div class="panel-t">Google 帳號</div>
+        <div id="profileInfo"></div>
+      </div>
+      <div class="panel" id="reqAccessPanel">
+        <div class="panel-t">🔐 申請管理員權限</div>
+        <div id="reqAccessContent"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<footer>
-  <div class="ft-left">
-    <div class="ft-brand">高雄城市學習網絡<span>Kaohsiung City Learning Network · 115年度</span></div>
+<div class="mover" id="imgModal">
+  <div class="mbox">
+    <div class="mtitle">編輯圖片資訊</div>
+    <input type="hidden" id="eImgId">
+    <div class="fg2"><label class="fl2">圖片標題（輪播大字）</label><input type="text" class="fi2" id="eCaption" placeholder="輪播標題文字"></div>
+    <div class="fg2"><label class="fl2">副標題說明</label><textarea class="fi2" id="eDesc"></textarea></div>
+    <div class="fg2"><label class="fl2">左上角標籤</label><input type="text" class="fi2" id="eTag" placeholder="例：高雄城市學習網絡"></div>
+    <div class="fg2"><label class="fl2">連結網址</label><input type="url" class="fi2" id="eLink"></div>
+    <div class="fg2"><label class="fl2">連結按鈕文字</label><input type="text" class="fi2" id="eLinkTxt" placeholder="了解更多"></div>
+    <div class="fg2"><label class="fl2">排列順序（數字越小越前）</label><input type="number" class="fi2" id="eOrder" value="0" min="0"></div>
+    <div class="fg2"><label class="fl2">顯示狀態</label>
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="eActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">在首頁輪播中顯示</span></div>
+    </div>
+    <div class="facts"><button class="btn btn-p" onclick="saveImg()">儲存</button><button class="btn btn-ghost" onclick="closeModal('imgModal')">取消</button></div>
   </div>
-  <div class="ft-tags">
-    <span class="fttag">AI智慧城市</span>
-    <span class="fttag">淨零永續</span>
-    <span class="fttag">友善高齡</span>
-  </div>
-  <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
-</footer>
+</div>
 
-<a href="admin.html" class="fab">⚙ 管理後台</a>
+<div class="mover" id="annModal">
+  <div class="mbox">
+    <div class="mtitle" id="annModalTitle">新增公告</div>
+    <input type="hidden" id="eAnnId">
+    <div class="fg2"><label class="fl2">公告標題</label><input type="text" class="fi2" id="aTitle"></div>
+    
+    <div class="fg2">
+      <label class="fl2">公告圖片 (選填)</label>
+      <div style="display:flex;gap:12px;align-items:flex-end;">
+        <div id="aImgPreview" style="width:120px;height:80px;background:var(--bg3);border:1px dashed var(--border);border-radius:6px;background-size:cover;background-position:center;"></div>
+        <input type="hidden" id="aImgUrl">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="openAnnUpload()">上傳圖片</button>
+        <button class="btn btn-sm btn-d" type="button" onclick="clearAnnImg()" id="aImgClear" style="display:none;">移除圖片</button>
+      </div>
+    </div>
+
+    <div class="fg2"><label class="fl2">公告內容</label><textarea class="fi2" id="aContent" style="min-height:120px;"></textarea></div>
+    <div class="frow">
+      <div class="fg2"><label class="fl2">分類</label>
+        <select class="fi2" id="aCat">
+          <option value="公告">📋 一般公告</option><option value="教育">📚 教育學習</option>
+          <option value="勞工">⚙️ 勞工職訓</option><option value="環保">🌿 永續環境</option>
+          <option value="文化">🎨 文化藝術</option><option value="運動">🏃 運動健康</option>
+        </select>
+      </div>
+      <div class="fg2"><label class="fl2">發布局處</label><input type="text" class="fi2" id="aBureau" placeholder="例：教育局"></div>
+    </div>
+    <div class="frow">
+      <div class="fg2"><label class="fl2">日期</label><input type="date" class="fi2" id="aDate"></div>
+      <div class="fg2"><label class="fl2">狀態</label>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">立即發布</span></div>
+      </div>
+    </div>
+    <div class="facts"><button class="btn btn-p" onclick="saveAnn()">儲存公告</button><button class="btn btn-ghost" onclick="closeModal('annModal')">取消</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,query,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{
+  getFirestore,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,
+  collection,query,where,orderBy,onSnapshot,serverTimestamp,deleteField
+}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const db=getFirestore(initializeApp({
-  apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",
-  authDomain:"kh-learningnetwork.firebaseapp.com",
-  projectId:"kh-learningnetwork",
-  storageBucket:"kh-learningnetwork.firebasestorage.app",
-  messagingSenderId:"140386001536",
-  appId:"1:140386001536:web:fa6902b4479f1a09273c65"
-}));
+/* ── GLOBAL DRAG & DROP PROTECTION ── */
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => e.preventDefault());
 
-/* ── TICKER (動態載入) ── */
-onSnapshot(query(collection(db, 'tickers')), snap => {
-  const track = document.getElementById('tickerTrack');
-  if (snap.empty) {
-    const emptyHtml = '<span class="tk-item">目前無最新跑馬燈資訊</span>';
-    track.innerHTML = emptyHtml.repeat(5);
+/* ── CONFIG ── */
+const CFG={apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",authDomain:"kh-learningnetwork.firebaseapp.com",projectId:"kh-learningnetwork",storageBucket:"kh-learningnetwork.firebasestorage.app",messagingSenderId:"140386001536",appId:"1:140386001536:web:fa6902b4479f1a09273c65"};
+const CLOUD_NAME='dnypguvxl', UPLOAD_PRESET='kaohsiung_gallery';
+const MASTER_EMAIL='issac@sjps.kh.edu.tw';
+
+const fbApp=initializeApp(CFG);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+const provider=new GoogleAuthProvider();
+
+let cu=null, cp=null;
+let unsubImg=null, unsubAnn=null, unsubTicker=null;
+let uploadWidget=null;
+let annUploadWidget=null;
+
+/* ── HELPERS ── */
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3200);}
+function lerr(msg){const e=document.getElementById('lerr');e.textContent=msg;e.style.display=msg?'':'none';}
+function fmtDate(ts){if(!ts)return'—';try{const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('zh-TW');}catch{return'—';}}
+
+/* ── GOOGLE LOGIN ── */
+window.doGoogleLogin=async()=>{
+  lerr('');
+  const btn=document.getElementById('gSignInBtn');
+  btn.disabled=true;btn.textContent='登入中…';
+  try{
+    await signInWithPopup(auth,provider);
+  }
+  catch(e){
+    if(e.code!=='auth/popup-closed-by-user') {
+      let errorMsg = e.message;
+      if (errorMsg.includes('network') || errorMsg.includes('403') || errorMsg.includes('configuration')) {
+        errorMsg += " [致命錯誤：請至 GCP 檢查 API 金鑰的 HTTP Referrer 限制，確認已將 firebaseapp.com 加入白名單。]";
+      }
+      lerr('登入失敗：' + errorMsg);
+      console.error("[Auth Error]", e);
+    }
+    btn.disabled=false;
+    btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> 使用 Google 帳號登入`;
+  }
+};
+
+window.doLogout=async()=>{
+  if(unsubImg)unsubImg();if(unsubAnn)unsubAnn();if(unsubTicker)unsubTicker();
+  await signOut(auth);
+};
+
+/* ── AUTH STATE ── */
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    cu=null;cp=null;
+    document.getElementById('loginScreen').style.display='';
+    document.getElementById('app').classList.remove('show');
+    document.getElementById('accessDenied').classList.remove('show');
     return;
   }
-  // 依建立時間排序，並產生 HTML
-  const docs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-  const html = docs.map(t => `<span class="tk-item">${t.content}</span>`).join('');
-  // 複製兩份以確保動畫無縫銜接
-  track.innerHTML = html + html;
-});
+  cu=user;
+  document.getElementById('loginScreen').style.display='none';
 
-/* ── CAROUSEL (隨機抽 10 張) ── */
-const DEF=[
-  {title:'城市即學堂',desc:'高雄市跨局處城市學習網絡，整合9大局處資源，讓每位市民都能在生活圈找到學習管道。',tag:'Kaohsiung Learning City',ph:'cph1',link:'resources.html',lt:'探索學習資源'},
-  {title:'38行政區全覆蓋',desc:'從楠梓到茂林，樂齡學習中心與長青學苑遍布全市每一個行政區。',tag:'District Coverage',ph:'cph2',link:'resources.html#districts',lt:'查看行政區'},
-  {title:'多元學習管道',desc:'職業訓練、文化藝術、環境永續、高齡友善——找到屬於你人生階段的學習方式。',tag:'Lifelong Learning',ph:'cph3',link:'resources.html',lt:'開始探索'}
-];
-let slides=[],cur=0,timer=null;
-
-function buildC(imgs){
-  slides=imgs.length?imgs:DEF;
-  const w=document.getElementById('cWrap'),d=document.getElementById('cDots');
-  w.innerHTML=slides.map((s,i)=>`<div class="cs${i===0?' on':''}" id="cs${i}">
-    ${s.url?`<img src="${s.url.replace('/upload/','/upload/w_1920,q_auto,f_auto/')}" alt="${s.caption||''}">`:`<div class="${s.ph||'cph1'}"></div>`}
-    <div class="co"></div>
-    <div class="cb">
-      <span class="ctag">${s.tag||'高雄城市學習網絡'}</span>
-      <h2 class="ctitle">${s.caption||s.title||''}</h2>
-      <p class="cdesc">${s.desc||''}</p>
-      ${(s.link||s.lt)?`<a href="${s.link||'#'}" class="clink">${s.lt||'了解更多'} →</a>`:''}
-    </div>
-  </div>`).join('');
-  d.innerHTML=slides.map((_,i)=>`<button class="cdot${i===0?' on':''}" onclick="cGo(${i})"></button>`).join('');
-  updC();if(timer)clearInterval(timer);timer=setInterval(()=>cGo(cur+1),5000);
-}
-function updC(){document.getElementById('cCnt').textContent=`${String(cur+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;}
-window.cGo=n=>{
-  document.querySelector('.cs.on')?.classList.remove('on');
-  document.querySelector('.cdot.on')?.classList.remove('on');
-  cur=(n+slides.length)%slides.length;
-  document.getElementById('cs'+cur)?.classList.add('on');
-  document.querySelectorAll('.cdot')[cur]?.classList.add('on');
-  updC();clearInterval(timer);timer=setInterval(()=>cGo(cur+1),5000);
-};
-window.cStep=n=>cGo(cur+n);
-
-onSnapshot(query(collection(db,'images')), s => {
-  const docs = s.docs.map(d => ({id:d.id, ...d.data()}));
-  let activeImgs = docs.filter(d => d.isActive !== false);
-
-  if (activeImgs.length > 10) {
-    for (let i = activeImgs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [activeImgs[i], activeImgs[j]] = [activeImgs[j], activeImgs[i]];
-    }
-    activeImgs = activeImgs.slice(0, 10);
-  } else {
-    activeImgs.sort((a, b) => (a.order||0) - (b.order||0));
+  await ensureWhitelist();
+  const wlSnap=await getDoc(doc(db,'settings','whitelist'));
+  const wl=wlSnap.exists()?wlSnap.data().emails||[]:[]; 
+  const isWl=wl.map(e=>e.toLowerCase()).includes(user.email.toLowerCase());
+  const uref=doc(db,'users',user.uid);
+  const usnap=await getDoc(uref);
+  if(!usnap.exists()){
+    await setDoc(uref,{uid:user.uid,email:user.email,displayName:user.displayName||'',photoURL:user.photoURL||'',isAdmin:isWl,createdAt:serverTimestamp()});
+  } else if(isWl && !usnap.data().isAdmin){
+    await updateDoc(uref,{isAdmin:true});
   }
+  cp=(await getDoc(uref)).data();
 
-  buildC(activeImgs);
-}, _ => buildC([]));
-
-/* ── ANNOUNCEMENTS (前端過濾排序) ── */
-const CC={教育:'cat-edu',勞工:'cat-work',環保:'cat-eco',文化:'cat-culture'};
-onSnapshot(
-  query(collection(db,'announcements')), 
-  snap=>{
-    const docs = snap.docs.map(d => d.data());
-    const activeAnns = docs.filter(a => a.isActive !== false)
-                           .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-                           .slice(0, 4); 
-
-    const g=document.getElementById('annGrid');
-    document.getElementById('annMore').style.display = activeAnns.length >= 4 ? '' : 'none';
-    if(activeAnns.length === 0){
-      g.innerHTML='<div class="ann-empty"><p style="font-size:28px">📢</p><p style="margin-top:8px;">目前尚無公告，請管理員登入後發布。</p></div>';
-      return;
+  if(cp.isAdmin){
+    showApp();
+  } else {
+    const rq=await getDocs(query(collection(db,'requests'),where('uid','==',cu.uid)));
+    const myReq=rq.docs[0]?.data();
+    if(myReq?.status==='pending'){
+      showAccessDenied(true);
+    } else {
+      showAccessDenied(false);
     }
-    
-    g.innerHTML = activeAnns.map(a => {
-      const ex = (a.content||'').substring(0,60);
-      const imgHtml = a.imgUrl ? `<div class="ann-img" style="background-image:url(${a.imgUrl.replace('/upload/','/upload/w_400,q_auto,f_auto/')})"></div>` : '';
-      return `<a href="#" class="ann-card">
-                ${imgHtml}
-                <div class="ann-body">
-                  <span class="acat ${CC[a.category]||'cat-def'}">${a.category||'公告'}</span>
-                  <div class="atitle">${a.title}</div>
-                  <div class="aex">${ex}${(a.content||'').length>60?'…':''}</div>
-                  <div class="amet"><span class="adate">${a.date||''}</span><span class="abureau">${a.bureau||''}</span></div>
-                </div>
-              </a>`;
-    }).join('');
-  },
-  _=>{document.getElementById('annGrid').innerHTML='<div class="ann-empty"><p>無法載入，請稍後再試。</p></div>';}
-);
-
-/* ── SCROLL PROGRESS ── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('scrollBar').style.width=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';
+  }
 });
 
-/* ── REVEAL ── */
-const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target);}}),{threshold:.08,rootMargin:'0px 0px -30px 0px'});
-document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+async function ensureWhitelist(){
+  const ref=doc(db,'settings','whitelist');
+  const snap=await getDoc(ref);
+  if(!snap.exists()){await setDoc(ref,{emails:[MASTER_EMAIL]});return;}
+  const emails=snap.data().emails||[]; 
+  if(!emails.map(e=>e.toLowerCase()).includes(MASTER_EMAIL.toLowerCase())){
+    await setDoc(ref,{emails:[MASTER_EMAIL,...emails]});
+  }
+}
 
-/* ── COUNTER ── */
-const co=new IntersectionObserver(es=>es.forEach(e=>{
-  if(!e.isIntersecting)return;
-  const el=e.target,t=+el.dataset.t,s=performance.now();
-  (function f(n){el.textContent=Math.round((1-Math.pow(1-Math.min((n-s)/1600,1),3))*t);if(n-s<1600)requestAnimationFrame(f);})(s);
-  co.unobserve(el);
-}),{threshold:.5});
-document.querySelectorAll('.cnt').forEach(el=>co.observe(el));
+function showAccessDenied(isPending){
+  document.getElementById('accessDenied').classList.add('show');
+  document.getElementById('adForm').style.display=isPending?'none':'';
+  document.getElementById('adPendingMsg').style.display=isPending?'':'none';
+}
+
+function showApp(){
+  document.getElementById('accessDenied').classList.remove('show');
+  document.getElementById('app').classList.add('show');
+  const av=document.getElementById('uAv');
+  if(cp.photoURL){
+    av.outerHTML=`<div id="uAv" class="uav"><img src="${cp.photoURL}" alt="${cp.displayName}"></div>`;
+  } else {
+    document.getElementById('uAv').textContent=(cp.displayName||cp.email||'U')[0].toUpperCase();
+  }
+  document.getElementById('uName').textContent=cp.displayName||cp.email;
+  document.getElementById('uRole').textContent=cp.isAdmin?'管理員':'一般使用者';
+  document.getElementById('navUsers').style.display=cp.isAdmin?'':'none';
+  document.getElementById('dashGreet').textContent=`歡迎回來，${(cp.displayName||'').split(' ')[0] || '管理員'} 👋`;
+  renderDash();startImgListener();startAnnListener();startTickerListener();renderProfile();
+  if(cp.isAdmin){renderUsers();updateReqBadge();}
+}
+
+/* ── ACCESS DENIED FORM ── */
+window.submitReqFromDenied=async()=>{
+  const unit=document.getElementById('adUnit').value.trim();
+  const reason=document.getElementById('adReason').value.trim();
+  if(!unit||!reason){toast('請填寫所屬單位與申請原因','err');return;}
+  const old=await getDocs(query(collection(db,'requests'),where('uid','==',cu.uid)));
+  for(const d of old.docs)await deleteDoc(doc(db,'requests',d.id));
+  await addDoc(collection(db,'requests'),{uid:cu.uid,email:cu.email,displayName:cu.displayName||'',photoURL:cu.photoURL||'',unit,reason,status:'pending',requestedAt:serverTimestamp()});
+  showAccessDenied(true);
+  toast('申請已送出，請等待管理員審核','ok');
+};
+
+/* ── DASHBOARD ── */
+async function renderDash(){
+  const[imgS,annS,userS,reqS]=await Promise.all([
+    getDocs(collection(db,'images')),
+    getDocs(query(collection(db,'announcements'),where('isActive','==',true))),
+    getDocs(collection(db,'users')),
+    getDocs(query(collection(db,'requests'),where('status','==','pending')))
+  ]);
+  document.getElementById('dashStats').innerHTML=`
+    <div class="sc accent"><span class="sc-n">${imgS.size}</span><div class="sc-l">輪播圖片</div></div>
+    <div class="sc"><span class="sc-n">${annS.size}</span><div class="sc-l">發布中公告</div></div>
+    <div class="sc"><span class="sc-n">${userS.size}</span><div class="sc-l">已登入使用者</div></div>
+    <div class="sc"><span class="sc-n" style="color:${reqS.size>0?'var(--danger)':'var(--success)'}">${reqS.size}</span><div class="sc-l">待審申請</div></div>`;
+  const allAnn=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
+  document.getElementById('dashAnn').innerHTML=allAnn.docs.slice(0,5).map(d=>{const a=d.data();return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;font-weight:500;">${a.imgUrl?'🖼 ':''}${a.title}</div><div style="font-size:11px;color:var(--tdim);">${a.bureau||''} · ${a.date||''}</div></div><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></div>`;}).join('')||'<p style="text-align:center;color:var(--tdim);padding:20px;">尚無公告</p>';
+  const rp=document.getElementById('dashReqPanel');
+  if(cp.isAdmin&&reqS.size>0){
+    rp.style.display='';
+    document.getElementById('dashReqs').innerHTML=reqS.docs.map(d=>{const r=d.data();return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:16px;"><div><div style="font-size:13px;font-weight:500;">${r.displayName||''} <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);">${r.email}</span></div><div style="font-size:12px;color:var(--tdim);">單位：${r.unit}</div></div><div style="display:flex;gap:8px;flex-shrink:0;"><button class="btn btn-sm btn-t" onclick="approveReq('${d.id}','${r.uid}')">核准</button><button class="btn btn-sm btn-ghost" onclick="denyReq('${d.id}')">拒絕</button></div></div>`;}).join('');
+  } else rp.style.display='none';
+}
+
+/* ── IMAGES (DRAG & DROP + WIDGET) ── */
+window.openUpload=function(){
+  if(!uploadWidget)uploadWidget=cloudinary.createUploadWidget({
+    cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,folder:'kaohsiung-gallery',
+    sources:['local','url','camera'],multiple:true,maxFileSize:10000000,
+    styles:{palette:{window:'#FFFFFF',windowBorder:'#D0DDEF',tabIcon:'#003F88',menuIcons:'#5A6A80',textDark:'#1A2840',textLight:'#FFFFFF',link:'#003F88',action:'#F5A800',inactiveTabIcon:'#B0BFCC',error:'#D63031',inProgress:'#0098B4',complete:'#00B894',sourceBg:'#F2F6FC'}}
+  },async(err,res)=>{
+    if(err){toast('上傳失敗','err');return;}
+    if(res?.event==='success'){
+      const i=res.info,cnt=(await getDocs(collection(db,'images'))).size;
+      await addDoc(collection(db,'images'),{publicId:i.public_id,url:i.secure_url,deleteToken:i.delete_token||'',caption:'',desc:'',tag:'',link:'',linkText:'',isActive:true,order:cnt,uploadedAt:serverTimestamp(),uploadedBy:cp.email});
+      toast('圖片上傳成功！','ok');
+    }
+  });
+  uploadWidget.open();
+};
+
+const dz = document.getElementById('dz');
+if(dz){
+  dz.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); dz.style.borderColor = 'var(--navy)'; dz.style.background = '#e8f0fe'; });
+  dz.addEventListener('dragleave', e => { e.preventDefault(); e.stopPropagation(); dz.style.borderColor = ''; dz.style.background = ''; });
+  dz.addEventListener('drop', async e => {
+    e.preventDefault(); e.stopPropagation();
+    dz.style.borderColor = ''; dz.style.background = '';
+    if(!cp || !cp.isAdmin) return;
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if(!files.length) return toast('請拖曳有效的圖片檔案','err');
+    
+    toast(`⏳ 開始上傳 ${files.length} 張圖片...`);
+    let sc = 0;
+    for(const f of files){
+      const fd = new FormData();
+      fd.append('file', f);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'kaohsiung-gallery');
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {method:'POST', body:fd});
+        const i = await res.json();
+        const cnt = (await getDocs(collection(db,'images'))).size;
+        await addDoc(collection(db,'images'),{publicId:i.public_id,url:i.secure_url,deleteToken:i.delete_token||'',caption:'',desc:'',tag:'',link:'',linkText:'',isActive:true,order:cnt,uploadedAt:serverTimestamp(),uploadedBy:cp.email});
+        sc++;
+      } catch(err){ console.error(err); }
+    }
+    if(sc === files.length) toast('✅ 拖曳圖片上傳成功！', 'ok');
+    else toast(`⚠️ 部分上傳失敗 (${sc}/${files.length})`, 'err');
+  });
+}
+
+function startImgListener(){
+  if(unsubImg)unsubImg();
+  unsubImg=onSnapshot(query(collection(db,'images'),orderBy('order','asc')),snap=>renderGallery(snap.docs.map(d=>({id:d.id,...d.data()}))));
+}
+
+function renderGallery(imgs){
+  document.getElementById('imgCount').textContent=imgs.length;
+  const g=document.getElementById('galleryGrid');
+  if(!imgs.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);"><span style="font-size:40px;display:block;margin-bottom:10px;">🏞</span><p>尚未上傳任何圖片</p></div>';return;}
+  g.innerHTML=imgs.map(img=>`<div class="gi"><img src="${img.url.replace('/upload/','/upload/w_360,q_auto,f_auto/')}" alt="${img.caption||''}">
+    ${img.caption?`<div class="gi-cap">${img.caption}</div>`:''}
+    <div class="gi-order">${img.order??0}</div>
+    <div class="gi-ov"><div class="gi-acts">
+      <button class="btn btn-sm" style="background:var(--gold);color:var(--navy);font-weight:700;" onclick="editImg('${img.id}')">✎</button>
+      <button class="btn btn-sm btn-ghost" style="background:rgba(255,255,255,.85);" onclick="toggleImg('${img.id}',${!img.isActive})">${img.isActive?'隱藏':'顯示'}</button>
+      <button class="btn btn-sm btn-d" onclick="delImg('${img.id}','${img.deleteToken||''}')">🗑</button>
+    </div></div>
+  </div>`).join('');
+}
+
+window.editImg=async id=>{
+  const d=(await getDoc(doc(db,'images',id))).data();if(!d)return;
+  document.getElementById('eImgId').value=id;
+  document.getElementById('eCaption').value=d.caption||'';
+  document.getElementById('eDesc').value=d.desc||'';
+  document.getElementById('eTag').value=d.tag||'';
+  document.getElementById('eLink').value=d.link||'';
+  document.getElementById('eLinkTxt').value=d.linkText||'';
+  document.getElementById('eOrder').value=d.order??0;
+  document.getElementById('eActive').checked=d.isActive!==false;
+  openModal('imgModal');
+};
+window.saveImg=async()=>{
+  const id=document.getElementById('eImgId').value;
+  await updateDoc(doc(db,'images',id),{caption:document.getElementById('eCaption').value,desc:document.getElementById('eDesc').value,tag:document.getElementById('eTag').value,link:document.getElementById('eLink').value,linkText:document.getElementById('eLinkTxt').value,order:parseInt(document.getElementById('eOrder').value)||0,isActive:document.getElementById('eActive').checked});
+  closeModal('imgModal');toast('圖片資訊已儲存','ok');
+};
+window.toggleImg=async(id,val)=>{await updateDoc(doc(db,'images',id),{isActive:val});toast(val?'已顯示':'已隱藏');};
+window.delImg=async(id,token)=>{
+  if(!confirm('確定要刪除這張圖片？'))return;
+  if(token){try{await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});}catch{}}
+  await deleteDoc(doc(db,'images',id));toast('已刪除','ok');
+};
+
+/* ── ANNOUNCEMENTS ── */
+window.openAnnUpload=function(){
+  if(!annUploadWidget)annUploadWidget=cloudinary.createUploadWidget({
+    cloudName:CLOUD_NAME,uploadPreset:UPLOAD_PRESET,folder:'kaohsiung-announcements',
+    sources:['local','url','camera'],multiple:false,maxFileSize:5000000,
+    styles:{palette:{window:'#FFFFFF',windowBorder:'#D0DDEF',tabIcon:'#003F88',menuIcons:'#5A6A80',textDark:'#1A2840',textLight:'#FFFFFF',link:'#003F88',action:'#F5A800',inactiveTabIcon:'#B0BFCC',error:'#D63031',inProgress:'#0098B4',complete:'#00B894',sourceBg:'#F2F6FC'}}
+  },(err,res)=>{
+    if(err){toast('圖片上傳失敗','err');return;}
+    if(res?.event==='success'){
+      document.getElementById('aImgUrl').value = res.info.secure_url;
+      document.getElementById('aImgPreview').style.backgroundImage = `url(${res.info.secure_url})`;
+      document.getElementById('aImgClear').style.display = '';
+      toast('公告圖片上傳成功！','ok');
+    }
+  });
+  annUploadWidget.open();
+};
+
+window.clearAnnImg=function(){
+  document.getElementById('aImgUrl').value = '';
+  document.getElementById('aImgPreview').style.backgroundImage = '';
+  document.getElementById('aImgClear').style.display = 'none';
+};
+
+function startAnnListener(){
+  if(unsubAnn)unsubAnn();
+  unsubAnn=onSnapshot(query(collection(db,'announcements'),orderBy('createdAt','desc')),snap=>renderAnnTable(snap.docs.map(d=>({id:d.id,...d.data()}))));
+}
+
+function renderAnnTable(anns){
+  const tb=document.getElementById('annTbody'),em=document.getElementById('annEmpty');
+  if(!anns.length){tb.innerHTML='';em.style.display='';return;}
+  em.style.display='none';
+  tb.innerHTML=anns.map(a=>`<tr>
+    <td><div style="font-weight:500;">${a.imgUrl?'🖼 ':''}${a.title}</div><div style="font-size:11px;color:var(--tdim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
+    <td><span class="badge b-user">${a.category||'公告'}</span></td>
+    <td>${a.bureau||'—'}</td>
+    <td style="font-family:'Space Mono',monospace;font-size:11px;">${a.date||'—'}</td>
+    <td><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></td>
+    <td><div style="display:flex;gap:6px;">
+      <button class="btn btn-sm btn-ghost" onclick="openAnnModal('${a.id}')">✎ 編輯</button>
+      <button class="btn btn-sm btn-ghost" onclick="toggleAnn('${a.id}',${!a.isActive})">${a.isActive?'停用':'啟用'}</button>
+      <button class="btn btn-sm btn-d" onclick="delAnn('${a.id}')">刪除</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+window.openAnnModal=async id=>{
+  document.getElementById('eAnnId').value=id||'';
+  document.getElementById('annModalTitle').textContent=id?'編輯公告':'新增公告';
+  const prev = document.getElementById('aImgPreview');
+  const clearBtn = document.getElementById('aImgClear');
+  const urlInput = document.getElementById('aImgUrl');
+  if(id){
+    const a=(await getDoc(doc(db,'announcements',id))).data();
+    if(!a)return;
+    document.getElementById('aTitle').value=a.title||'';
+    document.getElementById('aContent').value=a.content||'';
+    document.getElementById('aCat').value=a.category||'公告';
+    document.getElementById('aBureau').value=a.bureau||'';
+    document.getElementById('aDate').value=a.date||'';
+    document.getElementById('aActive').checked=a.isActive!==false;
+    if(a.imgUrl) {
+      urlInput.value = a.imgUrl;
+      prev.style.backgroundImage = `url(${a.imgUrl})`;
+      clearBtn.style.display = '';
+    } else {
+      urlInput.value = '';
+      prev.style.backgroundImage = '';
+      clearBtn.style.display = 'none';
+    }
+  } else {
+    document.getElementById('aTitle').value='';
+    document.getElementById('aContent').value='';
+    document.getElementById('aCat').value='公告';
+    document.getElementById('aBureau').value='';
+    document.getElementById('aDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('aActive').checked=true;
+    urlInput.value = '';
+    prev.style.backgroundImage = '';
+    clearBtn.style.display = 'none';
+  }
+  openModal('annModal');
+};
+
+window.saveAnn=async()=>{
+  const id=document.getElementById('eAnnId').value;
+  const title=document.getElementById('aTitle').value.trim();
+  if(!title)return toast('請輸入公告標題','err');
+  const data={
+    title,
+    imgUrl: document.getElementById('aImgUrl').value,
+    content:document.getElementById('aContent').value.trim(),
+    category:document.getElementById('aCat').value,
+    bureau:document.getElementById('aBureau').value.trim(),
+    date:document.getElementById('aDate').value,
+    isActive:document.getElementById('aActive').checked,
+    updatedAt:serverTimestamp()
+  };
+  if(id)await updateDoc(doc(db,'announcements',id),data);
+  else await addDoc(collection(db,'announcements'),{...data,createdAt:serverTimestamp(),createdBy:cu.email});
+  closeModal('annModal');toast('公告已儲存','ok');
+};
+window.toggleAnn=async(id,val)=>{await updateDoc(doc(db,'announcements',id),{isActive:val});toast(val?'公告已發布':'公告已停用');};
+window.delAnn=async id=>{if(!confirm('確定要刪除？'))return;await deleteDoc(doc(db,'announcements',id));toast('已刪除','ok');};
+
+/* ── TICKER (跑馬燈管理) ── */
+function startTickerListener(){
+  if(unsubTicker)unsubTicker();
+  unsubTicker=onSnapshot(query(collection(db,'tickers')), snap => {
+    const tb = document.getElementById('tickerTbody'), em = document.getElementById('tickerEmpty');
+    if (snap.empty) { tb.innerHTML = ''; em.style.display = ''; return; }
+    em.style.display = 'none';
+    // 前端按時間排序，免設複合索引
+    const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+    tb.innerHTML = docs.map(t => `<tr>
+      <td style="font-weight:500;">${t.content}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${fmtDate(t.createdAt)}</td>
+      <td><button class="btn btn-sm btn-d" onclick="delTicker('${t.id}')">刪除</button></td>
+    </tr>`).join('');
+  });
+}
+window.addTicker=async()=>{
+  const content=document.getElementById('tContent').value.trim();
+  if(!content)return toast('請輸入跑馬燈內容','err');
+  await addDoc(collection(db,'tickers'),{content,createdAt:serverTimestamp(),createdBy:cu.email});
+  document.getElementById('tContent').value='';
+  toast('跑馬燈已新增','ok');
+};
+window.delTicker=async id=>{
+  if(!confirm('確定要刪除這條跑馬燈？'))return;
+  await deleteDoc(doc(db,'tickers',id));
+  toast('已刪除','ok');
+};
+
+/* ── USERS ── */
+async function renderUsers(){
+  const[uS,rS,wS]=await Promise.all([getDocs(query(collection(db,'users'),orderBy('createdAt','asc'))),getDocs(query(collection(db,'requests'),where('status','==','pending'))),getDoc(doc(db,'settings','whitelist'))]);
+  const wl=wS.exists()?wS.data().emails||[]:[]; 
+  document.getElementById('reqsEmpty').style.display=rS.size?'none':'';
+  document.getElementById('reqsList').innerHTML=rS.docs.map(d=>{const r=d.data();return`<div class="req-box"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;"><div><div style="font-weight:600;font-size:14px;">${r.displayName||''} <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--tdim);">${r.email}</span></div><div style="font-size:12px;color:var(--tdim);margin-top:4px;">單位：<strong>${r.unit}</strong></div><div style="font-size:13px;margin-top:6px;">${r.reason}</div></div><div style="display:flex;gap:8px;flex-shrink:0;"><button class="btn btn-t" onclick="approveReq('${d.id}','${r.uid}')">✓ 核准</button><button class="btn btn-d" onclick="denyReq('${d.id}')">✕ 拒絕</button></div></div></div>`;}).join('');
+  document.getElementById('userTbody').innerHTML=uS.docs.map(d=>{const u=d.data();return`<tr><td><div style="display:flex;align-items:center;gap:10px;">${u.photoURL?`<img src="${u.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`:'<div style="width:28px;height:28px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;">'+(u.displayName||'U')[0]+'</div>'}<span style="font-weight:500;">${u.displayName||'—'}</span></div></td><td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${u.email}</td><td><span class="badge ${u.isAdmin?'b-admin':'b-user'}">${u.isAdmin?'● 管理員':'○ 一般'}</span></td><td style="font-size:11px;color:var(--tdim);">${fmtDate(u.createdAt)}</td><td>${u.email!==MASTER_EMAIL?`<button class="btn btn-sm btn-ghost" onclick="toggleAdmin('${d.id}',${!u.isAdmin})">${u.isAdmin?'取消管理員':'設為管理員'}</button>`:'<span style="font-size:11px;color:var(--tdim);">主管理員</span>'}</td></tr>`;}).join('');
+  document.getElementById('wlDisplay').innerHTML=wl.map(e=>`<span style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);padding:4px 12px;border-radius:20px;font-size:12px;margin:4px;">${e}${e.toLowerCase()!==MASTER_EMAIL.toLowerCase()?`<button onclick="removeWl('${e}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px;">×</button>`:''}</span>`).join('');
+}
+window.approveReq=async(rid,uid)=>{
+  await updateDoc(doc(db,'requests',rid),{status:'approved',reviewedAt:serverTimestamp()});
+  if(uid)await updateDoc(doc(db,'users',uid),{isAdmin:true});
+  await renderUsers();renderDash();updateReqBadge();toast('已核准','ok');
+};
+window.denyReq=async rid=>{if(!confirm('確定拒絕？'))return;await updateDoc(doc(db,'requests',rid),{status:'denied',reviewedAt:serverTimestamp()});await renderUsers();renderDash();updateReqBadge();toast('已拒絕');};
+window.toggleAdmin=async(uid,val)=>{await updateDoc(doc(db,'users',uid),{isAdmin:val});await renderUsers();toast(val?'已設為管理員':'已取消');};
+window.addWl=async()=>{
+  const email=document.getElementById('wlEmail').value.trim().toLowerCase();
+  if(!email||!email.includes('@'))return toast('請輸入有效 Email','err');
+  const ref=doc(db,'settings','whitelist');const s=await getDoc(ref);const curr=s.exists()?s.data().emails||[]:[]; 
+  if(curr.map(e=>e.toLowerCase()).includes(email))return toast('已在白名單中');
+  curr.push(email);await setDoc(ref,{emails:curr});
+  const uq=await getDocs(query(collection(db,'users'),where('email','==',email)));
+  for(const d of uq.docs)await updateDoc(doc(db,'users',d.id),{isAdmin:true});
+  document.getElementById('wlEmail').value='';await renderUsers();toast('已新增','ok');
+};
+window.removeWl=async email=>{
+  if(!confirm(`確定移除 ${email}？`))return;
+  const ref=doc(db,'settings','whitelist');const s=await getDoc(ref);const curr=s.exists()?s.data().emails||[]:[]; 
+  await setDoc(ref,{emails:curr.filter(e=>e.toLowerCase()!==email.toLowerCase())});await renderUsers();toast('已移除');
+};
+async function updateReqBadge(){const s=await getDocs(query(collection(db,'requests'),where('status','==','pending')));const b=document.getElementById('reqBadge');b.style.display=s.size>0?'':'none';b.textContent=s.size;}
+
+/* ── PROFILE ── */
+function renderProfile(){
+  document.getElementById('profileInfo').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+      ${cp.photoURL?`<img src="${cp.photoURL}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border);">`:'<div style="width:56px;height:56px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;">'+(cp.displayName||'U')[0]+'</div>'}
+      <div><div style="font-size:18px;font-weight:600;">${cp.displayName||'—'}</div><div style="font-size:13px;color:var(--tdim);margin-top:2px;">${cp.email}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:var(--bg);padding:12px 16px;border-radius:6px;"><div style="font-size:10px;color:var(--tdim);margin-bottom:3px;">角色</div><span class="badge ${cp.isAdmin?'b-admin':'b-user'}">${cp.isAdmin?'● 管理員':'○ 一般使用者'}</span></div>
+      <div style="background:var(--bg);padding:12px 16px;border-radius:6px;"><div style="font-size:10px;color:var(--tdim);margin-bottom:3px;">加入時間</div>${fmtDate(cp.createdAt)}</div>
+    </div>`;
+
+  const panel=document.getElementById('reqAccessPanel');
+  const content=document.getElementById('reqAccessContent');
+  if(cp.isAdmin){panel.style.display='none';return;}
+  panel.style.display='';
+  getDocs(query(collection(db,'requests'),where('uid','==',cu.uid))).then(rq=>{
+    const req=rq.docs[0]?.data();
+    if(req?.status==='pending') content.innerHTML='<div class="alert alert-warn">⏳ 申請已送出，等待管理員審核中。</div>';
+    else if(req?.status==='approved') content.innerHTML='<div class="alert alert-ok">✅ 申請已核准！請重新整理頁面。</div>';
+    else content.innerHTML=`<p style="font-size:13px;color:var(--tdim);margin-bottom:16px;">如需完整管理功能，請填寫以下表單申請管理員權限。</p>
+      <div class="fg2"><label class="fl2">申請人所屬單位</label><input type="text" class="fi2" id="reqUnit" placeholder="例：高雄市政府教育局"></div>
+      <div class="fg2"><label class="fl2">申請管理員原因</label><textarea class="fi2" id="reqReason" placeholder="請說明您需要管理後台權限的原因…"></textarea></div>
+      <button class="btn btn-p" onclick="submitReq()">送出申請</button>`;
+  });
+}
+window.submitReq=async()=>{
+  const unit=document.getElementById('reqUnit')?.value.trim();
+  const reason=document.getElementById('reqReason')?.value.trim();
+  if(!unit||!reason)return toast('請填寫所屬單位與申請原因','err');
+  const old=await getDocs(query(collection(db,'requests'),where('uid','==',cu.uid)));
+  for(const d of old.docs)await deleteDoc(doc(db,'requests',d.id));
+  await addDoc(collection(db,'requests'),{uid:cu.uid,email:cu.email,displayName:cu.displayName||'',photoURL:cu.photoURL||'',unit,reason,status:'pending',requestedAt:serverTimestamp()});
+  if(cp.isAdmin){await renderUsers();updateReqBadge();}
+  renderProfile();toast('申請已送出','ok');
+};
+
+/* ── TAB NAV ── */
+window.goTab=name=>{
+  document.querySelectorAll('.tc').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(el=>el.classList.remove('on'));
+  document.getElementById('tc-'+name)?.classList.add('on');
+  const m={dash:0,images:1,ann:2,ticker:3,users:4,profile:5};
+  document.querySelectorAll('.ni')[m[name]]?.classList.add('on');
+  if(name==='dash')renderDash();
+  if(name==='users'&&cp.isAdmin)renderUsers();
+  if(name==='profile')renderProfile();
+};
+
+/* ── MODAL ── */
+window.openModal=id=>document.getElementById(id).classList.add('open');
+window.closeModal=id=>document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.mover').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));
 </script>
 </body>
 </html>
