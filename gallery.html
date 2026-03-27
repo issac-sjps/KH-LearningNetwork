@@ -3,16 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>相片錦集 - 高雄城市學習網絡</title>
+<title>相片錦集 — 高雄城市學習網絡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/default-skin/default-skin.min.css">
-
 <style>
-/* ── 全域變數 (與其他頁面保持一致) ── */
-:root{ --navy:#003F88; --gold:#F5A800; --teal:#0098B4; --bg:#fff; --bg2:#F2F8FF; --text:#1A2840; --tdim:#5A6A80; --border:#C8DDEF; --shadow:0 4px 24px rgba(0,0,0,.08); --r:8px; }
+/* ── 全域變數 ── */
+:root{ --navy:#003F88; --gold:#F5A800; --teal:#0098B4; --bg:#fff; --bg2:#F2F8FF; --text:#1A2840; --tdim:#5A6A80; --border:#C8DDEF; --shadow:0 4px 24px rgba(0,63,136,.08); --r:8px; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;overflow-x:hidden;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--navy);border-radius:3px;}
@@ -24,48 +20,67 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);heigh
 .nt span{display:block;font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.25em;opacity:.6;font-weight:400;text-transform:uppercase;}
 .nl{display:flex;align-items:center;gap:4px;}
 .nl a{color:rgba(255,255,255,.78);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:4px;transition:all .2s;white-space:nowrap;}
-.nl a:hover, .nl a.active{color:#fff;background:rgba(255,255,255,.12);}
+.nl a:hover, .nl a.active{color:#fff;background:rgba(255,255,255,.15);}
 .nl .nbtn{background:var(--gold);color:var(--navy);font-weight:700;letter-spacing:.06em;padding:7px 18px;}
 .nl .nbtn:hover{background:#ffc02a;color:var(--navy);}
+.hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:8px;}
 
 /* ── PAGE HERO ── */
-.page-hero{background:var(--navy);padding:80px 72px;margin-top:68px;}
-.ph-title{font-family:'Noto Serif TC',serif;font-size:42px;font-weight:900;color:#fff;}
+.page-hero{margin-top:68px;background:var(--navy);padding:48px 72px;}
+.ph-title{font-family:'Noto Serif TC',serif;font-size:clamp(28px,3vw,42px);font-weight:900;color:#fff;margin-bottom:8px;}
+.ph-sub{font-size:14px;color:rgba(255,255,255,.65);}
 
-/* ── 相片錦集網格 ── */
-.gallery-outer { padding: 80px 72px; }
-.gallery-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+/* ── GALLERY GRID ── */
+.gallery-wrap{padding:48px 72px;max-width:1440px;margin:0 auto;min-height:50vh;}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.p-card{cursor:pointer;border-radius:8px;overflow:hidden;background:var(--bg2);box-shadow:0 4px 12px rgba(0,0,0,0.05);transition:all 0.3s;position:relative;}
+.p-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,63,136,0.15);}
+.p-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--bg3);}
+.p-info{padding:16px;background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;}
+.p-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:10px;color:var(--teal);background:#E0F5FA;padding:3px 10px;border-radius:12px;letter-spacing:.05em;margin-bottom:8px;}
+.p-title{font-weight:600;font-size:15px;color:var(--navy);line-height:1.4;}
+.p-desc{font-size:13px;color:var(--tdim);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 
-/* 縮圖樣式 */
-.gallery-thumbnail { position: relative; border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; background: var(--bg2); border: 1px solid var(--border); }
-.gallery-thumbnail:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,63,136,.18); }
-.gallery-thumbnail img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/9; } /* 確保縮圖比例一致 */
-.gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%); color: #fff; padding: 15px; font-size: 13px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; }
-.gallery-thumbnail:hover .gallery-caption { opacity: 1; }
+/* ── 原生 LIGHTBOX (硬核拖曳縮放系統) ── */
+#lightbox{position:fixed;inset:0;background:rgba(10,20,40,0.92);z-index:9999;display:none;align-items:center;justify-content:center;overflow:hidden;user-select:none;backdrop-filter:blur(5px);}
+#lbImg{max-width:90vw;max-height:90vh;object-fit:contain;cursor:grab;transition:transform 0.1s ease-out;will-change:transform;}
+#lbImg:active{cursor:grabbing;transition:none;}
+.lb-close{position:absolute;top:24px;right:32px;color:#fff;font-size:32px;cursor:pointer;z-index:10001;opacity:0.7;transition:0.2s;}
+.lb-close:hover{opacity:1;transform:scale(1.1);color:var(--gold);}
+.lb-controls{position:absolute;bottom:32px;display:flex;gap:12px;background:rgba(0,0,0,0.6);padding:10px 20px;border-radius:30px;z-index:10001;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);}
+.lb-btn{background:none;border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;padding:4px 8px;font-family:'Noto Sans TC',sans-serif;opacity:0.8;transition:0.2s;}
+.lb-btn:hover{opacity:1;color:var(--gold);}
+.lb-hint{position:absolute;top:32px;left:32px;color:rgba(255,255,255,0.6);font-size:13px;pointer-events:none;}
+.lb-title-bar{position:absolute;bottom:90px;color:#fff;font-size:16px;font-weight:500;text-shadow:0 2px 4px rgba(0,0,0,0.8);text-align:center;width:100%;pointer-events:none;}
 
 /* ── FOOTER ── */
 footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.ft-left{display:flex;align-items:center;gap:14px;}
 .ft-brand{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:#fff;}
 .ft-brand span{display:block;font-size:11px;font-weight:300;color:rgba(255,255,255,.5);margin-top:2px;}
 .ft-copy{font-size:11px;color:rgba(255,255,255,.25);}
 
-/* RWD */
 @media(max-width:860px){
   nav{padding:0 20px;}
-  .nt span {display: none;}
-  .nl {display: none;}
-  .nl .nbtn {padding: 5px 10px;}
-  .page-hero{padding:60px 20px;}
-  .ph-title{font-size:32px;}
-  .gallery-outer { padding: 60px 20px; }
+  .nl{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:16px;gap:4px;}
+  nav.open .nl{display:flex;}
+  .nl a{width:100%;text-align:center;padding:12px;}
+  .hamburger{display:block;}
+  .page-hero{padding:32px 20px;}
+  .gallery-wrap{padding:32px 20px;}
+  .photo-grid{grid-template-columns:1fr 1fr;}
+  .lb-hint{display:none;}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start;}
 }
+@media(max-width:500px){ .photo-grid{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
 
-<nav>
+<nav id="mainNav">
   <a href="index.html" class="nb">
+    <div class="nb-emblem">
+      <img src="https://issac-sjps.github.io/KH-LearningNetwork/Emblem_of_Kaohsiung_City.svg" alt="高雄市徽" width="44" height="44">
+    </div>
     <div class="nt">高雄城市學習網絡<span>Kaohsiung City Learning Network</span></div>
   </a>
   <div class="nl">
@@ -73,151 +88,154 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <a href="resources.html">學習資源</a>
     <a href="vision.html">發展願景</a>
     <a href="gallery.html" class="active">相片錦集</a>
-    <a href="admin.html" class="nbtn">管理後台</a>
+    <a href="admin.html" class="nbtn">管理後台 ▸</a>
   </div>
+  <button class="hamburger" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
 </nav>
 
 <div class="page-hero">
-  <h1 class="ph-title">相片錦集</h1>
+  <div class="ph-title">相片錦集</div>
+  <div class="ph-sub">瀏覽城市學習網絡的精彩活動紀錄與花絮。點擊可放大查看，支援滾輪縮放與滑鼠拖曳。</div>
 </div>
 
-<div class="gallery-outer">
-  <div class="gallery-inner" id="galleryContainer">
-    </div>
+<div class="gallery-wrap">
+  <div class="photo-grid" id="photoGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);">⏳ 照片載入中...</div>
+  </div>
+</div>
+
+<div id="lightbox">
+  <div class="lb-hint">💡 提示：使用滑鼠滾輪可縮放，按住圖片可拖曳移動。</div>
+  <div class="lb-close" onclick="closeLb()">✕</div>
+  <img id="lbImg" src="" alt="放大圖片">
+  <div class="lb-title-bar" id="lbTitle"></div>
+  <div class="lb-controls">
+    <button class="lb-btn" onclick="zoomLb(0.25)">＋ 放大</button>
+    <button class="lb-btn" onclick="zoomLb(-0.25)">－ 縮小</button>
+    <button class="lb-btn" onclick="resetLb()">↺ 重設</button>
+  </div>
 </div>
 
 <footer>
   <div class="ft-left">
     <div class="ft-brand">高雄城市學習網絡<span>Kaohsiung City Learning Network · 115年度</span></div>
   </div>
-  <div class="ft-copy">© 2025 高雄市政府</div>
+  <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
 </footer>
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="pswp__bg"></div>
-    <div class="pswp__scroll-wrap">
-        <div class="pswp__container">
-            <div class="pswp__item"></div>
-            <div class="pswp__item"></div>
-            <div class="pswp__item"></div>
-        </div>
-        <div class="pswp__ui pswp__ui--hidden">
-            <div class="pswp__top-bar">
-                <div class="pswp__counter"></div>
-                <button class="pswp__button pswp__button--close" title="關閉 (Esc)"></button>
-                <button class="pswp__button pswp__button--share" title="分享"></button>
-                <button class="pswp__button pswp__button--fs" title="全螢幕"></button>
-                <button class="pswp__button pswp__button--zoom" title="縮放 +/-"></button>
-                <div class="pswp__preloader">
-                    <div class="pswp__preloader__icn">
-                      <div class="pswp__preloader__cut">
-                        <div class="pswp__preloader__donut"></div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-                <div class="pswp__share-tooltip"></div> 
-            </div>
-            <button class="pswp__button pswp__button--arrow--left" title="上一個 (方向鍵左)">
-            </button>
-            <button class="pswp__button pswp__button--arrow--right" title="下一個 (方向鍵右)">
-            </button>
-            <div class="pswp__caption">
-                <div class="pswp__caption__center"></div>
-            </div>
-        </div>
-    </div>
-</div>
+<script src="chatbot.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,collection,query,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
-// ── 1. 定義您的範例照片數組 ──
-// 在實際整合時，此處將由 JS 或後端動態載入
-const items = [
-    {
-        src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600', // 放大後的高畫質圖片連結
-        w: 1600, // 圖片寬度
-        h: 900,  // 圖片高度
-        title: '課程活動照片 01 - AI 智慧學習工作坊' // 圖片標題
-    },
-    {
-        src: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1600',
-        w: 1600,
-        h: 900,
-        title: '課程活動照片 02 - 淨零永續低碳生活推廣'
-    },
-    {
-        src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1600',
-        w: 1600,
-        h: 900,
-        title: '課程活動照片 03 - 高齡友善福城樂齡學習中心'
-    },
-     {
-        src: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1600',
-        w: 1600,
-        h: 900,
-        title: '課程活動照片 04 - 社區共學網絡交流會'
-    },
-    {
-        src: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1600',
-        w: 1600,
-        h: 900,
-        title: '課程活動照片 05 - 數位地圖學習活動現場'
-    },
-    {
-        src: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1600',
-        w: 1600,
-        h: 900,
-        title: '課程活動照片 06 - 終身學習成果展示會'
-    }
-];
+const db=getFirestore(initializeApp({
+  apiKey:"AIzaSyAyjMtzui_McUq1SlJ1-fxRuVeMIqGq-xY",
+  authDomain:"kh-learningnetwork.firebaseapp.com",
+  projectId:"kh-learningnetwork",
+  storageBucket:"kh-learningnetwork.firebasestorage.app",
+  messagingSenderId:"140386001536",
+  appId:"1:140386001536:web:fa6902b4479f1a09273c65"
+}));
 
-// ── 2. 動態生成縮圖 ──
-const galleryContainer = document.getElementById('galleryContainer');
+// Firebase 資料載入與網格生成
+onSnapshot(query(collection(db,'images')), snap => {
+  const docs = snap.docs.map(d => d.data());
+  // 過濾啟用照片，依照自訂排序 (order) 顯示
+  const activeImgs = docs.filter(d => d.isActive !== false).sort((a,b) => (a.order||0) - (b.order||0));
+  
+  const g = document.getElementById('photoGrid');
+  if(activeImgs.length === 0){
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--tdim);">目前尚無照片紀錄。</div>';
+    return;
+  }
 
-items.forEach((item, index) => {
-    // 建立一個 div 包裹縮圖
-    const thumbnailDiv = document.createElement('div');
-    thumbnailDiv.className = 'gallery-thumbnail';
-    // 點擊事件：初始化 Lightbox
-    thumbnailDiv.onclick = () => openLightbox(index);
-
-    // 建立圖片標籤 (使用 PhotoSwipe 所需的縮圖格式，可以與放大圖一致或更小)
-    const img = document.createElement('img');
-    img.src = item.src; // 範例直接用大圖，您可以換成更小的縮圖網址
-    img.alt = item.title;
-
-    // 建立標題
-    const caption = document.createElement('div');
-    caption.className = 'gallery-caption';
-    caption.textContent = item.title;
-
-    thumbnailDiv.appendChild(img);
-    thumbnailDiv.appendChild(caption);
-    galleryContainer.appendChild(thumbnailDiv);
+  g.innerHTML = activeImgs.map(img => {
+    // 縮圖：Cloudinary 智慧裁切 w_600，高畫質且省流量
+    const thumbUrl = img.url.replace('/upload/', '/upload/w_600,q_auto,f_auto/');
+    // 原圖：高品質無裁切
+    const fullUrl = img.url.replace('/upload/', '/upload/q_auto,f_auto/');
+    // 安全處理字串，避免引號導致 HTML 破圖
+    const safeTitle = (img.caption || '').replace(/'/g, "\\'");
+    
+    return `
+      <div class="p-card" onclick="openLb('${fullUrl}', '${safeTitle}')">
+        <img src="${thumbUrl}" alt="${img.caption||'活動照片'}" class="p-img" loading="lazy">
+        ${(img.caption || img.tag || img.desc) ? `
+        <div class="p-info">
+          ${img.tag ? `<span class="p-tag">${img.tag}</span>` : ''}
+          ${img.caption ? `<div class="p-title">${img.caption}</div>` : ''}
+          ${img.desc ? `<div class="p-desc">${img.desc}</div>` : ''}
+        </div>` : ''}
+      </div>
+    `;
+  }).join('');
 });
 
-// ── 3. 初始化並打開 Lightbox ──
-const pswpElement = document.querySelectorAll('.pswp')[0];
+/* ── LIGHTBOX (無套件拖曳縮放邏輯) ── */
+const lb = document.getElementById('lightbox');
+const img = document.getElementById('lbImg');
+const lbTitle = document.getElementById('lbTitle');
+let scale = 1, panX = 0, panY = 0;
+let isDragging = false, startX, startY;
 
-function openLightbox(index) {
-    // PhotoSwipe 的選項
-    const options = {
-        index: index, // 從第幾張開始
-        showHideOpacity: true,
-        bgOpacity: 0.9,
-        loop: false, // 關閉循環
-        shareEl: false // 關閉分享按鈕 (如果您需要可以打開)
-    };
+window.openLb = (url, title) => {
+  img.src = url;
+  lbTitle.textContent = title || '';
+  resetLb();
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // 防止背部滾動
+};
 
-    // 初始化 PhotoSwipe
-    const gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
-    gallery.init();
+window.closeLb = () => { 
+  lb.style.display = 'none'; 
+  img.src = ''; 
+  document.body.style.overflow = ''; 
+};
+
+window.resetLb = () => { 
+  scale = 1; panX = 0; panY = 0; 
+  updateLb(); 
+};
+
+window.zoomLb = delta => {
+  scale += delta;
+  if(scale < 0.5) scale = 0.5;
+  if(scale > 5) scale = 5; // 最大放大 5 倍
+  updateLb();
+};
+
+function updateLb() {
+  img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
 }
-</script>
 
+// 滑鼠拖曳平移 (Pan)
+img.onmousedown = e => {
+  e.preventDefault();
+  isDragging = true;
+  startX = e.clientX - panX;
+  startY = e.clientY - panY;
+};
+window.onmousemove = e => {
+  if(!isDragging) return;
+  panX = e.clientX - startX;
+  panY = e.clientY - startY;
+  updateLb();
+};
+window.onmouseup = () => { isDragging = false; };
+window.onmouseleave = () => { isDragging = false; };
+
+// 點擊背景關閉
+lb.addEventListener('click', e => {
+  if (e.target === lb || e.target === lbTitle) closeLb();
+});
+
+// 滾輪縮放 (Zoom)
+lb.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomLb(e.deltaY > 0 ? -0.15 : 0.15);
+}, { passive: false });
+
+</script>
 </body>
 </html>
