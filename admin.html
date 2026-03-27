@@ -965,6 +965,7 @@ window.seedTickers=async()=>{
   toast('⏳ 匯入中...');
   const cnt = (await getDocs(collection(db,'tickers'))).size;
   for(let i=0;i<defs.length;i++){
+    // 給予預設排序值
     await addDoc(collection(db,'tickers'),{content:defs[i], order: cnt + i, createdAt:serverTimestamp(),createdBy:cu.email});
   }
   toast('✅ 預設跑馬燈匯入完成','ok');
@@ -998,12 +999,15 @@ function startTickerListener(){
       return (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0);
     });
     
-    tb.innerHTML = docs.map(t => `<tr>
-      <td><input type="number" class="fi2" style="width:60px;padding:6px;text-align:center;" value="${t.order||0}" onchange="updateTickerOrder('${t.id}', this.value)"></td>
+    tb.innerHTML = docs.map(t => `<tr draggable="true" data-id="${t.id}" class="drag-row">
+      <td class="drag-handle" title="按住拖曳排序">☰</td>
       <td style="font-weight:500;">${t.content}</td>
       <td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${fmtDate(t.createdAt)}</td>
       <td><button class="btn btn-sm btn-d" onclick="delTicker('${t.id}')">刪除</button></td>
     </tr>`).join('');
+    
+    // 啟動拖曳排序機制
+    makeSortable('tickerTbody', 'tickers');
   });
 }
 
