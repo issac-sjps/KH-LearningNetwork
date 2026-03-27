@@ -263,10 +263,8 @@ footer{background:#001F4A;padding:36px 72px;display:flex;align-items:center;just
     <span class="fttag">淨零永續</span>
     <span class="fttag">友善高齡</span>
   </div>
-  <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS</div>
+    <div class="ft-copy">© 2025 高雄市政府 · 9 BUREAUS · 38 DISTRICTS · <a href="admin.html" style="color:inherit;text-decoration:none;opacity:0.6;">Admin</a></div>
 </footer>
-
-<a href="admin.html" class="fab">⚙ 管理後台</a>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -281,7 +279,7 @@ const db=getFirestore(initializeApp({
   appId:"1:140386001536:web:fa6902b4479f1a09273c65"
 }));
 
-/* ── CAROUSEL (前端過濾排序，免設索引) ── */
+/* ── CAROUSEL (隨機抽 10 張) ── */
 const DEF=[
   {title:'城市即學堂',desc:'高雄市跨局處城市學習網絡，整合9大局處資源，讓每位市民都能在生活圈找到學習管道。',tag:'Kaohsiung Learning City',ph:'cph1',link:'resources.html',lt:'探索學習資源'},
   {title:'38行政區全覆蓋',desc:'從楠梓到茂林，樂齡學習中心與長青學苑遍布全市每一個行政區。',tag:'District Coverage',ph:'cph2',link:'resources.html#districts',lt:'查看行政區'},
@@ -317,9 +315,21 @@ window.cGo=n=>{
 window.cStep=n=>cGo(cur+n);
 
 onSnapshot(query(collection(db,'images')), s => {
-  // 將 Firebase 的 where 與 orderBy 邏輯拉到前端執行，避開複合索引錯誤
   const docs = s.docs.map(d => ({id:d.id, ...d.data()}));
-  const activeImgs = docs.filter(d => d.isActive !== false).sort((a, b) => (a.order||0) - (b.order||0));
+  let activeImgs = docs.filter(d => d.isActive !== false);
+
+  // 硬核洗牌演算法 (Fisher-Yates Shuffle)，隨機抽取 10 張
+  if (activeImgs.length > 10) {
+    for (let i = activeImgs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [activeImgs[i], activeImgs[j]] = [activeImgs[j], activeImgs[i]];
+    }
+    activeImgs = activeImgs.slice(0, 10);
+  } else {
+    // 若少於 10 張，維持原有排序
+    activeImgs.sort((a, b) => (a.order||0) - (b.order||0));
+  }
+
   buildC(activeImgs);
 }, _ => buildC([]));
 
