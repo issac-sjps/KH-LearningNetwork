@@ -125,18 +125,25 @@ input,textarea,select,button{font-family:'Noto Sans TC',sans-serif;}
 .gi-cap{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;max-width:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gi-order{position:absolute;top:6px;right:6px;background:var(--gold);color:var(--navy);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
 
-/* TABLE */
+/* TABLE & DRAG DROP */
 table{width:100%;border-collapse:collapse;}
 th{text-align:left;font-size:11px;font-family:'Space Mono',monospace;color:var(--tdim);letter-spacing:.15em;padding:10px 14px;border-bottom:2px solid var(--border);text-transform:uppercase;}
-td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;background:#fff;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#f8faff;}
+
+.drag-handle { cursor: grab; padding: 0 14px; color: var(--border); font-size: 20px; text-align: center; width: 40px; transition: color 0.2s;}
+.drag-row:hover .drag-handle { color: var(--navy); }
+.drag-handle:active { cursor: grabbing; }
+.drag-row.dragging td { opacity: 0.4; background: var(--bg3) !important; border-top: 2px dashed var(--navy); border-bottom: 2px dashed var(--navy); }
+
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
 .b-on{background:#e8f5ee;color:var(--success);}
 .b-off{background:#f5f5f5;color:#999;}
 .b-pend{background:#fff8e0;color:#8a6000;}
 .b-admin{background:#e0f0ff;color:var(--navy);}
 .b-user{background:#f5f5f5;color:#666;}
+.b-expired{background:#fff0f0;color:var(--danger);}
 
 /* FORM */
 .fg2{margin-bottom:16px;}
@@ -166,7 +173,7 @@ textarea.fi2{resize:vertical;min-height:90px;}
 /* MODAL */
 .mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
 .mover.open{display:flex;}
-.mbox{background:var(--white);border-radius:12px;padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadowmd);}
+.mbox{background:var(--white);border-radius:12px;padding:32px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadowmd);}
 .mtitle{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:var(--navy);margin-bottom:20px;}
 
 /* TAB */
@@ -287,12 +294,12 @@ textarea.fi2{resize:vertical;min-height:90px;}
 
     <div class="tc" id="tc-ann">
       <div class="phdr" style="display:flex;align-items:flex-end;justify-content:space-between;">
-        <div><div class="ptitle">📢 公告管理</div><div class="psub">新增、編輯或停用首頁公告，可選擇附加圖片</div></div>
+        <div><div class="ptitle">📢 公告管理</div><div class="psub">支援拖曳排序、置頂防護、與自動下架排程。</div></div>
         <button class="btn btn-p" onclick="openAnnModal()">＋ 新增公告</button>
       </div>
       <div class="panel">
         <table>
-          <thead><tr><th>標題</th><th>分類</th><th>局處</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
+          <thead><tr><th>排序</th><th>標題</th><th>分類</th><th>活動/下架日期</th><th>狀態</th><th>操作</th></tr></thead>
           <tbody id="annTbody"></tbody>
         </table>
         <div id="annEmpty" style="text-align:center;padding:40px;color:var(--tdim);display:none;">目前無公告。</div>
@@ -300,7 +307,19 @@ textarea.fi2{resize:vertical;min-height:90px;}
     </div>
 
     <div class="tc" id="tc-ticker">
-      <div class="phdr"><div class="ptitle">📜 跑馬燈管理</div><div class="psub">管理首頁頂部滾動文字</div></div>
+      <div class="phdr"><div class="ptitle">📜 跑馬燈管理</div><div class="psub">管理首頁頂部滾動文字，可直接拖曳調整順序</div></div>
+      
+      <div class="panel">
+        <div class="panel-t">⚙️ 跑馬燈設定</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <label style="font-size:13px;color:var(--tdim);">滾動一圈所需秒數：</label>
+          <input type="number" class="fi2" id="tSpeed" style="width:100px;" min="10" max="200" value="32">
+          <button class="btn btn-ghost" onclick="saveTickerSpeed()">儲存速度</button>
+          <div style="flex:1;"></div>
+          <button class="btn btn-ghost" onclick="seedTickers()" style="color:var(--gold);border-color:var(--gold);">🌟 一鍵匯入預設資料</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-t">＋ 新增跑馬燈</div>
         <div style="display:flex;gap:10px;">
@@ -310,7 +329,7 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
       <div class="panel">
         <table>
-          <thead><tr><th>內容</th><th>發布時間</th><th>操作</th></tr></thead>
+          <thead><tr><th>排序</th><th>內容</th><th>發布時間</th><th>操作</th></tr></thead>
           <tbody id="tickerTbody"></tbody>
         </table>
         <div id="tickerEmpty" style="text-align:center;padding:40px;color:var(--tdim);display:none;">目前無跑馬燈。</div>
@@ -384,7 +403,8 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
     </div>
 
-    <div class="fg2"><label class="fl2">公告內容</label><textarea class="fi2" id="aContent" style="min-height:120px;"></textarea></div>
+    <div class="fg2"><label class="fl2">公告內容</label><textarea class="fi2" id="aContent" style="min-height:90px;"></textarea></div>
+    
     <div class="frow">
       <div class="fg2"><label class="fl2">分類</label>
         <select class="fi2" id="aCat">
@@ -395,12 +415,17 @@ textarea.fi2{resize:vertical;min-height:90px;}
       </div>
       <div class="fg2"><label class="fl2">發布局處</label><input type="text" class="fi2" id="aBureau" placeholder="例：教育局"></div>
     </div>
+    
     <div class="frow">
-      <div class="fg2"><label class="fl2">日期</label><input type="date" class="fi2" id="aDate"></div>
-      <div class="fg2"><label class="fl2">狀態</label>
-        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">立即發布</span></div>
-      </div>
+      <div class="fg2"><label class="fl2">活動日期 (選填)</label><input type="date" class="fi2" id="aDate"></div>
+      <div class="fg2"><label class="fl2">下架日期 (留空不自動下架)</label><input type="date" class="fi2" id="aTakeDownDate"></div>
     </div>
+
+    <div class="fg2" style="display:flex;gap:20px;align-items:center;padding-bottom:10px;">
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aPinned"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--danger);font-weight:700;">📌 置頂公告</span></div>
+      <div class="tog-wrap"><label class="tog"><input type="checkbox" id="aActive" checked><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13px;color:var(--tdim);">允許前台顯示</span></div>
+    </div>
+
     <div class="facts"><button class="btn btn-p" onclick="saveAnn()">儲存公告</button><button class="btn btn-ghost" onclick="closeModal('annModal')">取消</button></div>
   </div>
 </div>
@@ -412,7 +437,7 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-ap
 import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{
   getFirestore,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,
-  collection,query,where,orderBy,onSnapshot,serverTimestamp,deleteField
+  collection,query,where,orderBy,onSnapshot,serverTimestamp,writeBatch
 }from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ── GLOBAL DRAG & DROP PROTECTION ── */
@@ -430,7 +455,7 @@ const db=getFirestore(fbApp);
 const provider=new GoogleAuthProvider();
 
 let cu=null, cp=null;
-let unsubImg=null, unsubAnn=null, unsubTicker=null;
+let unsubImg=null, unsubAnn=null, unsubTicker=null, unsubTickerSpeed=null;
 let uploadWidget=null;
 let annUploadWidget=null;
 
@@ -462,7 +487,7 @@ window.doGoogleLogin=async()=>{
 };
 
 window.doLogout=async()=>{
-  if(unsubImg)unsubImg();if(unsubAnn)unsubAnn();if(unsubTicker)unsubTicker();
+  if(unsubImg)unsubImg();if(unsubAnn)unsubAnn();if(unsubTicker)unsubTicker();if(unsubTickerSpeed)unsubTickerSpeed();
   await signOut(auth);
 };
 
@@ -547,6 +572,66 @@ window.submitReqFromDenied=async()=>{
   await addDoc(collection(db,'requests'),{uid:cu.uid,email:cu.email,displayName:cu.displayName||'',photoURL:cu.photoURL||'',unit,reason,status:'pending',requestedAt:serverTimestamp()});
   showAccessDenied(true);
   toast('申請已送出，請等待管理員審核','ok');
+};
+
+/* ── DRAG & DROP 核心邏輯 (硬核重構) ── */
+window.makeSortable = function(tbodyId, type) {
+  const tbody = document.getElementById(tbodyId);
+  if(!tbody) return;
+  
+  // 移除舊的 listener 避免快照重複綁定
+  const newTbody = tbody.cloneNode(true);
+  tbody.parentNode.replaceChild(newTbody, tbody);
+  
+  let dragEl = null;
+
+  newTbody.addEventListener('dragstart', e => {
+    const tr = e.target.closest('.drag-row');
+    if(!tr) return;
+    dragEl = tr;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', tr.dataset.id);
+    setTimeout(() => tr.classList.add('dragging'), 0);
+  });
+
+  newTbody.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const tr = e.target.closest('.drag-row');
+    if(tr && tr !== dragEl && tr.parentNode === newTbody) {
+      const rect = tr.getBoundingClientRect();
+      const relY = e.clientY - rect.top;
+      // 根據游標位置決定要插在目標行的上面還是下面
+      if(relY < rect.height / 2) newTbody.insertBefore(dragEl, tr);
+      else newTbody.insertBefore(dragEl, tr.nextSibling);
+    }
+  });
+
+  newTbody.addEventListener('dragend', async e => {
+    if(dragEl) dragEl.classList.remove('dragging');
+    dragEl = null;
+    
+    // 將當前 DOM 順序寫入 Firestore
+    const batch = writeBatch(db);
+    const rows = Array.from(newTbody.querySelectorAll('.drag-row'));
+    let pinnedIdx = 0, unpinnedIdx = 0;
+    
+    rows.forEach((row, index) => {
+      const id = row.dataset.id;
+      if (type === 'announcements') {
+        const isPinned = row.dataset.pinned === 'true';
+        // 依照要求防護邏輯：置頂與一般各自計算順序。硬拉也會在寫入後彈回！
+        const newOrder = isPinned ? pinnedIdx++ : unpinnedIdx++;
+        batch.update(doc(db, type, id), { order: newOrder });
+      } else {
+        batch.update(doc(db, type, id), { order: index });
+      }
+    });
+    
+    toast('⏳ 儲存排序中...');
+    await batch.commit();
+    toast('✅ 排序已更新', 'ok');
+  });
 };
 
 /* ── DASHBOARD ── */
@@ -689,25 +774,50 @@ window.clearAnnImg=function(){
 
 function startAnnListener(){
   if(unsubAnn)unsubAnn();
-  unsubAnn=onSnapshot(query(collection(db,'announcements'),orderBy('createdAt','desc')),snap=>renderAnnTable(snap.docs.map(d=>({id:d.id,...d.data()}))));
-}
+  unsubAnn=onSnapshot(query(collection(db,'announcements')),snap => {
+    const today = new Date().toISOString().split('T')[0];
+    const tb = document.getElementById('annTbody'), em = document.getElementById('annEmpty');
+    if(snap.empty) { tb.innerHTML=''; em.style.display=''; return; }
+    em.style.display='none';
+    
+    // 後台排序：置頂優先 -> 自訂排序小到大 -> 建立時間新到舊
+    const docs = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b) => {
+      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+      if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
+      return (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0);
+    });
 
-function renderAnnTable(anns){
-  const tb=document.getElementById('annTbody'),em=document.getElementById('annEmpty');
-  if(!anns.length){tb.innerHTML='';em.style.display='';return;}
-  em.style.display='none';
-  tb.innerHTML=anns.map(a=>`<tr>
-    <td><div style="font-weight:500;">${a.imgUrl?'🖼 ':''}${a.title}</div><div style="font-size:11px;color:var(--tdim);">${(a.content||'').substring(0,50)}${(a.content||'').length>50?'…':''}</div></td>
-    <td><span class="badge b-user">${a.category||'公告'}</span></td>
-    <td>${a.bureau||'—'}</td>
-    <td style="font-family:'Space Mono',monospace;font-size:11px;">${a.date||'—'}</td>
-    <td><span class="badge ${a.isActive?'b-on':'b-off'}">${a.isActive?'● 發布中':'○ 停用'}</span></td>
-    <td><div style="display:flex;gap:6px;">
-      <button class="btn btn-sm btn-ghost" onclick="openAnnModal('${a.id}')">✎ 編輯</button>
-      <button class="btn btn-sm btn-ghost" onclick="toggleAnn('${a.id}',${!a.isActive})">${a.isActive?'停用':'啟用'}</button>
-      <button class="btn btn-sm btn-d" onclick="delAnn('${a.id}')">刪除</button>
-    </div></td>
-  </tr>`).join('');
+    tb.innerHTML=docs.map(a=>{
+      const isExpired = a.takeDownDate && a.takeDownDate < today;
+      let statusBadge = '';
+      if(a.isActive === false) {
+        statusBadge = '<span class="badge b-off">○ 停用</span>';
+      } else if (isExpired) {
+        statusBadge = '<span class="badge b-expired" title="已達下架日期，前台不顯示">🕒 已下架</span>';
+      } else {
+        statusBadge = '<span class="badge b-on">● 發布中</span>';
+      }
+      
+      const pinIcon = a.isPinned ? '<span style="color:var(--danger);" title="置頂顯示">📌 </span>' : '';
+      const dateHtml = `<div style="margin-bottom:4px;">活：${a.date||'—'}</div><div style="color:var(--tdim);">下：${a.takeDownDate||'—'}</div>`;
+      
+      return `<tr draggable="true" data-id="${a.id}" data-pinned="${a.isPinned===true}" class="drag-row">
+        <td class="drag-handle" title="按住拖曳排序">☰</td>
+        <td><div style="font-weight:500;">${pinIcon}${a.imgUrl?'🖼 ':''}${a.title}</div></td>
+        <td><span class="badge b-user">${a.category||'公告'}</span></td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;">${dateHtml}</td>
+        <td>${statusBadge}</td>
+        <td><div style="display:flex;gap:6px;">
+          <button class="btn btn-sm btn-ghost" onclick="openAnnModal('${a.id}')">✎ 編輯</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleAnn('${a.id}',${!a.isActive})">${a.isActive?'停用':'啟用'}</button>
+          <button class="btn btn-sm btn-d" onclick="delAnn('${a.id}')">刪除</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+    
+    // 啟動拖曳排序機制
+    makeSortable('annTbody', 'announcements');
+  });
 }
 
 window.openAnnModal=async id=>{
@@ -724,7 +834,10 @@ window.openAnnModal=async id=>{
     document.getElementById('aCat').value=a.category||'公告';
     document.getElementById('aBureau').value=a.bureau||'';
     document.getElementById('aDate').value=a.date||'';
+    document.getElementById('aTakeDownDate').value=a.takeDownDate||'';
+    document.getElementById('aPinned').checked=a.isPinned===true;
     document.getElementById('aActive').checked=a.isActive!==false;
+    
     if(a.imgUrl) {
       urlInput.value = a.imgUrl;
       prev.style.backgroundImage = `url(${a.imgUrl})`;
@@ -740,7 +853,10 @@ window.openAnnModal=async id=>{
     document.getElementById('aCat').value='公告';
     document.getElementById('aBureau').value='';
     document.getElementById('aDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('aTakeDownDate').value='';
+    document.getElementById('aPinned').checked=false;
     document.getElementById('aActive').checked=true;
+    
     urlInput.value = '';
     prev.style.backgroundImage = '';
     clearBtn.style.display = 'none';
@@ -752,6 +868,18 @@ window.saveAnn=async()=>{
   const id=document.getElementById('eAnnId').value;
   const title=document.getElementById('aTitle').value.trim();
   if(!title)return toast('請輸入公告標題','err');
+  
+  const isPinned = document.getElementById('aPinned').checked;
+  // 若是新增，預設 order 放最後。若是編輯，維持原 order。
+  let order = 0;
+  if(id) {
+    const oldDoc = await getDoc(doc(db,'announcements',id));
+    order = oldDoc.data().order || 0;
+  } else {
+    // 取得當前總數做為預設 order
+    order = (await getDocs(collection(db,'announcements'))).size;
+  }
+
   const data={
     title,
     imgUrl: document.getElementById('aImgUrl').value,
@@ -759,9 +887,13 @@ window.saveAnn=async()=>{
     category:document.getElementById('aCat').value,
     bureau:document.getElementById('aBureau').value.trim(),
     date:document.getElementById('aDate').value,
+    takeDownDate:document.getElementById('aTakeDownDate').value,
+    isPinned: isPinned,
+    order: order,
     isActive:document.getElementById('aActive').checked,
     updatedAt:serverTimestamp()
   };
+  
   if(id)await updateDoc(doc(db,'announcements',id),data);
   else await addDoc(collection(db,'announcements'),{...data,createdAt:serverTimestamp(),createdBy:cu.email});
   closeModal('annModal');toast('公告已儲存','ok');
@@ -770,25 +902,70 @@ window.toggleAnn=async(id,val)=>{await updateDoc(doc(db,'announcements',id),{isA
 window.delAnn=async id=>{if(!confirm('確定要刪除？'))return;await deleteDoc(doc(db,'announcements',id));toast('已刪除','ok');};
 
 /* ── TICKER (跑馬燈管理) ── */
+window.saveTickerSpeed=async()=>{
+  const spd=parseInt(document.getElementById('tSpeed').value);
+  if(!spd||spd<5||spd>200)return toast('請輸入 5~200 的秒數','err');
+  await setDoc(doc(db,'settings','ticker'),{speed:spd},{merge:true});
+  toast('跑馬燈速度已更新','ok');
+};
+
+window.seedTickers=async()=>{
+  if(!confirm('確定要匯入預設的 8 筆跑馬燈？(這將會直接新增資料)'))return;
+  const defs = [
+    "樂齡學習中心・38行政區全覆蓋",
+    "淨零學院・11大國際標準認證持續招生",
+    "高美講堂・藝術跨域系列講座",
+    "勞工大學・每季新開課程線上報名",
+    "智慧圖書館・24小時自助借閱服務",
+    "行動健身房巡迴車・115年新增第二台",
+    "銀髮人才服務・55歲以上就業媒合",
+    "原住民族部落大學・免學費終身教育"
+  ];
+  toast('⏳ 匯入中...');
+  const cnt = (await getDocs(collection(db,'tickers'))).size;
+  for(let i=0;i<defs.length;i++){
+    await addDoc(collection(db,'tickers'),{content:defs[i], order: cnt + i, createdAt:serverTimestamp(),createdBy:cu.email});
+  }
+  toast('✅ 預設跑馬燈匯入完成','ok');
+};
+
 function startTickerListener(){
+  if(unsubTickerSpeed)unsubTickerSpeed();
+  unsubTickerSpeed=onSnapshot(doc(db,'settings','ticker'), snap => {
+    if(snap.exists() && snap.data().speed) {
+      const tSpeedInput = document.getElementById('tSpeed');
+      if(tSpeedInput) tSpeedInput.value = snap.data().speed;
+    }
+  });
+
   if(unsubTicker)unsubTicker();
   unsubTicker=onSnapshot(query(collection(db,'tickers')), snap => {
     const tb = document.getElementById('tickerTbody'), em = document.getElementById('tickerEmpty');
     if (snap.empty) { tb.innerHTML = ''; em.style.display = ''; return; }
     em.style.display = 'none';
-    // 前端按時間排序，免設複合索引
-    const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
-    tb.innerHTML = docs.map(t => `<tr>
+    
+    const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => {
+      if ((a.order||0) !== (b.order||0)) return (a.order||0) - (b.order||0);
+      return (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0);
+    });
+    
+    tb.innerHTML = docs.map(t => `<tr draggable="true" data-id="${t.id}" class="drag-row">
+      <td class="drag-handle" title="按住拖曳排序">☰</td>
       <td style="font-weight:500;">${t.content}</td>
       <td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--tdim);">${fmtDate(t.createdAt)}</td>
       <td><button class="btn btn-sm btn-d" onclick="delTicker('${t.id}')">刪除</button></td>
     </tr>`).join('');
+    
+    // 啟動拖曳排序機制
+    makeSortable('tickerTbody', 'tickers');
   });
 }
+
 window.addTicker=async()=>{
   const content=document.getElementById('tContent').value.trim();
   if(!content)return toast('請輸入跑馬燈內容','err');
-  await addDoc(collection(db,'tickers'),{content,createdAt:serverTimestamp(),createdBy:cu.email});
+  const cnt = (await getDocs(collection(db,'tickers'))).size;
+  await addDoc(collection(db,'tickers'),{content, order: cnt, createdAt:serverTimestamp(),createdBy:cu.email});
   document.getElementById('tContent').value='';
   toast('跑馬燈已新增','ok');
 };
